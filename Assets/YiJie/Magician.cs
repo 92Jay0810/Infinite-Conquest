@@ -5,7 +5,7 @@ using UnityEngine;
 public class Magician : MonoBehaviour
 {
     [SerializeField] float moveSpeed = 5.0f;
-    [SerializeField] float attackRange = 5.0f;
+    [SerializeField] float attackRange = 3.0f;
     [SerializeField] GameObject bulletPrefab; // 子彈物件
     [SerializeField] Transform firePoint; // 子彈發射點
     [SerializeField] float fireInterval = 1f;
@@ -23,14 +23,16 @@ public class Magician : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetMouseButtonDown(0))
+        {
+            SelectCharacter();
+        }
         lastFireTime += Time.deltaTime;
         //不在選取狀態下才檢測攻擊
         if (lastFireTime >= fireInterval && !isSelected && !isRun)
         {
             AttackDetect();
-            lastFireTime = 0.0f;
         }
-        SelectCharacter();
         if (isRun && !isSelected)
         {
             run();
@@ -51,6 +53,7 @@ public class Magician : MonoBehaviour
             if (hit.collider.CompareTag("castle"))
             {
                 Debug.Log("attack");
+                lastFireTime = 0.0f;
                 am.SetBool("run", false);
                 am.SetBool("attack", true);
                 GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
@@ -61,51 +64,49 @@ public class Magician : MonoBehaviour
     }
     void SelectCharacter()
     {
-        if (Input.GetMouseButtonDown(0))
+        bool change = false;
+        //hit角色，角色會在default
+        int charMask = LayerMask.GetMask("Default");
+        RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero,10f, charMask);
+        if (hit.collider != null)
         {
-            bool change = false;
-            //hit角色，角色UI在default
-            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-            if (hit.collider != null)
+            // 滑鼠點擊到角色就觸發選中或不選中
+            if (hit.collider.gameObject == gameObject)
             {
-                // 滑鼠點擊到角色就觸發選中或不選中
-                if (hit.collider.gameObject == gameObject)
+                isSelected = !isSelected;
+                change = true;
+                if (isSelected)
                 {
-                    isSelected = !isSelected;
-                    change = true;
+                    am.SetBool("run", false);
+                    am.SetBool("attack", false);
+                    am.SetBool("select", true);
+                }
+                else
+                {
+                    am.SetBool("select", false);
+                }
+                Debug.Log(" isSelected：" + isSelected.ToString());
+            }
+        }
+        if (!change)
+        {
+            //hit場景，場景在layer3
+            int layerMask = LayerMask.GetMask("ground");
+            RaycastHit2D hitGround = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 10f, layerMask);
+            if (hitGround.collider != null)
+            {
+                if (hitGround.collider.gameObject.tag == "ground")
+                {
+                    // 點擊到場地就移動
                     if (isSelected)
                     {
-                        am.SetBool("run", false);
-                        am.SetBool("attack", false);
-                        am.SetBool("select", true);
-                    }
-                    else
-                    {
+                        isSelected = false;
                         am.SetBool("select", false);
-                    }
-                    Debug.Log(" isSelected：" + isSelected.ToString());
-                }
-            }
-            if (!change)
-            {
-                //hit場景，場景在layer3
-                int layerMask = LayerMask.GetMask("ground");
-                RaycastHit2D hitGround = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 10f, layerMask);
-                if (hitGround.collider != null)
-                {
-                    if (hitGround.collider.gameObject.tag == "ground")
-                    {
-                        // 點擊到場地就移動
-                        if (isSelected)
-                        {
-                            isSelected = false;
-                            am.SetBool("select", false);
-                            am.SetBool("attack", false);
-                            am.SetBool("run", true);
-                            Debug.Log("move");
-                            RunTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                            isRun = true;
-                        }
+                        am.SetBool("attack", false);
+                        am.SetBool("run", true);
+                        Debug.Log("move");
+                        RunTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                        isRun = true;
                     }
                 }
             }

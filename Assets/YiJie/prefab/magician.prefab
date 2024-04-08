@@ -42,8 +42,8 @@ GameObject:
   - component: {fileID: 161506218294726433}
   - component: {fileID: 161506218294726432}
   - component: {fileID: 161506218294726434}
-  - component: {fileID: 161506218294726435}
   - component: {fileID: 2116511477}
+  - component: {fileID: 1279075467}
   m_Layer: 0
   m_Name: magician
   m_TagString: Untagged
@@ -140,23 +140,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &161506218294726435
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 161506218294726439}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 148dcac08411544418af562b6e944bf4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 5
-  attackRange: 10
-  bulletPrefab: {fileID: 5249931560073962309, guid: 8fbc39a9691f71f4eb678c501859e1d9, type: 3}
-  firePoint: {fileID: 161506218080350851}
-  fireInterval: 1
 --- !u!61 &2116511477
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -183,3 +166,20 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.0296941, y: 1.1049182}
   m_EdgeRadius: 0
+--- !u!114 &1279075467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 161506218294726439}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 148dcac08411544418af562b6e944bf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 5
+  attackRange: 3
+  bulletPrefab: {fileID: 5249931560073962309, guid: 8fbc39a9691f71f4eb678c501859e1d9, type: 3}
+  firePoint: {fileID: 161506218080350851}
+  fireInterval: 1

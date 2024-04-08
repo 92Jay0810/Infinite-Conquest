@@ -6,8 +6,12 @@ TagManager:
   tags:
   - bullet
   - castle
-  - food
   - ground
+  - wood
+  - stone
+  - iron
+  - coin
+  - food
   layers:
   - Default
   - TransparentFX

@@ -7,6 +7,7 @@ public class Farmer : MonoBehaviour
     [SerializeField] float moveSpeed = 5.0f;
     [SerializeField] float collectRange = 1.0f;
     [SerializeField] float collectInterval = 2.0f;
+    [SerializeField] int collectPower =2;
     [SerializeField] Transform collectPoint; // 採集發射點
     private SpriteRenderer spireRender;
     private Animator am;
@@ -14,16 +15,21 @@ public class Farmer : MonoBehaviour
     private bool isRun = false;
     private Vector2 RunTarget;
     private float collectTimer = 0.0f; // 上次採集時間
+    private Player player;
     void Start()
     {
         spireRender = GetComponent<SpriteRenderer>();
         am = GetComponent<Animator>();
+        player = transform.parent.GetComponent<Player>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        SelectCharacter();
+        if (Input.GetMouseButtonDown(0))
+        {
+            SelectCharacter();
+        }
         if (isRun && !isSelected)
         {
             run();
@@ -37,49 +43,47 @@ public class Farmer : MonoBehaviour
     }
     void SelectCharacter()
     {
-        if (Input.GetMouseButtonDown(0))
+        bool change = false;
+        //hit角色，角色UI在default
+        int charMask = LayerMask.GetMask("Default");
+        RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 10f, charMask);
+        if (hit.collider != null)
         {
-            bool change = false;
-            //hit角色，角色UI在default
-            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-            if (hit.collider != null)
+            // 滑鼠點擊到角色就觸發選中或不選中
+            if (hit.collider.gameObject == gameObject)
             {
-                // 滑鼠點擊到角色就觸發選中或不選中
-                if (hit.collider.gameObject == gameObject)
+                isSelected = !isSelected;
+                change = true;
+                if (isSelected)
                 {
-                    isSelected = !isSelected;
-                    change = true;
+                    am.SetBool("run", false);
+                    am.SetBool("select", true);
+                }
+                else
+                {
+                    am.SetBool("select", false);
+                }
+                Debug.Log(" isSelected：" + isSelected.ToString());
+            }
+        }
+        if (!change)
+        {
+            //hit場景，場景在layer3
+            int layerMask = LayerMask.GetMask("ground");
+            RaycastHit2D hitGround = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 10f, layerMask);
+            if (hitGround.collider != null)
+            {
+                if (hitGround.collider.gameObject.tag == "ground")
+                {
+                    // 點擊到場地就移動
                     if (isSelected)
                     {
-                        am.SetBool("run", false);
-                        am.SetBool("select", true);
-                    }
-                    else
-                    {
+                        isSelected = false;
                         am.SetBool("select", false);
-                    }
-                    Debug.Log(" isSelected：" + isSelected.ToString());
-                }
-            }
-            if (!change)
-            {
-                //hit場景，場景在layer3
-                int layerMask = LayerMask.GetMask("ground");
-                RaycastHit2D hitGround = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 10f, layerMask);
-                if (hitGround.collider != null)
-                {
-                    if (hitGround.collider.gameObject.tag == "ground")
-                    {
-                        // 點擊到場地就移動
-                        if (isSelected)
-                        {
-                            isSelected = false;
-                            am.SetBool("select", false);
-                            am.SetBool("run", true);
-                            Debug.Log("move");
-                            RunTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                            isRun = true;
-                        }
+                        am.SetBool("run", true);
+                        Debug.Log("move");
+                        RunTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                        isRun = true;
                     }
                 }
             }
@@ -109,10 +113,40 @@ public class Farmer : MonoBehaviour
         //有射中東西的話
         if (hit.collider != null)
         {
-            //如果射中目標，有food標籤，就採集
+            bool chahge = false;
+            //如果射中目標，有對應標籤，就採集
+            if (hit.collider.CompareTag("wood"))
+            {
+                Debug.Log("collect wood");
+                player.changeWood(collectPower);
+                chahge = true;
+            }
+            if (hit.collider.CompareTag("stone"))
+            {
+                Debug.Log("collect stone");
+                player.changStone(collectPower);
+                chahge = true;
+            }
+            if (hit.collider.CompareTag("iron"))
+            {
+                Debug.Log("collect iron");
+                player.changeIron(collectPower);
+                chahge = true;
+            }
+            if (hit.collider.CompareTag("coin"))
+            {
+                Debug.Log("collect coin");
+                player.changeCoin(collectPower);
+                chahge = true;
+            }
             if (hit.collider.CompareTag("food"))
             {
-                Debug.Log("collect");
+                Debug.Log("collect food ");
+                player.changeFood(collectPower);
+                chahge = true;
+            }
+            if (chahge)
+            {
                 am.SetBool("run", false);
                 am.SetBool("collect", true);
             }
