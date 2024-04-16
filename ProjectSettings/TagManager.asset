@@ -12,6 +12,8 @@ TagManager:
   - iron
   - coin
   - food
+  - tree
+  - wheat
   layers:
   - Default
   - TransparentFX

@@ -115,9 +115,9 @@ public class Farmer : MonoBehaviour
         {
             bool chahge = false;
             //如果射中目標，有對應標籤，就採集
-            if (hit.collider.CompareTag("wood"))
+            if (hit.collider.CompareTag("tree"))
             {
-                Debug.Log("collect wood");
+                Debug.Log("collect tree/wood");
                 player.changeWood(collectPower);
                 chahge = true;
             }
@@ -139,9 +139,9 @@ public class Farmer : MonoBehaviour
                 player.changeCoin(collectPower);
                 chahge = true;
             }
-            if (hit.collider.CompareTag("food"))
+            if (hit.collider.CompareTag("wheat"))
             {
-                Debug.Log("collect food ");
+                Debug.Log("collect wheat/food ");
                 player.changeFood(collectPower);
                 chahge = true;
             }
