@@ -10,7 +10,8 @@ public class Player : MonoBehaviour
     [SerializeField] Text iron_text;
     [SerializeField] Text coin_text;
     [SerializeField] Text food_text;
-    [SerializeField] Button buildButton;
+    [SerializeField] Image Button_menu;
+    [SerializeField] Image build_menu;
     [SerializeField] Image train_menu;
     private int wood = 0;
     private int stone = 0;
@@ -70,15 +71,25 @@ public class Player : MonoBehaviour
                 if (hitGround.collider.tag == "ground")
                 {
                     //點擊到地板，就顯示按鈕
-                    buildButton.gameObject.transform.position = new Vector3(inputPosition.x, inputPosition.y, 0f);
-                    buildButton.gameObject.SetActive(!buildButton.gameObject.activeSelf);
+                    Button_menu.gameObject.transform.position = new Vector3(inputPosition.x, inputPosition.y, 0f);
+                    Button_menu.gameObject.SetActive(!Button_menu.gameObject.activeSelf);
                 }
             }
         }
     }
-    public void CreateButton()
+    public void BuildButton()
     {
-        buildButton.gameObject.SetActive(false);
+        Button_menu.gameObject.SetActive(false);
+        build_menu.gameObject.SetActive(true);
+    }
+    public void TrainButton()
+    {
+        Button_menu.gameObject.SetActive(false);
         train_menu.gameObject.SetActive(true);
+    }
+    public void Cross()
+    {
+        build_menu.gameObject.SetActive(false);
+        train_menu.gameObject.SetActive(false);
     }
 }
