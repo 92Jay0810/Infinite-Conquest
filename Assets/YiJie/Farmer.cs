@@ -117,23 +117,23 @@ public class Farmer : MonoBehaviour
             //如果射中目標，有對應標籤，就採集
             if (hit.collider.CompareTag("tree"))
             {
-                Debug.Log("collect tree/wood");
+                Debug.Log("collect wood");
                 player.changeWood(collectPower);
                 chahge = true;
             }
             if (hit.collider.CompareTag("stone"))
             {
-                Debug.Log("collect stone");
-                player.changStone(collectPower);
+                Debug.Log("collect rock");
+                player.changRock(collectPower);
                 chahge = true;
             }
-            if (hit.collider.CompareTag("iron"))
+            if (hit.collider.CompareTag("steel"))
             {
                 Debug.Log("collect iron");
                 player.changeIron(collectPower);
                 chahge = true;
             }
-            if (hit.collider.CompareTag("coin"))
+            if (hit.collider.CompareTag("gold"))
             {
                 Debug.Log("collect coin");
                 player.changeCoin(collectPower);
@@ -141,7 +141,7 @@ public class Farmer : MonoBehaviour
             }
             if (hit.collider.CompareTag("wheat"))
             {
-                Debug.Log("collect wheat/food ");
+                Debug.Log("collect food ");
                 player.changeFood(collectPower);
                 chahge = true;
             }

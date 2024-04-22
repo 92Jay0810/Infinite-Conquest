@@ -9,11 +9,11 @@ TagManager:
   - ground
   - wood
   - stone
-  - iron
-  - coin
   - food
   - tree
   - wheat
+  - steel
+  - gold
   layers:
   - Default
   - TransparentFX
