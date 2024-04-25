@@ -17,9 +17,10 @@ public class Player : MonoBehaviour
     private int food = 0;
     Image button_menu;
     Image build_menu;
-     Image train_menu;
+    Image train_menu;
     [SerializeField] Button[] train_buttons;
     [SerializeField] GameObject[] train_prefab;
+    private Vector3 lastCallMenuPosition;
 
     void Start()
     {
@@ -30,7 +31,7 @@ public class Player : MonoBehaviour
         food_text = transform.Find("Camera/resource_canva/food/food_int").GetComponent<Text>();
         button_menu = transform.Find("Camera/create_canva/button_menu").GetComponent<Image>();
         build_menu = transform.Find("Camera/create_canva/build_menu").GetComponent<Image>();
-        train_menu= transform.Find("Camera/create_canva/train_menu").GetComponent<Image>();
+        train_menu = transform.Find("Camera/create_canva/train_menu").GetComponent<Image>();
     }
 
     void Update()
@@ -45,27 +46,27 @@ public class Player : MonoBehaviour
             Train_menu_detect();
         }
     }
-    public void changeWood(int number)
+    public void ChangeWood(int number)
     {
         wood += number;
         wood_text.text = wood.ToString();
     }
-    public void changRock(int number)
+    public void ChangRock(int number)
     {
         rock += number;
         rock_text.text = rock.ToString();
     }
-    public void changeIron(int number)
+    public void ChangeIron(int number)
     {
         iron += number;
         iron_text.text = iron.ToString();
     }
-    public void changeCoin(int number)
+    public void ChangeCoin(int number)
     {
         coin += number;
         coin_text.text = coin.ToString();
     }
-    public void changeFood(int number)
+    public void ChangeFood(int number)
     {
         food += number;
         food_text.text = food.ToString();
@@ -88,6 +89,8 @@ public class Player : MonoBehaviour
                     //點擊到地板，就顯示按鈕
                     button_menu.gameObject.transform.position = new Vector3(inputPosition.x, inputPosition.y, 0f);
                     button_menu.gameObject.SetActive(!button_menu.gameObject.activeSelf);
+                    //並更新開啟菜單位置
+                    lastCallMenuPosition = new Vector3(inputPosition.x, inputPosition.y, 0f);
                 }
             }
         }
@@ -122,6 +125,19 @@ public class Player : MonoBehaviour
         {
             train_buttons[1].interactable = false;
         }
+    }
+    public void CreateFarmer()
+    {
+        ChangeFood(-35);
+        Instantiate(train_prefab[0], lastCallMenuPosition, Quaternion.identity, transform);
+        train_menu.gameObject.SetActive(false);
+    }
+    public void CreateMagician()
+    {
+        ChangeFood(-50);
+        ChangeCoin(-10);
+        Instantiate(train_prefab[1], lastCallMenuPosition, Quaternion.identity, transform);
+        train_menu.gameObject.SetActive(false);
     }
     public void Cross()
     {

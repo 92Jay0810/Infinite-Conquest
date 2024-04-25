@@ -6,8 +6,8 @@ public class Farmer : MonoBehaviour
 {
     [SerializeField] float moveSpeed = 5.0f;
     [SerializeField] float collectRange = 1.0f;
-    [SerializeField] float collectInterval = 2.0f;
-    [SerializeField] int collectPower =2;
+    [SerializeField] float collectInterval = 5.0f;
+    [SerializeField] int collectPower = 15;
     [SerializeField] Transform collectPoint; // 採集發射點
     private SpriteRenderer spireRender;
     private Animator am;
@@ -34,10 +34,11 @@ public class Farmer : MonoBehaviour
         {
             run();
         }
-        collectTimer += Time.deltaTime;
+        //判斷觸發採集動畫，並累積採集時間
+        DetectAnimationOfCollect_AccumulationCollectTimer();
         if (!isRun && !isSelected && collectTimer >= collectInterval)
         {
-            CollectDetect();
+            CollectResource();
             collectTimer = 0.0f;
         }
     }
@@ -103,7 +104,7 @@ public class Farmer : MonoBehaviour
             am.SetBool("run", false);
         }
     }
-    void CollectDetect()
+    void CollectResource()
     {
         //射線方向
         Vector2 direction = spireRender.flipX == true ? transform.right : -transform.right;
@@ -113,37 +114,49 @@ public class Farmer : MonoBehaviour
         //有射中東西的話
         if (hit.collider != null)
         {
-            bool chahge = false;
             //如果射中目標，有對應標籤，就採集
             if (hit.collider.CompareTag("tree"))
             {
                 Debug.Log("collect wood");
-                player.changeWood(collectPower);
-                chahge = true;
+                player.ChangeWood(collectPower);
             }
             if (hit.collider.CompareTag("stone"))
             {
                 Debug.Log("collect rock");
-                player.changRock(collectPower);
-                chahge = true;
+                player.ChangRock(collectPower);
             }
             if (hit.collider.CompareTag("steel"))
             {
                 Debug.Log("collect iron");
-                player.changeIron(collectPower);
-                chahge = true;
+                player.ChangeIron(collectPower);
             }
             if (hit.collider.CompareTag("gold"))
             {
                 Debug.Log("collect coin");
-                player.changeCoin(collectPower);
-                chahge = true;
+                player.ChangeCoin(collectPower);
             }
             if (hit.collider.CompareTag("wheat"))
             {
                 Debug.Log("collect food ");
-                player.changeFood(collectPower);
+                player.ChangeFood(collectPower);
+            }
+        }
+    }
+    void DetectAnimationOfCollect_AccumulationCollectTimer()
+    {
+        //射線方向
+        Vector2 direction = spireRender.flipX == true ? transform.right : -transform.right;
+        int layerMask = LayerMask.GetMask("Default");
+        RaycastHit2D hit = Physics2D.Raycast(collectPoint.position, direction, collectRange, layerMask);
+        //有射中東西的話
+        if (hit.collider != null)
+        {
+            bool chahge = false;
+            //如果射中目標，有對應標籤，就採集
+            if (hit.collider.CompareTag("tree") || hit.collider.CompareTag("stone") || hit.collider.CompareTag("steel") || hit.collider.CompareTag("gold") || hit.collider.CompareTag("wheat"))
+            {
                 chahge = true;
+                collectTimer += Time.deltaTime;
             }
             if (chahge)
             {
@@ -154,6 +167,8 @@ public class Farmer : MonoBehaviour
         else
         {
             am.SetBool("collect", false);
+            collectTimer = 0.0f;
         }
     }
 }
+

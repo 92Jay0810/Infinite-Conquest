@@ -42,8 +42,8 @@ GameObject:
   - component: {fileID: 8605588540906797485}
   - component: {fileID: 8605588540906797484}
   - component: {fileID: 8605588540906797482}
-  - component: {fileID: 8605588540906797483}
   - component: {fileID: 8605588540906797480}
+  - component: {fileID: 1219284804}
   m_Layer: 0
   m_Name: farmer
   m_TagString: Untagged
@@ -140,22 +140,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &8605588540906797483
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8605588540906797487}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 694920255a02ee34b9d7c43fd8f7ad5e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 5
-  collectRange: 1
-  collectInterval: 2
-  collectPoint: {fileID: 1044016632}
 --- !u!61 &8605588540906797480
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -182,3 +166,20 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.96, y: 0.96}
   m_EdgeRadius: 0
+--- !u!114 &1219284804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8605588540906797487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 694920255a02ee34b9d7c43fd8f7ad5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 5
+  collectRange: 1
+  collectInterval: 5
+  collectPower: 15
+  collectPoint: {fileID: 1044016632}
