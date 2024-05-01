@@ -1,15 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Farmer : MonoBehaviour
 {
-    [SerializeField] float moveSpeed = 5.0f;
+    [SerializeField] int hp = 30;  
+    [SerializeField] int collectPower = 15; 
     [SerializeField] float collectRange = 1.0f;
+    [SerializeField] float moveSpeed = 7.0f;
     [SerializeField] float collectInterval = 5.0f;
-    [SerializeField] int collectPower = 15;
-    [SerializeField] Transform collectPoint; // 採集發射點
     private SpriteRenderer spireRender;
+    Transform collect_point_left; // 採集發射點
+    Transform collect_point_right; // 採集發射點
+    Text hp_text;
     private Animator am;
     private bool isSelected = false; //是否有被選中
     private bool isRun = false;
@@ -19,8 +23,12 @@ public class Farmer : MonoBehaviour
     void Start()
     {
         spireRender = GetComponent<SpriteRenderer>();
+        collect_point_left = transform.Find("collect_point_left").GetComponent<Transform>();
+        collect_point_right = transform.Find("collect_point_right").GetComponent<Transform>();
+        hp_text = transform.Find("hp_canva/hp_int").GetComponent<Text>();
         am = GetComponent<Animator>();
         player = transform.parent.GetComponent<Player>();
+        updateHp_text();
     }
 
     // Update is called once per frame
@@ -85,6 +93,17 @@ public class Farmer : MonoBehaviour
                         Debug.Log("move");
                         RunTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                         isRun = true;
+                        // 判斷方向來改變 spriteRenderer 的 flipX
+                        if (RunTarget.x < transform.position.x)
+                        {
+                            // 目標在左邊
+                            spireRender.flipX = false;
+                        }
+                        else
+                        {
+                            // 目標在右邊
+                            spireRender.flipX = true;
+                        }
                     }
                 }
             }
@@ -108,6 +127,7 @@ public class Farmer : MonoBehaviour
     {
         //射線方向
         Vector2 direction = spireRender.flipX == true ? transform.right : -transform.right;
+        Transform collectPoint= spireRender.flipX == true ? collect_point_right : collect_point_left;
         Debug.DrawRay(collectPoint.position, direction * collectRange, Color.red);
         int layerMask = LayerMask.GetMask("Default");
         RaycastHit2D hit = Physics2D.Raycast(collectPoint.position, direction, collectRange, layerMask);
@@ -146,6 +166,7 @@ public class Farmer : MonoBehaviour
     {
         //射線方向
         Vector2 direction = spireRender.flipX == true ? transform.right : -transform.right;
+        Transform collectPoint = spireRender.flipX == true ? collect_point_right : collect_point_left;
         int layerMask = LayerMask.GetMask("Default");
         RaycastHit2D hit = Physics2D.Raycast(collectPoint.position, direction, collectRange, layerMask);
         //有射中東西的話
@@ -169,6 +190,20 @@ public class Farmer : MonoBehaviour
             am.SetBool("collect", false);
             collectTimer = 0.0f;
         }
+    }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "bullet")
+        {
+            Debug.Log("hp--");
+            hp = hp - 15;
+            updateHp_text();
+            Destroy(collision.gameObject);
+        }
+    }
+    void updateHp_text()
+    {
+        hp_text.text = hp.ToString();
     }
 }
 

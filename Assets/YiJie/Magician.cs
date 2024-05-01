@@ -1,15 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Magician : MonoBehaviour
 {
+    [SerializeField] int hp = 35;
     [SerializeField] float moveSpeed = 5.0f;
-    [SerializeField] float attackRange = 3.0f;
+    [SerializeField] float attackRange = 5.0f;
+    [SerializeField] float fireInterval = 4f;
     [SerializeField] GameObject bulletPrefab; // 子彈物件
-    [SerializeField] Transform firePoint; // 子彈發射點
-    [SerializeField] float fireInterval = 1f;
     private SpriteRenderer spireRender;
+    Transform firePoint_left; // 子彈發射點
+    Transform firePoint_right; // 子彈發射點
+    Text hp_text;
     private Animator am;
     private float lastFireTime = 0.0f; // 上次開火時間
     private bool isSelected = false; //是否有被選中
@@ -18,7 +22,11 @@ public class Magician : MonoBehaviour
     void Start()
     {
         spireRender = GetComponent<SpriteRenderer>();
+        firePoint_left = transform.Find("fire_point_left").GetComponent<Transform>();
+        firePoint_right = transform.Find("fire_point_right").GetComponent<Transform>();
+        hp_text = transform.Find("hp_canva/hp_int").GetComponent<Text>();
         am = GetComponent<Animator>();
+        updateHp_text();
     }
 
     void Update()
@@ -43,6 +51,7 @@ public class Magician : MonoBehaviour
     {
         //射線方向
         Vector2 direction = spireRender.flipX == true ? transform.right : -transform.right;
+        Transform firePoint = spireRender.flipX == true ? firePoint_right : firePoint_left;
         Debug.DrawRay(firePoint.position, direction * attackRange, Color.red);
         int layerMask = LayerMask.GetMask("Default");
         RaycastHit2D hit = Physics2D.Raycast(firePoint.position, direction, attackRange, layerMask);
@@ -50,7 +59,7 @@ public class Magician : MonoBehaviour
         if (hit.collider != null)
         {
             //如果射中目標，有castle標籤，就攻擊
-            if (hit.collider.CompareTag("castle"))
+            if (hit.collider.CompareTag("castle") || hit.collider.CompareTag("soldier"))
             {
                 Debug.Log("attack");
                 lastFireTime = 0.0f;
@@ -67,7 +76,7 @@ public class Magician : MonoBehaviour
         bool change = false;
         //hit角色，角色會在default
         int charMask = LayerMask.GetMask("Default");
-        RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero,10f, charMask);
+        RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 10f, charMask);
         if (hit.collider != null)
         {
             // 滑鼠點擊到角色就觸發選中或不選中
@@ -107,6 +116,17 @@ public class Magician : MonoBehaviour
                         Debug.Log("move");
                         RunTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                         isRun = true;
+                        // 判斷方向來改變 spriteRenderer 的 flipX
+                        if (RunTarget.x < transform.position.x)
+                        {
+                            // 目標在左邊
+                            spireRender.flipX = false;
+                        }
+                        else
+                        {
+                            // 目標在右邊
+                            spireRender.flipX = true;
+                        }
                     }
                 }
             }
@@ -125,5 +145,19 @@ public class Magician : MonoBehaviour
             isRun = false;
             am.SetBool("run", false);
         }
+    }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "bullet")
+        {
+            Debug.Log("hp--");
+            hp = hp - 15;
+            updateHp_text();
+            Destroy(collision.gameObject);
+        }
+    }
+    void updateHp_text()
+    {
+        hp_text.text = hp.ToString();
     }
 }
