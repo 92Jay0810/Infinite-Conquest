@@ -129,14 +129,20 @@ public class Player : MonoBehaviour
     public void CreateFarmer()
     {
         ChangeFood(-35);
-        Instantiate(train_prefab[0], lastCallMenuPosition, Quaternion.identity, transform);
+        Instantiate(train_prefab[1], lastCallMenuPosition, Quaternion.identity, transform);
         train_menu.gameObject.SetActive(false);
     }
     public void CreateMagician()
     {
         ChangeFood(-50);
         ChangeCoin(-10);
-        Instantiate(train_prefab[1], lastCallMenuPosition, Quaternion.identity, transform);
+        Instantiate(train_prefab[2], lastCallMenuPosition, Quaternion.identity, transform);
+        train_menu.gameObject.SetActive(false);
+    }
+    public void CreateSoldier()
+    {
+        ChangeFood(-30);
+        Instantiate(train_prefab[0], lastCallMenuPosition, Quaternion.identity, transform);
         train_menu.gameObject.SetActive(false);
     }
     public void Cross()

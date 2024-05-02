@@ -336,7 +336,7 @@ GameObject:
   - component: {fileID: 161506218294726432}
   - component: {fileID: 161506218294726434}
   - component: {fileID: 2116511477}
-  - component: {fileID: 3818056410778056104}
+  - component: {fileID: 1322553544}
   m_Layer: 0
   m_Name: magician
   m_TagString: soldier
@@ -461,7 +461,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.7489953, y: 0.9801632}
   m_EdgeRadius: 0
---- !u!114 &3818056410778056104
+--- !u!114 &1322553544
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -473,8 +473,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 148dcac08411544418af562b6e944bf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp: 35
-  moveSpeed: 5
-  attackRange: 5
-  fireInterval: 4
+  hp: 40
+  attackRange: 1
+  attackInterval: 3
+  moveSpeed: 4
   bulletPrefab: {fileID: 5249931560073962309, guid: 8fbc39a9691f71f4eb678c501859e1d9, type: 3}
