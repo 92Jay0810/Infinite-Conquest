@@ -10,12 +10,18 @@ public class Player : MonoBehaviour
     Text iron_text;
     Text coin_text;
     Text food_text;
+    Text research_text;
+    RawImage current_generation_Image;
+    [SerializeField] Sprite[] generations_Image;
     private int wood = 0;
     private int rock = 0;
     private int iron = 0;
     private int coin = 0;
     private int food = 0;
+    private int research = 0;
+    private int generation = 1;
     Image button_menu;
+    Button update_generation_button;
     Image build_menu;
     Image train_menu;
     [SerializeField] Button[] train_buttons;
@@ -29,7 +35,10 @@ public class Player : MonoBehaviour
         iron_text = transform.Find("Camera/resource_canva/iron/iron_int").GetComponent<Text>();
         coin_text = transform.Find("Camera/resource_canva/coin/coin_int").GetComponent<Text>();
         food_text = transform.Find("Camera/resource_canva/food/food_int").GetComponent<Text>();
+        research_text = transform.Find("Camera/resource_canva/research/research_int").GetComponent<Text>();
+        current_generation_Image = transform.Find("Camera/resource_canva/research/generation").GetComponent<RawImage>();
         button_menu = transform.Find("Camera/create_canva/button_menu").GetComponent<Image>();
+        update_generation_button = transform.Find("Camera/create_canva/button_menu/UpdateGenerationButton").GetComponent<Button>();
         build_menu = transform.Find("Camera/create_canva/build_menu").GetComponent<Image>();
         train_menu = transform.Find("Camera/create_canva/train_menu").GetComponent<Image>();
     }
@@ -40,10 +49,24 @@ public class Player : MonoBehaviour
         {
             CreateMenuDetected();
         }
+        //若 build_menu打開的話，就持續檢查是否達成升級世代的條件
+        if (button_menu.gameObject.activeSelf)
+        {
+            UpdateGenerationButtonDetected();
+        }
         //若 train_menu打開的話，就持續檢查是否達成條件
         if (train_menu.gameObject.activeSelf)
         {
             Train_menu_detect();
+        }
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            ChangeWood(500);
+            ChangRock(500);
+            ChangeIron(500);
+            ChangeCoin(500);
+            ChangeFood(500);
+            ChangeResearch(500);
         }
     }
     public void ChangeWood(int number)
@@ -71,6 +94,12 @@ public class Player : MonoBehaviour
         food += number;
         food_text.text = food.ToString();
     }
+    public void ChangeResearch(int number)
+    {
+        research += number;
+        research_text.text = research.ToString();
+    }
+
     void CreateMenuDetected()
     {
         Vector3 inputPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -101,15 +130,90 @@ public class Player : MonoBehaviour
         build_menu.gameObject.SetActive(true);
 
     }
+    void UpdateGenerationButtonDetected()
+    {
+        bool update_generation = false;
+        switch (generation)
+        {
+            case 1:
+                if (food >= 500)
+                {
+                    update_generation = true;
+                }
+                break;
+            case 2:
+                if (coin >= 200 && food >= 800)
+                {
+                    update_generation = true;
+                }
+                break;
+            case 3:
+                if (coin >= 800 && food >= 1000)
+                {
+                    update_generation = true;
+                }
+                break;
+            case 4:
+                if (coin >= 1500 && food >= 1200)
+                {
+                    update_generation = true;
+                }
+                break;
+            case 5:
+                break;
+            default:
+                Debug.Log("時代按鈕有錯");
+                break;
+        }
+        if (update_generation)
+        {
+            update_generation_button.interactable = true;
+        }
+        else
+        {
+            update_generation_button.interactable = false;
+        }
+    }
+    public void UpdateGenerationButton()
+    {
+        switch (generation)
+        {
+            case 1:
+                ChangeFood(-500);
+                current_generation_Image.texture = generations_Image[1].texture;
+                break;
+            case 2:
+                ChangeCoin(-200);
+                ChangeFood(-800);
+                current_generation_Image.texture = generations_Image[2].texture;
+                break;
+            case 3:
+                ChangeCoin(-800);
+                ChangeFood(-1000);
+                current_generation_Image.texture = generations_Image[3].texture;
+                break;
+            case 4:
+                ChangeCoin(-1500);
+                ChangeFood(-1200);
+                current_generation_Image.texture = generations_Image[4].texture;
+                break;
+            default:
+                Debug.Log("時代有錯");
+                break;
+        }
+        generation += 1;
+        update_generation_button.interactable = false;
+        button_menu.gameObject.SetActive(false);
+    }
     public void TrainButton()
     {
         button_menu.gameObject.SetActive(false);
         train_menu.gameObject.SetActive(true);
-
     }
     private void Train_menu_detect()
     {
-        if (food >= 35)
+        //士兵
+        if (food >= 30)
         {
             train_buttons[0].interactable = true;
         }
@@ -117,13 +221,23 @@ public class Player : MonoBehaviour
         {
             train_buttons[0].interactable = false;
         }
-        if (coin >= 10 && food >= 50)
+        //農民
+        if (food >= 35 && generation >= 2)
         {
             train_buttons[1].interactable = true;
         }
         else
         {
             train_buttons[1].interactable = false;
+        }
+        //魔法師
+        if (coin >= 10 && food >= 50 && generation >= 3)
+        {
+            train_buttons[2].interactable = true;
+        }
+        else
+        {
+            train_buttons[2].interactable = false;
         }
     }
     public void CreateFarmer()
