@@ -366,7 +366,7 @@ MonoBehaviour:
   attackRange: 1
   attackInterval: 3
   moveSpeed: 4
-  bulletPrefab: {fileID: 5249931560073962309, guid: 8fbc39a9691f71f4eb678c501859e1d9, type: 3}
+  bulletPrefab: {fileID: 6838020115692583071, guid: 5f515a9d3a8a0f7449fa2dce9d2c2528, type: 3}
 --- !u!1 &4707689437289938847
 GameObject:
   m_ObjectHideFlags: 0

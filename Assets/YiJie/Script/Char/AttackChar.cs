@@ -5,11 +5,11 @@ using UnityEngine.UI;
 
 public class AttackChar : MonoBehaviour
 {
-    [SerializeField] protected int hp = 40;    
+    [SerializeField] protected int hp = 40;
     [SerializeField] protected float attackRange = 1.0f;
-    [SerializeField] protected float attackInterval = 3f;    
+    [SerializeField] protected float attackInterval = 3f;
     [SerializeField] protected float moveSpeed = 4.0f;
-    [SerializeField] protected  GameObject bulletPrefab; // 子彈物件
+    [SerializeField] protected GameObject bulletPrefab; // 子彈物件
     protected SpriteRenderer spireRender;
     protected Transform firePoint_left; // 子彈發射點
     protected Transform firePoint_right; // 子彈發射點
@@ -35,7 +35,7 @@ public class AttackChar : MonoBehaviour
         {
             SelectCharacter();
         }
-        lastFireTime += Time.deltaTime;
+        DetectAnimationOfAttack_AccumulationAttackTimer();
         //不在選取狀態下才檢測攻擊
         if (lastFireTime >= attackInterval && !isSelected && !isRun)
         {
@@ -47,6 +47,35 @@ public class AttackChar : MonoBehaviour
         }
     }
 
+    protected void DetectAnimationOfAttack_AccumulationAttackTimer()
+    {
+        //射線方向
+        Vector2 direction = spireRender.flipX == true ? transform.right : -transform.right;
+        Transform collectPoint = spireRender.flipX == true ? firePoint_right : firePoint_left;
+        int layerMask = LayerMask.GetMask("Default");
+        RaycastHit2D hit = Physics2D.Raycast(collectPoint.position, direction, attackRange, layerMask);
+        //有射中東西的話
+        if (hit.collider != null)
+        {
+            bool chahge = false;
+            //如果射中目標，有對應標籤，就採集
+            if (hit.collider.CompareTag("castle") || hit.collider.CompareTag("soldier"))
+            {
+                chahge = true;
+                lastFireTime += Time.deltaTime;
+            }
+            if (chahge)
+            {
+                am.SetBool("run", false);
+                am.SetBool("attack", true);
+            }
+        }
+        else
+        {
+            am.SetBool("attack", false);
+            lastFireTime = 0.0f;
+        }
+    }
     protected void AttackDetect()
     {
         //射線方向
@@ -63,15 +92,13 @@ public class AttackChar : MonoBehaviour
             {
                 Debug.Log("attack");
                 lastFireTime = 0.0f;
-                am.SetBool("run", false);
-                am.SetBool("attack", true);
                 GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
                 Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
                 rb.AddForce(direction * 10f, ForceMode2D.Impulse);
             }
         }
     }
-    protected  void SelectCharacter()
+    protected void SelectCharacter()
     {
         bool change = false;
         //hit角色，角色會在default
@@ -148,10 +175,17 @@ public class AttackChar : MonoBehaviour
     }
     protected void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "bullet")
+        if (collision.gameObject.tag == "fireball")
         {
             Debug.Log("hp--");
             hp = hp - 15;
+            updateHp_text();
+            Destroy(collision.gameObject);
+        }
+        if (collision.gameObject.tag == "chopping")
+        {
+            Debug.Log("hp--");
+            hp = hp - 7;
             updateHp_text();
             Destroy(collision.gameObject);
         }

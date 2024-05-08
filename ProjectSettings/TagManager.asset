@@ -4,7 +4,6 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - bullet
   - castle
   - ground
   - wood
@@ -15,6 +14,8 @@ TagManager:
   - steel
   - gold
   - soldier
+  - chopping
+  - fireball
   layers:
   - Default
   - TransparentFX

@@ -3,24 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Farmer : MonoBehaviour
+public class CollectChar : MonoBehaviour
 {
-    [SerializeField] int hp = 30;  
-    [SerializeField] int collectPower = 15; 
-    [SerializeField] float collectRange = 1.0f;
-    [SerializeField] float moveSpeed = 7.0f;
-    [SerializeField] float collectInterval = 5.0f;
-    private SpriteRenderer spireRender;
-    Transform collect_point_left; // 採集發射點
-    Transform collect_point_right; // 採集發射點
-    Text hp_text;
-    private Animator am;
-    private bool isSelected = false; //是否有被選中
-    private bool isRun = false;
-    private Vector2 RunTarget;
-    private float collectTimer = 0.0f; // 上次採集時間
-    private Player player;
-    void Start()
+    [SerializeField] protected int hp = 20;
+    [SerializeField] protected int collectPower = 5;
+    [SerializeField] protected float collectRange = 1.0f;
+    [SerializeField] protected float moveSpeed = 5.0f;
+    [SerializeField] protected float collectInterval = 5.0f;
+    protected SpriteRenderer spireRender;
+    protected Transform collect_point_left; // 採集發射點
+    protected Transform collect_point_right; // 採集發射點
+    protected Text hp_text;
+    protected Animator am;
+    protected bool isSelected = false; //是否有被選中
+    protected bool isRun = false;
+    protected Vector2 RunTarget;
+    protected float collectTimer = 0.0f; // 上次採集時間
+    protected Player player;
+    virtual protected void Start()
     {
         spireRender = GetComponent<SpriteRenderer>();
         collect_point_left = transform.Find("collect_point_left").GetComponent<Transform>();
@@ -32,7 +32,7 @@ public class Farmer : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
@@ -50,7 +50,7 @@ public class Farmer : MonoBehaviour
             collectTimer = 0.0f;
         }
     }
-    void SelectCharacter()
+    protected void SelectCharacter()
     {
         bool change = false;
         //hit角色，角色UI在default
@@ -109,7 +109,7 @@ public class Farmer : MonoBehaviour
             }
         }
     }
-    void run()
+    protected void run()
     {
         // 計算距離
         float distanceToTarget = Vector2.Distance(transform.position, RunTarget);
@@ -123,11 +123,11 @@ public class Farmer : MonoBehaviour
             am.SetBool("run", false);
         }
     }
-    void CollectResource()
+    protected void CollectResource()
     {
         //射線方向
         Vector2 direction = spireRender.flipX == true ? transform.right : -transform.right;
-        Transform collectPoint= spireRender.flipX == true ? collect_point_right : collect_point_left;
+        Transform collectPoint = spireRender.flipX == true ? collect_point_right : collect_point_left;
         Debug.DrawRay(collectPoint.position, direction * collectRange, Color.red);
         int layerMask = LayerMask.GetMask("Default");
         RaycastHit2D hit = Physics2D.Raycast(collectPoint.position, direction, collectRange, layerMask);
@@ -162,7 +162,7 @@ public class Farmer : MonoBehaviour
             }
         }
     }
-    void DetectAnimationOfCollect_AccumulationCollectTimer()
+    protected void DetectAnimationOfCollect_AccumulationCollectTimer()
     {
         //射線方向
         Vector2 direction = spireRender.flipX == true ? transform.right : -transform.right;
@@ -191,17 +191,24 @@ public class Farmer : MonoBehaviour
             collectTimer = 0.0f;
         }
     }
-    private void OnCollisionEnter2D(Collision2D collision)
+    protected void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "bullet")
+        if (collision.gameObject.tag == "fireball")
         {
             Debug.Log("hp--");
             hp = hp - 15;
             updateHp_text();
             Destroy(collision.gameObject);
         }
+        if (collision.gameObject.tag == "chopping")
+        {
+            Debug.Log("hp--");
+            hp = hp - 7;
+            updateHp_text();
+            Destroy(collision.gameObject);
+        }
     }
-    void updateHp_text()
+    protected void updateHp_text()
     {
         hp_text.text = hp.ToString();
     }
