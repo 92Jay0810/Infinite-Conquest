@@ -336,7 +336,7 @@ GameObject:
   - component: {fileID: 8605588540906797484}
   - component: {fileID: 8605588540906797482}
   - component: {fileID: 8605588540906797480}
-  - component: {fileID: 8055837639314533273}
+  - component: {fileID: 7252464752696920806}
   m_Layer: 0
   m_Name: farmer
   m_TagString: soldier
@@ -461,7 +461,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.96, y: 0.96}
   m_EdgeRadius: 0
---- !u!114 &8055837639314533273
+--- !u!114 &7252464752696920806
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -473,8 +473,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 694920255a02ee34b9d7c43fd8f7ad5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp: 30
-  collectPower: 15
+  hp: 20
+  collectPower: 5
   collectRange: 1
-  moveSpeed: 7
+  moveSpeed: 5
   collectInterval: 5

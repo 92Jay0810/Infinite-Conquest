@@ -336,7 +336,7 @@ GameObject:
   - component: {fileID: 161506218294726432}
   - component: {fileID: 161506218294726434}
   - component: {fileID: 2116511477}
-  - component: {fileID: 1322553544}
+  - component: {fileID: 5061620231332180682}
   m_Layer: 0
   m_Name: magician
   m_TagString: soldier
@@ -461,7 +461,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.7489953, y: 0.9801632}
   m_EdgeRadius: 0
---- !u!114 &1322553544
+--- !u!114 &5061620231332180682
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

@@ -143,7 +143,7 @@ public class CollectChar : MonoBehaviour
             if (hit.collider.CompareTag("stone"))
             {
                 Debug.Log("collect rock");
-                player.ChangRock(collectPower);
+                player.ChangeRock(collectPower);
             }
             if (hit.collider.CompareTag("steel"))
             {

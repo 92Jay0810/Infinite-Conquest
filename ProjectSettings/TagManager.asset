@@ -4,7 +4,6 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - castle
   - ground
   - wood
   - stone
@@ -16,6 +15,7 @@ TagManager:
   - soldier
   - chopping
   - fireball
+  - building
   layers:
   - Default
   - TransparentFX

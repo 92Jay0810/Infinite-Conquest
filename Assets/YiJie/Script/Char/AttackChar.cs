@@ -59,7 +59,7 @@ public class AttackChar : MonoBehaviour
         {
             bool chahge = false;
             //如果射中目標，有對應標籤，就採集
-            if (hit.collider.CompareTag("castle") || hit.collider.CompareTag("soldier"))
+            if (hit.collider.CompareTag("building") || hit.collider.CompareTag("soldier"))
             {
                 chahge = true;
                 lastFireTime += Time.deltaTime;
@@ -88,7 +88,7 @@ public class AttackChar : MonoBehaviour
         if (hit.collider != null)
         {
             //如果射中目標，有castle標籤，就攻擊
-            if (hit.collider.CompareTag("castle") || hit.collider.CompareTag("soldier"))
+            if (hit.collider.CompareTag("building") || hit.collider.CompareTag("soldier"))
             {
                 Debug.Log("attack");
                 lastFireTime = 0.0f;

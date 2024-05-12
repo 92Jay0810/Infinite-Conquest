@@ -23,6 +23,8 @@ public class Player : MonoBehaviour
     Image button_menu;
     Button update_generation_button;
     Image build_menu;
+    [SerializeField] Button[] build_buttons;
+    [SerializeField] GameObject[] build_prefab;
     Image train_menu;
     [SerializeField] Button[] train_buttons;
     [SerializeField] GameObject[] train_prefab;
@@ -54,6 +56,11 @@ public class Player : MonoBehaviour
         {
             UpdateGenerationButtonDetected();
         }
+        //若 build_menu打開的話，就持續檢查是否達成條件
+        if (build_menu.gameObject.activeSelf)
+        {
+            Build_menu_detect();
+        }
         //若 train_menu打開的話，就持續檢查是否達成條件
         if (train_menu.gameObject.activeSelf)
         {
@@ -62,7 +69,7 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.T))
         {
             ChangeWood(500);
-            ChangRock(500);
+            ChangeRock(500);
             ChangeIron(500);
             ChangeCoin(500);
             ChangeFood(500);
@@ -74,7 +81,7 @@ public class Player : MonoBehaviour
         wood += number;
         wood_text.text = wood.ToString();
     }
-    public void ChangRock(int number)
+    public void ChangeRock(int number)
     {
         rock += number;
         rock_text.text = rock.ToString();
@@ -129,6 +136,26 @@ public class Player : MonoBehaviour
         button_menu.gameObject.SetActive(false);
         build_menu.gameObject.SetActive(true);
 
+    }
+    private void Build_menu_detect()
+    {
+        //礦場
+        if (wood >= 100 && rock >= 100 && iron >= 100)
+        {
+            build_buttons[0].interactable = true;
+        }
+        else
+        {
+            build_buttons[0].interactable = false;
+        }
+    }
+    public void CreateMines()
+    {
+        ChangeWood(-100);
+        ChangeRock(-100);
+        ChangeIron(-100);
+        Instantiate(build_prefab[0], lastCallMenuPosition, Quaternion.identity, transform);
+        build_menu.gameObject.SetActive(false);
     }
     void UpdateGenerationButtonDetected()
     {

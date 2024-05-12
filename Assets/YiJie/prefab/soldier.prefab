@@ -225,7 +225,7 @@ GameObject:
   - component: {fileID: 4707689436433449066}
   - component: {fileID: 4707689436433449067}
   - component: {fileID: 4707689436433449077}
-  - component: {fileID: 7866013683086170839}
+  - component: {fileID: 7869930095064237723}
   m_Layer: 0
   m_Name: soldier
   m_TagString: soldier
@@ -350,7 +350,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &7866013683086170839
+--- !u!114 &7869930095064237723
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
