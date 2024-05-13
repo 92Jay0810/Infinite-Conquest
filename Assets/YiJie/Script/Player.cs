@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
+    // resource
     Text wood_text;
     Text rock_text;
     Text iron_text;
@@ -20,6 +21,7 @@ public class Player : MonoBehaviour
     private int food = 0;
     private int research = 0;
     private int generation = 1;
+    // create_menu
     Image button_menu;
     Button update_generation_button;
     Image build_menu;
@@ -29,9 +31,14 @@ public class Player : MonoBehaviour
     [SerializeField] Button[] train_buttons;
     [SerializeField] GameObject[] train_prefab;
     private Vector3 lastCallMenuPosition;
+    // reel_menu
+    Image reel_menu;
+    Button reel_botton;
+    float reel_display_timer;
 
     void Start()
     {
+        // resource
         wood_text = transform.Find("Camera/resource_canva/wood/wood_int").GetComponent<Text>();
         rock_text = transform.Find("Camera/resource_canva/rock/rock_int").GetComponent<Text>();
         iron_text = transform.Find("Camera/resource_canva/iron/iron_int").GetComponent<Text>();
@@ -39,10 +46,15 @@ public class Player : MonoBehaviour
         food_text = transform.Find("Camera/resource_canva/food/food_int").GetComponent<Text>();
         research_text = transform.Find("Camera/resource_canva/research/research_int").GetComponent<Text>();
         current_generation_Image = transform.Find("Camera/resource_canva/research/generation").GetComponent<RawImage>();
+        // create_menu
         button_menu = transform.Find("Camera/create_canva/button_menu").GetComponent<Image>();
         update_generation_button = transform.Find("Camera/create_canva/button_menu/UpdateGenerationButton").GetComponent<Button>();
         build_menu = transform.Find("Camera/create_canva/build_menu").GetComponent<Image>();
         train_menu = transform.Find("Camera/create_canva/train_menu").GetComponent<Image>();
+        // reel_menu
+        reel_menu = transform.Find("Camera/reel_canva/reel").GetComponent<Image>();
+        reel_botton = transform.Find("Camera/reel_canva/reel_button").GetComponent<Button>();
+        reel_display_timer = Random.Range(180f, 300f);
     }
 
     void Update()
@@ -66,6 +78,11 @@ public class Player : MonoBehaviour
         {
             Train_menu_detect();
         }
+        //若 train_menu沒打開的話，就持續檢查是否要開奏摺
+        if (!reel_menu.gameObject.activeSelf)
+        {
+            DetectReelButton();
+        }
         if (Input.GetKeyDown(KeyCode.T))
         {
             ChangeWood(500);
@@ -74,6 +91,7 @@ public class Player : MonoBehaviour
             ChangeCoin(500);
             ChangeFood(500);
             ChangeResearch(500);
+            reel_display_timer = 0.0f;
         }
     }
     public void ChangeWood(int number)
@@ -286,9 +304,27 @@ public class Player : MonoBehaviour
         Instantiate(train_prefab[0], lastCallMenuPosition, Quaternion.identity, transform);
         train_menu.gameObject.SetActive(false);
     }
+    private void DetectReelButton()
+    {
+        if (reel_display_timer > 0.0f)
+        {
+            reel_display_timer -= Time.deltaTime;
+        }
+        else
+        {
+            reel_botton.gameObject.SetActive(true);
+        }
+
+    }
+    public void Reel_Button()
+    {
+        reel_menu.gameObject.SetActive(true);
+        reel_botton.gameObject.SetActive(false);
+    }
     public void Cross()
     {
         build_menu.gameObject.SetActive(false);
         train_menu.gameObject.SetActive(false);
+        reel_menu.gameObject.SetActive(false);
     }
 }
