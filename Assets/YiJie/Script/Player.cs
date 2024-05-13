@@ -32,10 +32,16 @@ public class Player : MonoBehaviour
     [SerializeField] GameObject[] train_prefab;
     private Vector3 lastCallMenuPosition;
     // reel_menu
-    Image reel_menu;
     Button reel_botton;
-    float reel_display_timer;
-
+    float reel_display_timer;  
+    Image mutiple_reel_menu;
+    Text mutiple_reel_topic;
+    Button[] mutiple_reel_buttons;
+    Image single_reel_menu;
+    Text single_reel_topic;
+    Button[] single_reel_buttons;
+    bool is_Multiple_choice = true;
+    Image current_reel_menu;
     void Start()
     {
         // resource
@@ -52,9 +58,10 @@ public class Player : MonoBehaviour
         build_menu = transform.Find("Camera/create_canva/build_menu").GetComponent<Image>();
         train_menu = transform.Find("Camera/create_canva/train_menu").GetComponent<Image>();
         // reel_menu
-        reel_menu = transform.Find("Camera/reel_canva/reel").GetComponent<Image>();
+        single_reel_menu = transform.Find("Camera/reel_canva/single_reel").GetComponent<Image>();
+        mutiple_reel_menu = transform.Find("Camera/reel_canva/mutiple_reel").GetComponent<Image>();
         reel_botton = transform.Find("Camera/reel_canva/reel_button").GetComponent<Button>();
-        reel_display_timer = Random.Range(180f, 300f);
+        InitReel();
     }
 
     void Update()
@@ -79,7 +86,7 @@ public class Player : MonoBehaviour
             Train_menu_detect();
         }
         //若 train_menu沒打開的話，就持續檢查是否要開奏摺
-        if (!reel_menu.gameObject.activeSelf)
+        if (!current_reel_menu.gameObject.activeSelf)
         {
             DetectReelButton();
         }
@@ -91,6 +98,7 @@ public class Player : MonoBehaviour
             ChangeCoin(500);
             ChangeFood(500);
             ChangeResearch(500);
+            InitReel();
             reel_display_timer = 0.0f;
         }
     }
@@ -304,6 +312,22 @@ public class Player : MonoBehaviour
         Instantiate(train_prefab[0], lastCallMenuPosition, Quaternion.identity, transform);
         train_menu.gameObject.SetActive(false);
     }
+    private void InitReel()
+    {
+        reel_display_timer = Random.Range(180f, 300f);
+        is_Multiple_choice = (Random.Range(0, 2) == 1);
+        if (is_Multiple_choice)
+        {
+            current_reel_menu = mutiple_reel_menu;
+           // mutiple_reel_topic.text = reel_display_timer.ToString();
+
+        }
+        else
+        {
+            current_reel_menu = single_reel_menu;
+          // single_reel_topic.text = reel_display_timer.ToString();
+        }
+    }
     private void DetectReelButton()
     {
         if (reel_display_timer > 0.0f)
@@ -318,13 +342,21 @@ public class Player : MonoBehaviour
     }
     public void Reel_Button()
     {
-        reel_menu.gameObject.SetActive(true);
+        current_reel_menu.gameObject.SetActive(true);
         reel_botton.gameObject.SetActive(false);
+    }
+    public void Click_RightAnswer()
+    {
+        InitReel();
+    }
+    public void Click_WrongAnswer()
+    {
+        InitReel();
     }
     public void Cross()
     {
         build_menu.gameObject.SetActive(false);
         train_menu.gameObject.SetActive(false);
-        reel_menu.gameObject.SetActive(false);
+       current_reel_menu.gameObject.SetActive(false);
     }
 }
