@@ -29,9 +29,9 @@ public class Mines : MonoBehaviour
     }
     private void GainResource()
     {
-        player.ChangeWood(gainPower);
-        player.ChangeRock(gainPower);
-        player.ChangeIron(gainPower);
+        player.ChangeWood(gainPower, true, false);
+        player.ChangeRock(gainPower, true, false);
+        player.ChangeIron(gainPower, true, false);
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {

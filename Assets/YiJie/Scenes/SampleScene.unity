@@ -2625,6 +2625,8 @@ MonoBehaviour:
   - {fileID: 4707689436433449064, guid: d86905570550f7547a5a2f52391a885b, type: 3}
   - {fileID: 8605588540906797487, guid: 43fe2d2e0775d1143a206878048ce73a, type: 3}
   - {fileID: 161506218294726439, guid: d0c1de24820b2864a8876b443dc19905, type: 3}
+  gainResource_buff: 0
+  attackResource_buff: 0
 --- !u!1 &470272740
 GameObject:
   m_ObjectHideFlags: 0

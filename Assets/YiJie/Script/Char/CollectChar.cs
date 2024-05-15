@@ -138,27 +138,27 @@ public class CollectChar : MonoBehaviour
             if (hit.collider.CompareTag("tree"))
             {
                 Debug.Log("collect wood");
-                player.ChangeWood(collectPower);
+                player.ChangeWood(collectPower, false, false);
             }
             if (hit.collider.CompareTag("stone"))
             {
                 Debug.Log("collect rock");
-                player.ChangeRock(collectPower);
+                player.ChangeRock(collectPower, false, false);
             }
             if (hit.collider.CompareTag("steel"))
             {
                 Debug.Log("collect iron");
-                player.ChangeIron(collectPower);
+                player.ChangeIron(collectPower, false, false);
             }
             if (hit.collider.CompareTag("gold"))
             {
                 Debug.Log("collect coin");
-                player.ChangeCoin(collectPower);
+                player.ChangeCoin(collectPower, false, false);
             }
             if (hit.collider.CompareTag("wheat"))
             {
                 Debug.Log("collect food ");
-                player.ChangeFood(collectPower);
+                player.ChangeFood(collectPower, false, false);
             }
         }
     }

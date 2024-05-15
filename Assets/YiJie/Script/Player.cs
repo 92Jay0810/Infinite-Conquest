@@ -33,7 +33,7 @@ public class Player : MonoBehaviour
     private Vector3 lastCallMenuPosition;
     // reel_menu
     Button reel_botton;
-    float reel_display_timer;  
+    float reel_display_timer;
     Image mutiple_reel_menu;
     Text mutiple_reel_topic;
     Button[] mutiple_reel_buttons;
@@ -42,6 +42,9 @@ public class Player : MonoBehaviour
     Button[] single_reel_buttons;
     bool is_Multiple_choice = true;
     Image current_reel_menu;
+    //reward
+    public float gainResource_buff ;
+    public float attackResource_buff;
     void Start()
     {
         // resource
@@ -59,9 +62,21 @@ public class Player : MonoBehaviour
         train_menu = transform.Find("Camera/create_canva/train_menu").GetComponent<Image>();
         // reel_menu
         single_reel_menu = transform.Find("Camera/reel_canva/single_reel").GetComponent<Image>();
+        single_reel_topic = transform.Find("Camera/reel_canva/single_reel/topicframe/topictext").GetComponent<Text>();
+        single_reel_buttons = new Button[2];
+        single_reel_buttons[0] = transform.Find("Camera/reel_canva/single_reel/case1").GetComponent<Button>();
+        single_reel_buttons[1] = transform.Find("Camera/reel_canva/single_reel/case2").GetComponent<Button>();
         mutiple_reel_menu = transform.Find("Camera/reel_canva/mutiple_reel").GetComponent<Image>();
+        mutiple_reel_topic = transform.Find("Camera/reel_canva/mutiple_reel/topicframe/topictext").GetComponent<Text>();
+        mutiple_reel_buttons = new Button[4];
+        mutiple_reel_buttons[0] = transform.Find("Camera/reel_canva/mutiple_reel/case1").GetComponent<Button>();
+        mutiple_reel_buttons[1] = transform.Find("Camera/reel_canva/mutiple_reel/case2").GetComponent<Button>();
+        mutiple_reel_buttons[2] = transform.Find("Camera/reel_canva/mutiple_reel/case3").GetComponent<Button>();
+        mutiple_reel_buttons[3] = transform.Find("Camera/reel_canva/mutiple_reel/case4").GetComponent<Button>();
         reel_botton = transform.Find("Camera/reel_canva/reel_button").GetComponent<Button>();
         InitReel();
+        gainResource_buff = 1.0f;
+        attackResource_buff = 1.0f;
     }
 
     void Update()
@@ -92,40 +107,111 @@ public class Player : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.T))
         {
-            ChangeWood(500);
-            ChangeRock(500);
-            ChangeIron(500);
-            ChangeCoin(500);
-            ChangeFood(500);
+            ChangeWood(500, false, false);
+            ChangeRock(500, false, false);
+            ChangeIron(500, false, false);
+            ChangeCoin(500, false, false);
+            ChangeFood(500, false, false);
             ChangeResearch(500);
             InitReel();
             reel_display_timer = 0.0f;
         }
+        if (Input.GetKeyDown(KeyCode.Y))
+        {
+            Debug.Log("buff增加，gainResource20%");
+            gainResource_buff = 1.2f;
+            //可以在類似的code 新增顯示buff圖案
+        }
     }
-    public void ChangeWood(int number)
+    public void ChangeWood(int number, bool gain_buff, bool attack_gain_buff)
     {
-        wood += number;
-        wood_text.text = wood.ToString();
+        if (gain_buff)
+        {
+            wood += (int)(gainResource_buff * number);
+            wood_text.text = wood.ToString();
+        }
+        else if (attack_gain_buff)
+        {
+            wood += (int)(attackResource_buff * number);
+            wood_text.text = wood.ToString();
+        }
+        else
+        {
+            wood += number;
+            wood_text.text = wood.ToString();
+        }
     }
-    public void ChangeRock(int number)
+    public void ChangeRock(int number, bool gain_buff, bool attack_gain_buff)
     {
-        rock += number;
-        rock_text.text = rock.ToString();
+        if (gain_buff)
+        {
+            rock += (int)(gainResource_buff * number);
+            rock_text.text = rock.ToString();
+        }
+        else if (attack_gain_buff)
+        {
+            rock += (int)(attackResource_buff * number);
+            rock_text.text = rock.ToString();
+        }
+        else
+        {
+            rock += number;
+            rock_text.text = rock.ToString();
+        }
     }
-    public void ChangeIron(int number)
+    public void ChangeIron(int number, bool gain_buff, bool attack_gain_buff)
     {
-        iron += number;
-        iron_text.text = iron.ToString();
+        if (gain_buff)
+        {
+            iron += (int)(gainResource_buff * number);
+            iron_text.text = iron.ToString();
+        }
+        else if (attack_gain_buff)
+        {
+            iron += (int)(attackResource_buff * number);
+            iron_text.text = iron.ToString();
+        }
+        else
+        {
+            iron += number;
+            iron_text.text = iron.ToString();
+        }
     }
-    public void ChangeCoin(int number)
+    public void ChangeCoin(int number, bool gain_buff, bool attack_gain_buff)
     {
-        coin += number;
-        coin_text.text = coin.ToString();
+        if (gain_buff)
+        {
+            coin += (int)(gainResource_buff * number);
+            coin_text.text = coin.ToString();
+        }
+        else if (attack_gain_buff)
+        {
+            coin += (int)(attackResource_buff * number);
+            coin_text.text = coin.ToString();
+        }
+        else
+        {
+            coin += number;
+            coin_text.text = coin.ToString();
+        }
     }
-    public void ChangeFood(int number)
+    public void ChangeFood(int number, bool gain_buff, bool attack_gain_buff)
     {
-        food += number;
-        food_text.text = food.ToString();
+        if (gain_buff)
+        {
+            food += (int)(gainResource_buff * number);
+            food_text.text = food.ToString();
+        }
+        else if (attack_gain_buff)
+        {
+            food += (int)(attackResource_buff * number);
+            food_text.text = food.ToString();
+        }
+        else
+        {
+            food += number;
+            food_text.text = food.ToString();
+        }
     }
     public void ChangeResearch(int number)
     {
@@ -177,9 +263,9 @@ public class Player : MonoBehaviour
     }
     public void CreateMines()
     {
-        ChangeWood(-100);
-        ChangeRock(-100);
-        ChangeIron(-100);
+        ChangeWood(-100, false, false);
+        ChangeRock(-100, false, false);
+        ChangeIron(-100, false, false);
         Instantiate(build_prefab[0], lastCallMenuPosition, Quaternion.identity, transform);
         build_menu.gameObject.SetActive(false);
     }
@@ -232,22 +318,22 @@ public class Player : MonoBehaviour
         switch (generation)
         {
             case 1:
-                ChangeFood(-500);
+                ChangeFood(-500, false, false);
                 current_generation_Image.texture = generations_Image[1].texture;
                 break;
             case 2:
-                ChangeCoin(-200);
-                ChangeFood(-800);
+                ChangeCoin(-200, false, false);
+                ChangeFood(-800, false, false);
                 current_generation_Image.texture = generations_Image[2].texture;
                 break;
             case 3:
-                ChangeCoin(-800);
-                ChangeFood(-1000);
+                ChangeCoin(-800, false, false);
+                ChangeFood(-1000, false, false);
                 current_generation_Image.texture = generations_Image[3].texture;
                 break;
             case 4:
-                ChangeCoin(-1500);
-                ChangeFood(-1200);
+                ChangeCoin(-1500, false, false);
+                ChangeFood(-1200, false, false);
                 current_generation_Image.texture = generations_Image[4].texture;
                 break;
             default:
@@ -295,20 +381,20 @@ public class Player : MonoBehaviour
     }
     public void CreateFarmer()
     {
-        ChangeFood(-35);
+        ChangeFood(-35, false, false);
         Instantiate(train_prefab[1], lastCallMenuPosition, Quaternion.identity, transform);
         train_menu.gameObject.SetActive(false);
     }
     public void CreateMagician()
     {
-        ChangeFood(-50);
-        ChangeCoin(-10);
+        ChangeFood(-50, false, false);
+        ChangeCoin(-10, false, false);
         Instantiate(train_prefab[2], lastCallMenuPosition, Quaternion.identity, transform);
         train_menu.gameObject.SetActive(false);
     }
     public void CreateSoldier()
     {
-        ChangeFood(-30);
+        ChangeFood(-30, false, false);
         Instantiate(train_prefab[0], lastCallMenuPosition, Quaternion.identity, transform);
         train_menu.gameObject.SetActive(false);
     }
@@ -318,14 +404,19 @@ public class Player : MonoBehaviour
         is_Multiple_choice = (Random.Range(0, 2) == 1);
         if (is_Multiple_choice)
         {
-            current_reel_menu = mutiple_reel_menu;
-           // mutiple_reel_topic.text = reel_display_timer.ToString();
-
+            current_reel_menu = mutiple_reel_menu; 
+            //模擬查詢資料庫找到正確答案和題目描述
+            int rightAnwer = Random.Range(0, 4) + 1;
+            // mutiple_reel_topic.text = reel_display_timer.ToString();
+           
+           
         }
         else
         {
             current_reel_menu = single_reel_menu;
-          // single_reel_topic.text = reel_display_timer.ToString();
+            //模擬查詢資料庫找到正確答案和題目描述
+            int rightAnwer = Random.Range(0, 4) + 1;
+            // single_reel_topic.text = reel_display_timer.ToString();
         }
     }
     private void DetectReelButton()
@@ -357,6 +448,6 @@ public class Player : MonoBehaviour
     {
         build_menu.gameObject.SetActive(false);
         train_menu.gameObject.SetActive(false);
-       current_reel_menu.gameObject.SetActive(false);
+        current_reel_menu.gameObject.SetActive(false);
     }
 }
