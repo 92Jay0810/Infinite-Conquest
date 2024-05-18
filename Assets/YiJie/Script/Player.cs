@@ -43,8 +43,13 @@ public class Player : MonoBehaviour
     bool is_Multiple_choice = true;
     Image current_reel_menu;
     //reward
-    public float gainResource_buff ;
-    public float attackResource_buff;
+    float gainResource_buff;
+    float attackResource_buff;
+    float gainResearch_buff;
+    Image gainResource_buff_image;
+    Image attackResource_buff_image;
+    Image gainResearch_buff_image;
+
     void Start()
     {
         // resource
@@ -75,8 +80,13 @@ public class Player : MonoBehaviour
         mutiple_reel_buttons[3] = transform.Find("Camera/reel_canva/mutiple_reel/case4").GetComponent<Button>();
         reel_botton = transform.Find("Camera/reel_canva/reel_button").GetComponent<Button>();
         InitReel();
+        //reward
         gainResource_buff = 1.0f;
         attackResource_buff = 1.0f;
+        gainResearch_buff = 1.0f;
+        gainResource_buff_image = transform.Find("Camera/reel_canva/coll-nb").GetComponent<Image>();
+        attackResource_buff_image = transform.Find("Camera/reel_canva/thief-nb").GetComponent<Image>();
+        gainResearch_buff_image = transform.Find("Camera/reel_canva/tech-nb").GetComponent<Image>();
     }
 
     void Update()
@@ -112,7 +122,7 @@ public class Player : MonoBehaviour
             ChangeIron(500, false, false);
             ChangeCoin(500, false, false);
             ChangeFood(500, false, false);
-            ChangeResearch(500);
+            ChangeResearch(500, false);
             InitReel();
             reel_display_timer = 0.0f;
         }
@@ -213,10 +223,18 @@ public class Player : MonoBehaviour
             food_text.text = food.ToString();
         }
     }
-    public void ChangeResearch(int number)
+    public void ChangeResearch(int number, bool gain_buffer)
     {
-        research += number;
-        research_text.text = research.ToString();
+        if (gain_buffer)
+        {
+            research += (int)(gainResearch_buff * number);
+            research_text.text = research.ToString();
+        }
+        else
+        {
+            research += number;
+            research_text.text = research.ToString();
+        }
     }
 
     void CreateMenuDetected()
@@ -401,22 +419,34 @@ public class Player : MonoBehaviour
     private void InitReel()
     {
         reel_display_timer = Random.Range(180f, 300f);
+        //模擬查詢資料庫找到題目類型、題目難度、題目描述、正確答案
         is_Multiple_choice = (Random.Range(0, 2) == 1);
+        int difficult = Random.Range(0, 3) + 1; //難度1~3
         if (is_Multiple_choice)
         {
-            current_reel_menu = mutiple_reel_menu; 
-            //模擬查詢資料庫找到正確答案和題目描述
-            int rightAnwer = Random.Range(0, 4) + 1;
-            // mutiple_reel_topic.text = reel_display_timer.ToString();
-           
-           
+            int rightAnwer = Random.Range(0, 4);
+            current_reel_menu = mutiple_reel_menu;
+            for (int i = 0; i < 4; i++)
+            {
+                mutiple_reel_buttons[i].onClick.RemoveAllListeners();
+                mutiple_reel_buttons[i].onClick.AddListener(() => Click_WrongAnswer(difficult));
+            }
+            mutiple_reel_topic.text = " 難度 " + difficult.ToString() + " 正確答案:　" + (rightAnwer + 1).ToString();
+            mutiple_reel_buttons[rightAnwer].onClick.RemoveAllListeners();
+            mutiple_reel_buttons[rightAnwer].onClick.AddListener(() => Click_RightAnswer(difficult));
         }
         else
         {
+            int rightAnwer = Random.Range(0, 2);
             current_reel_menu = single_reel_menu;
-            //模擬查詢資料庫找到正確答案和題目描述
-            int rightAnwer = Random.Range(0, 4) + 1;
-            // single_reel_topic.text = reel_display_timer.ToString();
+            for (int i = 0; i < 2; i++)
+            {
+                single_reel_buttons[i].onClick.RemoveAllListeners();
+                single_reel_buttons[i].onClick.AddListener(() => Click_WrongAnswer(difficult));
+            }
+            single_reel_topic.text = " 難度 " + difficult.ToString() + " 正確答案:　" + (rightAnwer + 1).ToString();
+            single_reel_buttons[rightAnwer].onClick.RemoveAllListeners();
+            single_reel_buttons[rightAnwer].onClick.AddListener(() => Click_RightAnswer(difficult));
         }
     }
     private void DetectReelButton()
@@ -436,13 +466,345 @@ public class Player : MonoBehaviour
         current_reel_menu.gameObject.SetActive(true);
         reel_botton.gameObject.SetActive(false);
     }
-    public void Click_RightAnswer()
+    public void Click_RightAnswer(int difficult)
     {
+        Debug.Log("RightAnswer");
+        current_reel_menu.gameObject.SetActive(false);
+        int reward = Random.Range(0, 4);
+        if (is_Multiple_choice)
+        {
+            if (difficult == 1)
+            {
+                switch (reward)
+                {
+                    case 0:
+                        ChangeWood(150, false, false);
+                        ChangeRock(150, false, false);
+                        ChangeIron(150, false, false);
+                        ChangeCoin(150, false, false);
+                        ChangeFood(150, false, false);
+                        break;
+                    case 1:
+                        gainResource_buff = 1.5f;
+                        break;
+                    case 2:
+                        attackResource_buff = 1.03f;
+                        break;
+                    case 3:
+                        gainResearch_buff = 2f;
+                        break;
+                }
+            }
+            if (difficult == 2)
+            {
+                switch (reward)
+                {
+                    case 0:
+                        ChangeWood(250, false, false);
+                        ChangeRock(250, false, false);
+                        ChangeIron(250, false, false);
+                        ChangeCoin(250, false, false);
+                        ChangeFood(250, false, false);
+                        break;
+                    case 1:
+                        gainResource_buff = 1.7f;
+                        break;
+                    case 2:
+                        attackResource_buff = 1.05f;
+                        break;
+                    case 3:
+                        gainResearch_buff = 2.5f;
+                        break;
+                }
+            }
+            if (difficult == 3)
+            {
+                switch (reward)
+                {
+                    case 0:
+                        ChangeWood(350, false, false);
+                        ChangeRock(350, false, false);
+                        ChangeIron(350, false, false);
+                        ChangeCoin(350, false, false);
+                        ChangeFood(350, false, false);
+                        break;
+                    case 1:
+                        gainResource_buff = 2f;
+                        break;
+                    case 2:
+                        attackResource_buff = 1.07f;
+                        break;
+                    case 3:
+                        gainResearch_buff = 3f;
+                        break;
+                }
+            }
+        }
+        else
+        {
+            if (difficult == 1)
+            {
+                switch (reward)
+                {
+                    case 0:
+                        ChangeWood(100, false, false);
+                        ChangeRock(100, false, false);
+                        ChangeIron(100, false, false);
+                        ChangeCoin(100, false, false);
+                        ChangeFood(100, false, false);
+                        break;
+                    case 1:
+                        gainResource_buff = 1.3f;
+                        break;
+                    case 2:
+                        attackResource_buff = 1.01f;
+                        break;
+                    case 3:
+                        gainResearch_buff = 1.3f;
+                        break;
+                }
+            }
+            if (difficult == 2)
+            {
+                switch (reward)
+                {
+                    case 0:
+                        ChangeWood(150, false, false);
+                        ChangeRock(150, false, false);
+                        ChangeIron(150, false, false);
+                        ChangeCoin(150, false, false);
+                        ChangeFood(150, false, false);
+                        break;
+                    case 1:
+                        gainResource_buff = 1.5f;
+                        break;
+                    case 2:
+                        attackResource_buff = 1.03f;
+                        break;
+                    case 3:
+                        gainResearch_buff = 1.5f;
+                        break;
+                }
+            }
+            if (difficult == 3)
+            {
+                switch (reward)
+                {
+                    case 0:
+                        ChangeWood(250, false, false);
+                        ChangeRock(250, false, false);
+                        ChangeIron(250, false, false);
+                        ChangeCoin(250, false, false);
+                        ChangeFood(250, false, false);
+                        break;
+                    case 1:
+                        gainResource_buff = 1.7f;
+                        break;
+                    case 2:
+                        attackResource_buff = 1.05f;
+                        break;
+                    case 3:
+                        gainResearch_buff = 2f;
+                        break;
+                }
+            }
+        }
+        Debug.Log("gainResource_buff  " + gainResource_buff + " attackResource_buff " + attackResource_buff + "gainResearch_buff " + gainResearch_buff);
+        if (reward != 0)
+        {
+            Active_buff(reward);
+        }
         InitReel();
     }
-    public void Click_WrongAnswer()
+    public void Click_WrongAnswer(int difficult)
     {
+        Debug.Log("WrongAnswer");
+        current_reel_menu.gameObject.SetActive(false);
+        int penalty = Random.Range(0, 4);
+        if (is_Multiple_choice)
+        {
+            if (difficult == 1)
+            {
+                switch (penalty)
+                {
+                    case 0:
+                        ChangeWood(-100, false, false);
+                        ChangeRock(-100, false, false);
+                        ChangeIron(-100, false, false);
+                        ChangeCoin(-100, false, false);
+                        ChangeFood(-100, false, false);
+                        break;
+                    case 1:
+                        gainResource_buff = 0.5f;
+                        break;
+                    case 2:
+                        attackResource_buff = 0.97f;
+                        break;
+                    case 3:
+                        gainResearch_buff = 0.3f;
+                        break;
+                }
+            }
+            if (difficult == 2)
+            {
+                switch (penalty)
+                {
+                    case 0:
+                        ChangeWood(-70, false, false);
+                        ChangeRock(-70, false, false);
+                        ChangeIron(-70, false, false);
+                        ChangeCoin(-70, false, false);
+                        ChangeFood(-70, false, false);
+                        break;
+                    case 1:
+                        gainResource_buff = 0.7f;
+                        break;
+                    case 2:
+                        attackResource_buff = 0.98f;
+                        break;
+                    case 3:
+                        gainResearch_buff = 0.5f;
+                        break;
+                }
+            }
+            if (difficult == 3)
+            {
+                switch (penalty)
+                {
+                    case 0:
+                        ChangeWood(-50, false, false);
+                        ChangeRock(-50, false, false);
+                        ChangeIron(-50, false, false);
+                        ChangeCoin(-50, false, false);
+                        ChangeFood(-50, false, false);
+                        break;
+                    case 1:
+                        gainResource_buff = 0.9f;
+                        break;
+                    case 2:
+                        attackResource_buff = 0.99f;
+                        break;
+                    case 3:
+                        gainResearch_buff = 0.75f;
+                        break;
+                }
+            }
+        }
+        else
+        {
+            if (difficult == 1)
+            {
+                switch (penalty)
+                {
+                    case 0:
+                        ChangeWood(-80, false, false);
+                        ChangeRock(-80, false, false);
+                        ChangeIron(-80, false, false);
+                        ChangeCoin(-80, false, false);
+                        ChangeFood(-80, false, false);
+                        break;
+                    case 1:
+                        gainResource_buff = 0.3f;
+                        break;
+                    case 2:
+                        attackResource_buff = 0.95f;
+                        break;
+                    case 3:
+                        gainResearch_buff = 0f;
+                        break;
+                }
+            }
+            if (difficult == 2)
+            {
+                switch (penalty)
+                {
+                    case 0:
+                        ChangeWood(-50, false, false);
+                        ChangeRock(-50, false, false);
+                        ChangeIron(-50, false, false);
+                        ChangeCoin(-50, false, false);
+                        ChangeFood(-50, false, false);
+                        break;
+                    case 1:
+                        gainResource_buff = 0.5f;
+                        break;
+                    case 2:
+                        attackResource_buff = 0.97f;
+                        break;
+                    case 3:
+                        gainResearch_buff = 0.5f;
+                        break;
+                }
+            }
+            if (difficult == 3)
+            {
+                switch (penalty)
+                {
+                    case 0:
+                        ChangeWood(-30, false, false);
+                        ChangeRock(-30, false, false);
+                        ChangeIron(-30, false, false);
+                        ChangeCoin(-30, false, false);
+                        ChangeFood(-30, false, false);
+                        break;
+                    case 1:
+                        gainResource_buff = 0.9f;
+                        break;
+                    case 2:
+                        attackResource_buff = 0.99f;
+                        break;
+                    case 3:
+                        gainResearch_buff = 0.7f;
+                        break;
+                }
+            }
+
+        }
+        Debug.Log("gainResource_buff  " + gainResource_buff + " attackResource_buff " + attackResource_buff + "gainResearch_buff " + gainResearch_buff);
+        //只有處罰0 沒有buff圖案
+        if (penalty != 0)
+        {
+            Active_buff(penalty);
+        }
         InitReel();
+    }
+    private void Active_buff(int change_buff_index)
+    {
+        float buffDuration = Random.Range(120f, 180f);
+        switch (change_buff_index)
+        {
+            case 1:
+                gainResource_buff_image.gameObject.SetActive(true);
+                StartCoroutine(BuffCoroutine(gainResource_buff_image, buffDuration,change_buff_index));
+                break;
+            case 2:
+                attackResource_buff_image.gameObject.SetActive(true);
+                StartCoroutine(BuffCoroutine(attackResource_buff_image, buffDuration, change_buff_index));
+                break;
+            case 3:
+                gainResearch_buff_image.gameObject.SetActive(true);
+                StartCoroutine(BuffCoroutine(gainResearch_buff_image, buffDuration, change_buff_index));
+                break;
+        }
+    }
+    private IEnumerator BuffCoroutine(Image buffimage, float buffDuration , int buffer_index)
+    {
+        // 等待 buffDuration 秒
+        yield return new WaitForSeconds(buffDuration);
+        // 隱藏圖片
+        buffimage.gameObject.SetActive(false);
+        switch (buffer_index)
+        {
+            case 1:
+                gainResource_buff = 1.0f;
+                break;
+            case 2:
+                attackResource_buff = 1.0f;
+                break;
+            case 3:
+                gainResearch_buff = 1.0f;
+                break;
+        }
     }
     public void Cross()
     {
