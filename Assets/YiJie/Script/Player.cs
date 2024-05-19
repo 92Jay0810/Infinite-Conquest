@@ -270,7 +270,7 @@ public class Player : MonoBehaviour
     private void Build_menu_detect()
     {
         //礦場
-        if (wood >= 100 && rock >= 100 && iron >= 100)
+        if (wood >= 100 && rock >= 100 && iron >= 150)
         {
             build_buttons[0].interactable = true;
         }
@@ -278,13 +278,30 @@ public class Player : MonoBehaviour
         {
             build_buttons[0].interactable = false;
         }
+        //礦場
+        if (wood >= 100 && rock >= 100 && iron >= 100)
+        {
+            build_buttons[1].interactable = true;
+        }
+        else
+        {
+            build_buttons[1].interactable = false;
+        }
+    }
+    public void CreateQuarry()
+    {
+        ChangeWood(-100, false, false);
+        ChangeRock(-100, false, false);
+        ChangeIron(-150, false, false);
+        Instantiate(build_prefab[0], lastCallMenuPosition, Quaternion.identity, transform);
+        build_menu.gameObject.SetActive(false);
     }
     public void CreateMines()
     {
         ChangeWood(-100, false, false);
         ChangeRock(-100, false, false);
         ChangeIron(-100, false, false);
-        Instantiate(build_prefab[0], lastCallMenuPosition, Quaternion.identity, transform);
+        Instantiate(build_prefab[1], lastCallMenuPosition, Quaternion.identity, transform);
         build_menu.gameObject.SetActive(false);
     }
     void UpdateGenerationButtonDetected()
@@ -369,8 +386,8 @@ public class Player : MonoBehaviour
     }
     private void Train_menu_detect()
     {
-        //士兵
-        if (food >= 30)
+        //平民
+        if (food >= 25)
         {
             train_buttons[0].interactable = true;
         }
@@ -378,8 +395,8 @@ public class Player : MonoBehaviour
         {
             train_buttons[0].interactable = false;
         }
-        //農民
-        if (food >= 35 && generation >= 2)
+        //士兵
+        if (food >= 30)
         {
             train_buttons[1].interactable = true;
         }
@@ -387,8 +404,8 @@ public class Player : MonoBehaviour
         {
             train_buttons[1].interactable = false;
         }
-        //魔法師
-        if (coin >= 10 && food >= 50 && generation >= 3)
+        //農民
+        if (food >= 35 && generation >= 2)
         {
             train_buttons[2].interactable = true;
         }
@@ -396,23 +413,38 @@ public class Player : MonoBehaviour
         {
             train_buttons[2].interactable = false;
         }
+        //魔法師
+        if (coin >= 10 && food >= 50 && generation >= 3)
+        {
+            train_buttons[3].interactable = true;
+        }
+        else
+        {
+            train_buttons[3].interactable = false;
+        }
     }
     public void CreateFarmer()
     {
         ChangeFood(-35, false, false);
-        Instantiate(train_prefab[1], lastCallMenuPosition, Quaternion.identity, transform);
+        Instantiate(train_prefab[2], lastCallMenuPosition, Quaternion.identity, transform);
         train_menu.gameObject.SetActive(false);
     }
     public void CreateMagician()
     {
         ChangeFood(-50, false, false);
         ChangeCoin(-10, false, false);
-        Instantiate(train_prefab[2], lastCallMenuPosition, Quaternion.identity, transform);
+        Instantiate(train_prefab[3], lastCallMenuPosition, Quaternion.identity, transform);
         train_menu.gameObject.SetActive(false);
     }
     public void CreateSoldier()
     {
         ChangeFood(-30, false, false);
+        Instantiate(train_prefab[1], lastCallMenuPosition, Quaternion.identity, transform);
+        train_menu.gameObject.SetActive(false);
+    }
+    public void CreateVillager()
+    {
+        ChangeFood(-25, false, false);
         Instantiate(train_prefab[0], lastCallMenuPosition, Quaternion.identity, transform);
         train_menu.gameObject.SetActive(false);
     }

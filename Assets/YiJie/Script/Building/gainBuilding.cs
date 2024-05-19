@@ -2,23 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class Mines : MonoBehaviour
+
+public class gainBuilding : MonoBehaviour
 {
-    [SerializeField] int hp = 200;
-    [SerializeField] protected int gainPower =  10;
-    [SerializeField] protected float gainInterval = 5.0f; 
-    Text hp_text;
-    private Player player;
-    private float lastGainCounter;
-    private
-    void Start()
+    [SerializeField] protected int hp = 200;
+    [SerializeField] protected int gainPower = 10;
+    [SerializeField] protected float gainInterval = 5.0f;
+    protected Text hp_text;
+    protected Player player;
+    protected float lastGainCounter;
+    virtual protected void Start()
     {
         hp_text = transform.Find("hp_canva/hp_int").GetComponent<Text>();
         player = transform.parent.GetComponent<Player>();
         updateHp_text();
     }
 
-    void Update()
+    protected void Update()
     {
         lastGainCounter += Time.deltaTime;
         if (lastGainCounter >= gainInterval)
@@ -27,13 +27,11 @@ public class Mines : MonoBehaviour
             GainResource();
         }
     }
-    private void GainResource()
+    virtual protected void GainResource()
     {
-        player.ChangeWood(gainPower, true, false);
-        player.ChangeRock(gainPower, true, false);
-        player.ChangeIron(gainPower, true, false);
+       
     }
-    private void OnCollisionEnter2D(Collision2D collision)
+    protected void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "fireball")
         {
@@ -50,7 +48,7 @@ public class Mines : MonoBehaviour
             Destroy(collision.gameObject);
         }
     }
-    void updateHp_text()
+    protected void updateHp_text()
     {
         hp_text.text = hp.ToString();
     }
