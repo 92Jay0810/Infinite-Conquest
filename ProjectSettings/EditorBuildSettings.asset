@@ -5,7 +5,25 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
-    path: Assets/XinZhang/SampleScene.unity
+  - enabled: 0
+    path: Assets/XinZhang/XinZhang/SampleScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/XinZhang/Scenes/MultiRoomScene.unity
+    guid: 60d14659fb5a522439ac5dc231057e80
+  - enabled: 1
+    path: Assets/XinZhang/Scenes/StartScene.unity
+    guid: 7ce2541e9cb27114a99ee5510a486609
+  - enabled: 1
+    path: Assets/XinZhang/Scenes/SingleLobbyScene.unity
+    guid: eefce59ec9c073c4cbb21f5f80c4d908
+  - enabled: 0
+    path: Assets/XinZhang/Scenes/MultiGameScene.unity
+    guid: 6a3eb5b8ae3523d41acc68a023bbb345
+  - enabled: 1
+    path: Assets/XinZhang/Scenes/MultiLobbyScene.unity
+    guid: c1cb6209d3a55ce47984074b46eb79f2
+  - enabled: 1
+    path: Assets/YiJie/Scenes/SampleScene.unity
+    guid: dbbf06f78b8eda747a8244033b6fa1d6
   m_configObjects: {}
