@@ -31,9 +31,9 @@ public class MultiRoomSceneManager : MonoBehaviourPunCallbacks
         
     }
 
-    public override void OnMasterClientSwitched(Player newMasterClient)
+    public override void OnMasterClientSwitched(Photon.Realtime.Player newMasterClient)
     {
-         buttonStartGame.interactable = PhotonNetwork.IsMasterClient;
+        base.OnMasterClientSwitched(newMasterClient);
     }
 
     // public void UpdatePlayerList(){
@@ -55,12 +55,12 @@ public class MultiRoomSceneManager : MonoBehaviourPunCallbacks
         textPlayerList.text = sb.ToString();
     }
 
-    public override void OnPlayerEnteredRoom(Player newPlayer)
+    public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
         UpdatePlayerList();
     }
 
-    public override void OnPlayerLeftRoom(Player otherPlayer)
+    public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
         UpdatePlayerList();
     }
@@ -70,7 +70,7 @@ public class MultiRoomSceneManager : MonoBehaviourPunCallbacks
     }
 
     public void OnClickStartGame(){
-        SceneManager.LoadScene("MultiGameScene");
+        SceneManager.LoadScene("SampleScene");
     }
 
     public override void OnLeftRoom()
