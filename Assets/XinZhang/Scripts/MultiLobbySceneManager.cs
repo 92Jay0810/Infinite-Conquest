@@ -12,7 +12,7 @@ public class MultiLobbySceneManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] InputField inputRoomName;
     // [SerializeField] InputField inputFindRoomName;
-    [SerializeField] Text textRoomList;
+    [SerializeField] Text textRoomInformation;
 
     [SerializeField] Text WelcomePlayerName;
 
@@ -22,6 +22,8 @@ public class MultiLobbySceneManager : MonoBehaviourPunCallbacks
 
     
     [SerializeField] Transform roomListParent;
+
+    List<RoomInfo> currentroomList;
     
     // Start is called before the first frame update
     void Start()
@@ -57,11 +59,6 @@ public class MultiLobbySceneManager : MonoBehaviourPunCallbacks
         print("Lobby joined");
     }
 
-    //好的鮮隱藏
-    // public string GetRoomName(){
-    //     string roomName = inputRoomName.text;
-    //     return roomName.Trim();//擷取調空白字元
-    // }
 
     public string GetRoomName(){
 
@@ -74,95 +71,80 @@ public class MultiLobbySceneManager : MonoBehaviourPunCallbacks
             }
     }
 
-    
-    
-    //統一用getroomname先隱藏
-    // public string GetFindRoomName(){
-    //     string roomName = inputRoomName.text;
-    //     return roomName.Trim();//擷取調空白字元
-        
-    // }
-
-    
-//chat給的
-//     public string GetFindRoomName(){
-//     if(inputFindRoomName != null){
-//         string roomName = inputFindRoomName.text;
-//         return roomName.Trim();//擷取調空白字元
-//     } else {
-//         Debug.LogError("InputFindRoomName is not initialized!");
-//         return string.Empty; // 或者返回 null 或其他適當的值
-//     }
-// }
-
 
     public string GetPlayerName(){
         string playerName = PlayerPrefs.GetString("PlayerName");
         return playerName.Trim();//擷取調空白字元
     }
 
-    //chat魔改搜尋功能
-    // public void OnClickSearchRoomName(){
-    //     string searchText = GetRoomName();
+    public void OnClickSearchRoomName(){
+        string searchText = GetRoomName();
 
-    //     if (searchText.Length == 0)
-    //     {
-    //         // 如果搜索文字為空，不進行搜索
-    //         return;
-    //     }
+        if (searchText.Length == 0){
+            Debug.Log("Input not received");
+            return;
+        }
 
-    //     // 創建 TypedLobby 對象
-    //     TypedLobby typedLobby = new TypedLobby("MultiLobbyScene", LobbyType.SqlLobby);
+        if(currentroomList != null){
+            StringBuilder sb = new StringBuilder();
+            foreach(RoomInfo roomInfo in currentroomList)
+            {
+                if(roomInfo.PlayerCount > 0 && roomInfo.Name == searchText){
+                    string hostNickname = roomInfo.CustomProperties.ContainsKey("Host") ? (string)roomInfo.CustomProperties["Host"] : "Unknown";
+                    sb.AppendLine("Room Name: "+ roomInfo.Name +"\n房主: " + hostNickname+ "\n房間人數: " +roomInfo.PlayerCount+"/"+roomInfo.MaxPlayers);
+                } 
+            }
+            textRoomInformation.text = sb.ToString();
+        }
+        
+    }
 
-    //     // 創建 SQL-like filter 字符串
-    //     //string sqlLobbyFilter = "your SQL-like filter";
-    //     string sqlLobbyFilter = "RoomName LIKE '%" + searchText + "%'";
+    private void HandleSearchResults(List<RoomInfo> roomList)
+    {
+        string searchText = GetRoomName();
+        if (string.IsNullOrEmpty(searchText))
+        {
+            return;
+        }
 
-    //     // 獲取自定義房間列表
-    //     bool success = PhotonNetwork.GetCustomRoomList(typedLobby, sqlLobbyFilter);
-    //     if (!success){
-    //     Debug.LogError("Failed to get custom room list.");
-    //     }
+        bool foundMatchingRoom = false;
+        StringBuilder sb = new StringBuilder();
 
-    //     // // 遍歷房間列表，查找包含搜索文字的房間
-    //     // List<RoomInfo> rooms = new List<RoomInfo>(PhotonNetwork.GetCustomRoomList());
-    //     // List<RoomInfo> matchingRooms = new List<RoomInfo>();
+        foreach (RoomInfo roomInfo in roomList)
+        {
+            if (roomInfo.PlayerCount > 0 && roomInfo.Name.Contains(searchText))
+            {
+                string roomName = roomInfo.Name;
+                int playerCount = roomInfo.PlayerCount;
+                int maxPlayers = roomInfo.MaxPlayers;
+                string hostNickname = roomInfo.CustomProperties.ContainsKey("Host") ? (string)roomInfo.CustomProperties["Host"] : "";
 
-    //     // foreach (RoomInfo room in rooms)
-    //     // {
-    //     //     if (room.Name.Contains(searchText))
-    //     //     {
-    //     //         matchingRooms.Add(room);
-    //     //     }
-    //     // }
+                sb.AppendLine($"Room Name: {roomName} | Players: {playerCount}/{maxPlayers} | Host: {hostNickname}");
+                foundMatchingRoom = true;
+                break;
+            }
+        }
 
-    //     // // 更新搜索結果
-    //     // UpdateSearchResult(matchingRooms);
-    // }
+        if (!foundMatchingRoom)
+        {
+            sb.AppendLine("No matching room found.");
+        }
 
-    //chat魔改
-    // 更新搜索結果
-    // private void UpdateSearchResult(List<RoomInfo> roomlist)
-    // {
-    //     // 將搜索結果顯示在 UI 上
-    //     StringBuilder sb = new StringBuilder();
+        textRoomInformation.text = sb.ToString();
+    }
 
-    //     foreach (RoomInfo roomInfo in roomlist)
-    //     {
-    //         sb.AppendLine("Room Name: " + roomInfo.Name + " | Player Count: " + roomInfo.PlayerCount);
-    //     }
-
-    //     textRoomList.text = sb.ToString();
-    // }
 
     public void OnClickCreatRoom()
     {
         string roomName = GenerateRoomName();
         string playerName = GetPlayerName();
         if(roomName.Length > 0 && playerName.Length > 0){
-        PhotonNetwork.CreateRoom(roomName);
-        print("Room created"+ roomName);
-        PhotonNetwork.LocalPlayer.NickName = playerName;  
+            RoomOptions roomOptions = new RoomOptions();
+            roomOptions.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable() { { "Host", playerName } };
+            roomOptions.CustomRoomPropertiesForLobby = new string[] { "Host" };
+            PhotonNetwork.CreateRoom(roomName, roomOptions, TypedLobby.Default);
+            print("Room created"+ roomName);
+            PhotonNetwork.LocalPlayer.NickName = playerName;  
        }else{
         print("Invalid RoomName or PlayerName");
        }  
@@ -183,7 +165,6 @@ public class MultiLobbySceneManager : MonoBehaviourPunCallbacks
         Debug.Log("按鈕被典籍");
         
         string playerName = GetPlayerName();
-        Debug.Log(roomName);
         if(roomName.Length > 0 && playerName.Length > 0){
         PhotonNetwork.JoinRoom(roomName);
         PhotonNetwork.LocalPlayer.NickName = playerName;  
@@ -217,41 +198,11 @@ public class MultiLobbySceneManager : MonoBehaviourPunCallbacks
         return sb.ToString();
     }
 
-
-    //chat魔改，有bug，搜尋功能
-    // public override void OnRoomListUpdate(List<RoomInfo> roomList)
-    // {
-    //     string roomName = GetRoomName();
-    //     // 如果搜索框中有文字，則執行搜尋房間的功能
-    //     if (!string.IsNullOrEmpty(roomName)){
-    //     OnClickSearchRoomName();
-    //     return;
-    //     }
-
-    //     // 如果搜索框中沒有文字，則正常顯示房間列表
-    //     print("update");
-    //     StringBuilder sb = new StringBuilder();
-    //     foreach(RoomInfo roomInfo in roomList){
-    //         if(roomInfo.PlayerCount > 0){
-    //             sb.AppendLine("→ " + roomInfo.Name + ": " +roomInfo.PlayerCount);
-    //         }
-    //     }
-    //     textRoomList.text = sb.ToString();
-    //     // if (textRoomList != null) {
-    //     //     textRoomList.text = sb.ToString();
-    //     //     } else {
-    //     //         Debug.LogError("textRoomList is null!");
-    //     //     }
-
-    // }
-
-    
-    
-
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
         if(roomList != null) {// 檢查 roomList 是否為空
             print("update");
+            currentroomList = roomList;
             StringBuilder sb = new StringBuilder();
             foreach (RoomInfo roomInfo in roomList){
                 Debug.Log(roomInfo.PlayerCount);
@@ -272,85 +223,17 @@ public class MultiLobbySceneManager : MonoBehaviourPunCallbacks
                         if (roomNameText != null){
                             roomNameText.text = roomInfo.Name;
                         }else{
-                            Debug.LogError("RoomName Text not found in room prefab.");
+                            Debug.Log("RoomName Text not found in room prefab.");
                         }
                         // 设置房间的名字作为 Prefab 的名字，以便后续查找和删除
                         roomImage.name = roomInfo.Name;
                         roomImage.onClick.AddListener(() => OnClickImageJoinRoom(roomNameText.text));
                     }
                 }
-
-                // if(roomInfo.PlayerCount > 0){
-                //     sb.AppendLine("→ " + roomInfo.Name + ": " +roomInfo.PlayerCount);
-                //     GameObject roomImage = Instantiate(roomNamePrefab, roomListParent);
-                
-                //     // 在新房間圖片中找到用於顯示房間名的 Text，並將其設置為房間名
-                //     Text roomNameText = roomImage.GetComponentInChildren<Text>();
-                //     if (roomNameText != null){
-                //         roomNameText.text = roomInfo.Name;
-                //     }
-                // } 
-                
-                // // 使用預置件生成新的房間圖片
-                // GameObject roomImage = Instantiate(roomNamePrefab, roomListParent);
-                
-                // // 在新房間圖片中找到用於顯示房間名的 Text，並將其設置為房間名
-                // Text roomNameText = roomImage.GetComponentInChildren<Text>();
-                // if (roomNameText != null){
-                //     roomNameText.text = roomInfo.Name;
-                // }
             }
-            textRoomList.text = sb.ToString();
         }else{
             Debug.LogError("Room list is null."); // 如果 roomList 為空，則打印錯誤信息
         }
     }
-    
-    //版2能生成不能更新
-    // public override void OnRoomListUpdate(List<RoomInfo> roomList)
-    // {
-    //     if(roomList != null) {// 檢查 roomList 是否為空
-    //         print("update");
-    //         StringBuilder sb = new StringBuilder();
-    //         foreach (RoomInfo roomInfo in roomList){
-    //             // 使用預置件生成新的房間圖片
-    //             GameObject roomImage = Instantiate(roomNamePrefab, roomListParent);
-                
-    //             // 在新房間圖片中找到用於顯示房間名的 Text，並將其設置為房間名
-    //             Text roomNameText = roomImage.GetComponentInChildren<Text>();
-    //             if (roomNameText != null){
-    //                 roomNameText.text = roomInfo.Name;
-    //             }
-    //             else{
-    //                 Debug.LogError("RoomName Text not found in room prefab.");
-    //             }
-    //         }
-    //         textRoomList.text = sb.ToString();
-    //     }else{
-    //         Debug.LogError("Room list is null."); // 如果 roomList 為空，則打印錯誤信息
-    //     }
-    // }
-
-    //原版
-    // public override void OnRoomListUpdate(List<RoomInfo> roomList)
-    // {
-    //     if(roomList != null) // 檢查 roomList 是否為空
-    //     {
-    //         print("update");
-    //         StringBuilder sb = new StringBuilder();
-    //         foreach(RoomInfo roomInfo in roomList)
-    //         {
-    //             if(roomInfo.PlayerCount > 0)
-    //             {
-    //                 sb.AppendLine("→ " + roomInfo.Name + ": " +roomInfo.PlayerCount);
-    //             } 
-    //         }
-    //         textRoomList.text = sb.ToString();
-    //     }else{
-    //         Debug.LogError("Room list is null."); // 如果 roomList 為空，則打印錯誤信息
-    //     }
-    // }
-
-
-
+  
 }

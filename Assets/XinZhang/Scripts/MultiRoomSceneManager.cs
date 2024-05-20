@@ -36,10 +36,21 @@ public class MultiRoomSceneManager : MonoBehaviourPunCallbacks
          buttonStartGame.interactable = PhotonNetwork.IsMasterClient;
     }
 
-    public void UpdatePlayerList(){
+    // public void UpdatePlayerList(){
+    //     StringBuilder sb = new StringBuilder();
+    //     foreach(var kvp  in PhotonNetwork.CurrentRoom.Players){
+    //         sb.AppendLine("→ " + kvp.Value.NickName);
+    //     }
+    //     textPlayerList.text = sb.ToString();
+    // }
+
+    public void UpdatePlayerList()
+    {
         StringBuilder sb = new StringBuilder();
-        foreach(var kvp  in PhotonNetwork.CurrentRoom.Players){
-            sb.AppendLine("→ " + kvp.Value.NickName);
+        foreach (var kvp in PhotonNetwork.CurrentRoom.Players)
+        {
+            string playerType = kvp.Value.IsMasterClient ? "房主" : "玩家";
+            sb.AppendLine($"→ {kvp.Value.NickName} ({playerType})");
         }
         textPlayerList.text = sb.ToString();
     }
