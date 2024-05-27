@@ -70,7 +70,7 @@ public class MultiRoomSceneManager : MonoBehaviourPunCallbacks
     }
 
     public void OnClickStartGame(){
-        SceneManager.LoadScene("SampleScene");
+        SceneManager.LoadScene("GameScene");
     }
 
     public override void OnLeftRoom()
