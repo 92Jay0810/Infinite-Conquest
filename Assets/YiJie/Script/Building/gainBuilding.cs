@@ -9,12 +9,11 @@ public class gainBuilding : MonoBehaviour
     [SerializeField] protected int gainPower = 10;
     [SerializeField] protected float gainInterval = 5.0f;
     protected Text hp_text;
-    protected Player player;
+    public Player player;
     protected float lastGainCounter;
     virtual protected void Start()
     {
         hp_text = transform.Find("hp_canva/hp_int").GetComponent<Text>();
-        player = transform.parent.GetComponent<Player>();
         updateHp_text();
     }
 

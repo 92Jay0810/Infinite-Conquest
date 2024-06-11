@@ -4281,19 +4281,11 @@ MonoBehaviour:
   build_buttons:
   - {fileID: 2267887069336738859}
   - {fileID: 2267887069249113233}
-  build_prefab:
-  - {fileID: 5638410654876705634, guid: feb4a5be1bb01b7408cc3a7b098dc0cc, type: 3}
-  - {fileID: 3560839817352234285, guid: 893657e68ace32948b10d1817018c9a8, type: 3}
   train_buttons:
   - {fileID: 2267887069129864800}
   - {fileID: 2267887070258541571}
   - {fileID: 2267887069063314275}
   - {fileID: 2267887070004563085}
-  train_prefab:
-  - {fileID: 961305431698880094, guid: 83bd56bf84474324cbcc571401d0aee0, type: 3}
-  - {fileID: 4707689436433449064, guid: d86905570550f7547a5a2f52391a885b, type: 3}
-  - {fileID: 8605588540906797487, guid: 43fe2d2e0775d1143a206878048ce73a, type: 3}
-  - {fileID: 161506218294726439, guid: d0c1de24820b2864a8876b443dc19905, type: 3}
 --- !u!114 &2267887070338351147
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -12,13 +12,13 @@ public class GameSceneManger : MonoBehaviour
     {
         if (PhotonNetwork.CurrentRoom == null)
         {
-           // SceneManager.LoadScene("MultiLobbyScene");
+            SceneManager.LoadScene("MultiLobbyScene");
         }
         else
         {
-            //initGame();
+            initGame();
         }
-        initGame();
+        //initGame();
     }
     void Update()
     {
@@ -27,6 +27,7 @@ public class GameSceneManger : MonoBehaviour
     public void initGame()
     {
         initGround();
+        initPlayer();
     }
     private void initGround()
     {
@@ -37,13 +38,25 @@ public class GameSceneManger : MonoBehaviour
         ground_Sprite[3] = transform.Find("ground4").GetComponent<SpriteRenderer>();
         ground_Sprite[4] = transform.Find("ground5").GetComponent<SpriteRenderer>();
         ground_Sprite[5] = transform.Find("ground6").GetComponent<SpriteRenderer>();
-        for(int i =0; i <6; i++)
+        for (int i = 0; i < 6; i++)
         {
             ground_Sprite[i].sprite = ground_resource[Random.Range(0, 6)];
         }
     }
     private void initPlayer()
     {
-
+        Vector3 player_position = new Vector3(0, 0, 0);
+        Vector3 char_position = new Vector3(player_position.x + 10f, 0, 0);
+        GameObject player_gameObject = PhotonNetwork.Instantiate("player", player_position, Quaternion.identity);
+        Player player = player_gameObject.GetComponent<Player>();
+        GameObject castle_gameObject = PhotonNetwork.Instantiate("castle", player_position, Quaternion.identity);
+        Castle castle = castle_gameObject.GetComponent<Castle>();
+        castle.player = player;
+        GameObject farmer1 = PhotonNetwork.Instantiate("farmer", char_position, Quaternion.identity);
+        GameObject farmer2 = PhotonNetwork.Instantiate("farmer", char_position, Quaternion.identity);
+        Farmer farmer1_component = farmer1.GetComponent<Farmer>();
+        Farmer farmer2_component = farmer2.GetComponent<Farmer>();
+        farmer1_component.player = player;
+        farmer2_component.player = player;
     }
 }

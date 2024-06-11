@@ -7,7 +7,7 @@ public class Castle : MonoBehaviour
 {
     [SerializeField] int hp = 250;
     Text hp_text;
-    // Start is called before the first frame update
+    public Player player;
     void Start()
     {
         hp_text = transform.Find("hp_canva/hp_int").GetComponent<Text>();

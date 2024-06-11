@@ -19,7 +19,7 @@ public class CollectChar : MonoBehaviour
     protected bool isRun = false;
     protected Vector2 RunTarget;
     protected float collectTimer = 0.0f; // 上次採集時間
-    protected Player player;
+    public Player player;
     virtual protected void Start()
     {
         spireRender = GetComponent<SpriteRenderer>();
@@ -27,7 +27,6 @@ public class CollectChar : MonoBehaviour
         collect_point_right = transform.Find("collect_point_right").GetComponent<Transform>();
         hp_text = transform.Find("hp_canva/hp_int").GetComponent<Text>();
         am = GetComponent<Animator>();
-        player = transform.parent.GetComponent<Player>();
         updateHp_text();
     }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
 
 public class Player : MonoBehaviour
 {
@@ -26,10 +27,8 @@ public class Player : MonoBehaviour
     Button update_generation_button;
     Image build_menu;
     [SerializeField] Button[] build_buttons;
-    [SerializeField] GameObject[] build_prefab;
     Image train_menu;
     [SerializeField] Button[] train_buttons;
-    [SerializeField] GameObject[] train_prefab;
     private Vector3 lastCallMenuPosition;
     // reel_menu
     Button reel_botton;
@@ -49,7 +48,8 @@ public class Player : MonoBehaviour
     Image gainResource_buff_image;
     Image attackResource_buff_image;
     Image gainResearch_buff_image;
-
+    //photon
+    private PhotonView Photonview;
     void Start()
     {
         // resource
@@ -87,50 +87,55 @@ public class Player : MonoBehaviour
         gainResource_buff_image = transform.Find("Camera/reel_canva/coll-nb").GetComponent<Image>();
         attackResource_buff_image = transform.Find("Camera/reel_canva/thief-nb").GetComponent<Image>();
         gainResearch_buff_image = transform.Find("Camera/reel_canva/tech-nb").GetComponent<Image>();
+        //photon
+        Photonview = this.gameObject.GetComponent<PhotonView>();
     }
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(1))
+        if (Photonview.IsMine)
         {
-            CreateMenuDetected();
-        }
-        //若 build_menu打開的話，就持續檢查是否達成升級世代的條件
-        if (button_menu.gameObject.activeSelf)
-        {
-            UpdateGenerationButtonDetected();
-        }
-        //若 build_menu打開的話，就持續檢查是否達成條件
-        if (build_menu.gameObject.activeSelf)
-        {
-            Build_menu_detect();
-        }
-        //若 train_menu打開的話，就持續檢查是否達成條件
-        if (train_menu.gameObject.activeSelf)
-        {
-            Train_menu_detect();
-        }
-        //若 train_menu沒打開的話，就持續檢查是否要開奏摺
-        if (!current_reel_menu.gameObject.activeSelf)
-        {
-            DetectReelButton();
-        }
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            ChangeWood(500, false, false);
-            ChangeRock(500, false, false);
-            ChangeIron(500, false, false);
-            ChangeCoin(500, false, false);
-            ChangeFood(500, false, false);
-            ChangeResearch(500, false);
-            InitReel();
-            reel_display_timer = 0.0f;
-        }
-        if (Input.GetKeyDown(KeyCode.Y))
-        {
-            Debug.Log("buff增加，gainResource20%");
-            gainResource_buff = 1.2f;
-            //可以在類似的code 新增顯示buff圖案
+            if (Input.GetMouseButtonDown(1))
+            {
+                CreateMenuDetected();
+            }
+            //若 build_menu打開的話，就持續檢查是否達成升級世代的條件
+            if (button_menu.gameObject.activeSelf)
+            {
+                UpdateGenerationButtonDetected();
+            }
+            //若 build_menu打開的話，就持續檢查是否達成條件
+            if (build_menu.gameObject.activeSelf)
+            {
+                Build_menu_detect();
+            }
+            //若 train_menu打開的話，就持續檢查是否達成條件
+            if (train_menu.gameObject.activeSelf)
+            {
+                Train_menu_detect();
+            }
+            //若 reel_menu沒打開的話，就持續檢查是否要開奏摺
+            if (!current_reel_menu.gameObject.activeSelf)
+            {
+                DetectReelButton();
+            }
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                ChangeWood(500, false, false);
+                ChangeRock(500, false, false);
+                ChangeIron(500, false, false);
+                ChangeCoin(500, false, false);
+                ChangeFood(500, false, false);
+                ChangeResearch(500, false);
+                InitReel();
+                reel_display_timer = 0.0f;
+            }
+            if (Input.GetKeyDown(KeyCode.Y))
+            {
+                Debug.Log("buff增加，gainResource20%");
+                gainResource_buff = 1.2f;
+                //可以在類似的code 新增顯示buff圖案
+            }
         }
     }
     public void ChangeWood(int number, bool gain_buff, bool attack_gain_buff)
@@ -269,7 +274,7 @@ public class Player : MonoBehaviour
     }
     private void Build_menu_detect()
     {
-        //礦場
+        //商會
         if (wood >= 100 && rock >= 100 && iron >= 150)
         {
             build_buttons[0].interactable = true;
@@ -293,7 +298,9 @@ public class Player : MonoBehaviour
         ChangeWood(-100, false, false);
         ChangeRock(-100, false, false);
         ChangeIron(-150, false, false);
-        Instantiate(build_prefab[0], lastCallMenuPosition, Quaternion.identity, transform);
+        GameObject quarry= PhotonNetwork.Instantiate("quarry", lastCallMenuPosition, Quaternion.identity);
+        Quarry quarry_component = quarry.GetComponent<Quarry>();
+        quarry_component.player = this.GetComponent<Player>();
         build_menu.gameObject.SetActive(false);
     }
     public void CreateMines()
@@ -301,7 +308,9 @@ public class Player : MonoBehaviour
         ChangeWood(-100, false, false);
         ChangeRock(-100, false, false);
         ChangeIron(-100, false, false);
-        Instantiate(build_prefab[1], lastCallMenuPosition, Quaternion.identity, transform);
+        GameObject mines = PhotonNetwork.Instantiate("mines", lastCallMenuPosition, Quaternion.identity);
+        Mines mines_component = mines.GetComponent<Mines>();
+        mines_component.player = this.GetComponent<Player>();
         build_menu.gameObject.SetActive(false);
     }
     void UpdateGenerationButtonDetected()
@@ -426,26 +435,30 @@ public class Player : MonoBehaviour
     public void CreateFarmer()
     {
         ChangeFood(-35, false, false);
-        Instantiate(train_prefab[2], lastCallMenuPosition, Quaternion.identity, transform);
+        GameObject farmer = PhotonNetwork.Instantiate("farmer", lastCallMenuPosition, Quaternion.identity);
+        Farmer farmer_component = farmer.GetComponent<Farmer>();
+        farmer_component.player = this.GetComponent<Player>();
         train_menu.gameObject.SetActive(false);
     }
     public void CreateMagician()
     {
         ChangeFood(-50, false, false);
         ChangeCoin(-10, false, false);
-        Instantiate(train_prefab[3], lastCallMenuPosition, Quaternion.identity, transform);
+        PhotonNetwork.Instantiate("magician", lastCallMenuPosition, Quaternion.identity);
         train_menu.gameObject.SetActive(false);
     }
     public void CreateSoldier()
     {
         ChangeFood(-30, false, false);
-        Instantiate(train_prefab[1], lastCallMenuPosition, Quaternion.identity, transform);
+        PhotonNetwork.Instantiate("soldier", lastCallMenuPosition, Quaternion.identity);
         train_menu.gameObject.SetActive(false);
     }
     public void CreateVillager()
     {
         ChangeFood(-25, false, false);
-        Instantiate(train_prefab[0], lastCallMenuPosition, Quaternion.identity, transform);
+        GameObject villager = PhotonNetwork.Instantiate("villager", lastCallMenuPosition, Quaternion.identity);
+       villager villager_component = villager.GetComponent<villager>();
+        villager_component.player = this.GetComponent<Player>();
         train_menu.gameObject.SetActive(false);
     }
     private void InitReel()
@@ -807,7 +820,7 @@ public class Player : MonoBehaviour
         {
             case 1:
                 gainResource_buff_image.gameObject.SetActive(true);
-                StartCoroutine(BuffCoroutine(gainResource_buff_image, buffDuration,change_buff_index));
+                StartCoroutine(BuffCoroutine(gainResource_buff_image, buffDuration, change_buff_index));
                 break;
             case 2:
                 attackResource_buff_image.gameObject.SetActive(true);
@@ -819,7 +832,7 @@ public class Player : MonoBehaviour
                 break;
         }
     }
-    private IEnumerator BuffCoroutine(Image buffimage, float buffDuration , int buffer_index)
+    private IEnumerator BuffCoroutine(Image buffimage, float buffDuration, int buffer_index)
     {
         // 等待 buffDuration 秒
         yield return new WaitForSeconds(buffDuration);
