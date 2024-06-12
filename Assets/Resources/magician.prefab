@@ -479,7 +479,6 @@ MonoBehaviour:
   attackRange: 1
   attackInterval: 3
   moveSpeed: 4
-  bulletPrefab: {fileID: 5249931560073962309, guid: 8fbc39a9691f71f4eb678c501859e1d9, type: 3}
 --- !u!114 &-902996561846732957
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -514,7 +513,8 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: -902996561846732957}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0

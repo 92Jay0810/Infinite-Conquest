@@ -45,8 +45,16 @@ public class GameSceneManger : MonoBehaviour
     }
     private void initPlayer()
     {
-        Vector3 player_position = new Vector3(0, 0, 0);
-        Vector3 char_position = new Vector3(player_position.x + 10f, 0, 0);
+        Vector3 player_position = new Vector3(Random.Range(-180f, 180f), Random.Range(-60f, 180f), 0);
+        Vector3 char_position;
+        if (player_position.x + 10f <= 180f)
+        {
+            char_position = new Vector3(player_position.x + 10f, player_position.y, player_position.z);
+        }
+        else
+        {
+            char_position = new Vector3(player_position.x - 10f, player_position.y, player_position.z);
+        }
         GameObject player_gameObject = PhotonNetwork.Instantiate("player", player_position, Quaternion.identity);
         Player player = player_gameObject.GetComponent<Player>();
         GameObject castle_gameObject = PhotonNetwork.Instantiate("castle", player_position, Quaternion.identity);

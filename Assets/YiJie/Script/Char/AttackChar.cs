@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
-public class AttackChar : MonoBehaviour
+public class AttackChar : MonoBehaviourPunCallbacks
 {
     [SerializeField] protected int hp = 40;
     [SerializeField] protected float attackRange = 1.0f;
     [SerializeField] protected float attackInterval = 3f;
     [SerializeField] protected float moveSpeed = 4.0f;
-    [SerializeField] protected GameObject bulletPrefab; // 子彈物件
+    protected string bulletPrefab_Name; // 子彈物件字串
     protected SpriteRenderer spireRender;
     protected Transform firePoint_left; // 子彈發射點
     protected Transform firePoint_right; // 子彈發射點
@@ -19,6 +21,8 @@ public class AttackChar : MonoBehaviour
     protected bool isSelected = false; //是否有被選中
     protected bool isRun = false;
     protected Vector2 RunTarget;
+    //photon
+    private PhotonView pv;
     virtual protected void Start()
     {
         spireRender = GetComponent<SpriteRenderer>();
@@ -27,23 +31,28 @@ public class AttackChar : MonoBehaviour
         hp_text = transform.Find("hp_canva/hp_int").GetComponent<Text>();
         am = GetComponent<Animator>();
         updateHp_text();
+        //photon
+        pv = this.gameObject.GetComponent<PhotonView>();
     }
 
     protected void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (pv.IsMine)
         {
-            SelectCharacter();
-        }
-        DetectAnimationOfAttack_AccumulationAttackTimer();
-        //不在選取狀態下才檢測攻擊
-        if (lastFireTime >= attackInterval && !isSelected && !isRun)
-        {
-            AttackDetect();
-        }
-        if (isRun && !isSelected)
-        {
-            run();
+            if (Input.GetMouseButtonDown(0))
+            {
+                SelectCharacter();
+            }
+            DetectAnimationOfAttack_AccumulationAttackTimer();
+            //不在選取狀態下才檢測攻擊
+            if (lastFireTime >= attackInterval && !isSelected && !isRun)
+            {
+                AttackDetect();
+            }
+            if (isRun && !isSelected)
+            {
+                run();
+            }
         }
     }
 
@@ -58,11 +67,15 @@ public class AttackChar : MonoBehaviour
         if (hit.collider != null)
         {
             bool chahge = false;
-            //如果射中目標，有對應標籤，就採集
+            //如果射中目標，有對應標籤
             if (hit.collider.CompareTag("building") || hit.collider.CompareTag("soldier"))
             {
-                chahge = true;
-                lastFireTime += Time.deltaTime;
+                //不是自己的陣營的話，做出攻擊動作
+                if (!hit.collider.gameObject.GetComponent<PhotonView>().IsMine)
+                {
+                    chahge = true;
+                    lastFireTime += Time.deltaTime;
+                }
             }
             if (chahge)
             {
@@ -87,14 +100,17 @@ public class AttackChar : MonoBehaviour
         //有射中東西的話
         if (hit.collider != null)
         {
-            //如果射中目標，有castle標籤，就攻擊
+            //如果射中目標，有castle、soldier標籤
             if (hit.collider.CompareTag("building") || hit.collider.CompareTag("soldier"))
             {
-                Debug.Log("attack");
-                lastFireTime = 0.0f;
-                GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
-                Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
-                rb.AddForce(direction * 10f, ForceMode2D.Impulse);
+                //不是自己的陣營的話，攻擊
+                if (!hit.collider.gameObject.GetComponent<PhotonView>().IsMine)
+                {
+                    lastFireTime = 0.0f;
+                    GameObject bullet = PhotonNetwork.Instantiate(bulletPrefab_Name, firePoint.position, Quaternion.identity);
+                    Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
+                    rb.AddForce(direction * 5f, ForceMode2D.Impulse);
+                }
             }
         }
     }
@@ -175,23 +191,50 @@ public class AttackChar : MonoBehaviour
     }
     protected void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "fireball")
+        if (pv.IsMine)
         {
-            Debug.Log("hp--");
-            hp = hp - 15;
-            updateHp_text();
-            Destroy(collision.gameObject);
+            int damage = 0;
+            //判斷是否為子彈
+            switch (collision.gameObject.tag)
+            {
+                case "fireball":
+                    damage = 15;
+                    break;
+                case "chopping":
+                    damage = 7;
+                    break;
+            }
+            if (damage > 0)
+            {
+                //不是我的子彈，代表被攻擊
+                Bullet bullet = collision.gameObject.GetComponent<Bullet>();
+                if (!bullet.pv.IsMine)
+                {
+                    Debug.Log("hp--");
+                    pv.RPC("UpdateHealth", RpcTarget.AllBuffered, hp - damage);
+                    // 銷毀子彈
+                    pv.RPC("DestroyBullet", RpcTarget.AllBuffered, collision.gameObject.GetPhotonView().ViewID);
+                }
+            }
         }
-        if (collision.gameObject.tag == "chopping")
-        {
-            Debug.Log("hp--");
-            hp = hp - 7;
-            updateHp_text();
-            Destroy(collision.gameObject);
-        }
+    }
+    [PunRPC]
+    void UpdateHealth(int newHp)
+    {
+        hp = newHp;
+        updateHp_text();
     }
     protected void updateHp_text()
     {
         hp_text.text = hp.ToString();
+    }
+    [PunRPC]
+    void DestroyBullet(int bulletViewID)
+    {
+        PhotonView bulletView = PhotonView.Find(bulletViewID);
+        if (bulletView != null && bulletView.IsMine)
+        {
+            PhotonNetwork.Destroy(bulletView.gameObject);
+        }
     }
 }

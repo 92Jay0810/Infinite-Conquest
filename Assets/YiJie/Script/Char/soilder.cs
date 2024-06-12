@@ -10,6 +10,7 @@ public class soilder : AttackChar
          attackRange = 0.3f;
          attackInterval = 3f;
         moveSpeed = 4.0f;
+        bulletPrefab_Name = "chopping";
         base.Start();
     }
 

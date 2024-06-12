@@ -11,6 +11,7 @@ public class Magician : AttackChar
         attackRange = 5f;
         attackInterval = 4f;
         moveSpeed = 5.0f;
+        bulletPrefab_Name = "fireball";
         base.Start();
     }
 

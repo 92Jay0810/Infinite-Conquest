@@ -14,11 +14,13 @@ public class CameraController : MonoBehaviour
         Photonview = this.GetComponentInParent<PhotonView>();
         if (Photonview.IsMine)
         {
-            camera.enabled = true;
+            // camera.enabled = true;
+            camera.gameObject.SetActive(true);
         }
         else
         {
-            camera.enabled = false;
+            //camera.enabled = false;
+            camera.gameObject.SetActive(false);
         }
     }
 
