@@ -67,7 +67,7 @@ public class gainBuilding : MonoBehaviourPunCallbacks
         }
     }
     [PunRPC]
-    void UpdateHealth(int newHp)
+    protected void UpdateHealth(int newHp)
     {
         hp = newHp;
         updateHp_text();
@@ -77,7 +77,7 @@ public class gainBuilding : MonoBehaviourPunCallbacks
         hp_text.text = hp.ToString();
     }
     [PunRPC]
-    void DestroyBullet(int bulletViewID)
+    protected void DestroyBullet(int bulletViewID)
     {
         PhotonView bulletView = PhotonView.Find(bulletViewID);
         if (bulletView != null && bulletView.IsMine)

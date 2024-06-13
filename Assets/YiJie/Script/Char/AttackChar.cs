@@ -109,7 +109,8 @@ public class AttackChar : MonoBehaviourPunCallbacks
                     lastFireTime = 0.0f;
                     GameObject bullet = PhotonNetwork.Instantiate(bulletPrefab_Name, firePoint.position, Quaternion.identity);
                     Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
-                    rb.AddForce(direction * 5f, ForceMode2D.Impulse);
+                    //rb.AddForce(direction * 5f, ForceMode2D.Impulse);
+                    rb.AddForce(direction * 5f);
                 }
             }
         }
@@ -219,7 +220,7 @@ public class AttackChar : MonoBehaviourPunCallbacks
         }
     }
     [PunRPC]
-    void UpdateHealth(int newHp)
+    protected void UpdateHealth(int newHp)
     {
         hp = newHp;
         updateHp_text();
@@ -229,7 +230,7 @@ public class AttackChar : MonoBehaviourPunCallbacks
         hp_text.text = hp.ToString();
     }
     [PunRPC]
-    void DestroyBullet(int bulletViewID)
+    protected void DestroyBullet(int bulletViewID)
     {
         PhotonView bulletView = PhotonView.Find(bulletViewID);
         if (bulletView != null && bulletView.IsMine)
