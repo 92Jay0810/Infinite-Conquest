@@ -31,6 +31,10 @@ public class gainBuilding : MonoBehaviourPunCallbacks
                 lastGainCounter = 0.0f;
                 GainResource();
             }
+            if (player != null && !player.alive)
+            {
+                PhotonNetwork.Destroy(this.gameObject);
+            }
         }
     }
     virtual protected void GainResource()

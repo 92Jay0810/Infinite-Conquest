@@ -50,6 +50,12 @@ public class Player : MonoBehaviour
     Image gainResearch_buff_image;
     //photon
     private PhotonView Photonview;
+    public bool alive = true;
+    //GameSceneManger
+    GameSceneManger gm;
+    //final_image
+    Image GameOver;
+    Image Win;
     void Start()
     {
         // resource
@@ -89,11 +95,16 @@ public class Player : MonoBehaviour
         gainResearch_buff_image = transform.Find("Camera/reel_canva/tech-nb").GetComponent<Image>();
         //photon
         Photonview = this.gameObject.GetComponent<PhotonView>();
+        //GameSceneManger
+        gm = GameObject.Find("GameSceneManger").GetComponent<GameSceneManger>();
+        //final
+        GameOver= transform.Find("Camera/final_canva/gameOver").GetComponent<Image>();
+        Win= transform.Find("Camera/final_canva/win").GetComponent<Image>();
     }
 
     void Update()
     {
-        if (Photonview.IsMine)
+        if (Photonview.IsMine && alive)
         {
             if (Input.GetMouseButtonDown(1))
             {
@@ -135,6 +146,11 @@ public class Player : MonoBehaviour
                 Debug.Log("buff增加，gainResource20%");
                 gainResource_buff = 1.2f;
                 //可以在類似的code 新增顯示buff圖案
+            }
+            //若 GameOver沒打開的話，就持續檢查是否結束遊戲，並顯示勝利
+            if (!GameOver.gameObject.activeSelf)
+            {
+                CheckWin();
             }
         }
     }
@@ -444,13 +460,17 @@ public class Player : MonoBehaviour
     {
         ChangeFood(-50, false, false);
         ChangeCoin(-10, false, false);
-        PhotonNetwork.Instantiate("magician", lastCallMenuPosition, Quaternion.identity);
+        GameObject magician = PhotonNetwork.Instantiate("magician", lastCallMenuPosition, Quaternion.identity);
+        Magician Magician_component = magician.GetComponent<Magician>();
+        Magician_component.player = this.GetComponent<Player>();
         train_menu.gameObject.SetActive(false);
     }
     public void CreateSoldier()
     {
         ChangeFood(-30, false, false);
-        PhotonNetwork.Instantiate("soldier", lastCallMenuPosition, Quaternion.identity);
+        GameObject Soldier = PhotonNetwork.Instantiate("soldier", lastCallMenuPosition, Quaternion.identity);
+        soilder Soldier_component = Soldier.GetComponent<soilder>();
+        Soldier_component.player = this.GetComponent<Player>();
         train_menu.gameObject.SetActive(false);
     }
     public void CreateVillager()
@@ -856,5 +876,20 @@ public class Player : MonoBehaviour
         build_menu.gameObject.SetActive(false);
         train_menu.gameObject.SetActive(false);
         current_reel_menu.gameObject.SetActive(false);
+    }
+    public void Dead()
+    {
+        alive = false;
+        //呼叫gameSceneManger 更新字典
+        gm.CallPlayerDead();
+        //顯示結束遊戲畫面
+        GameOver.gameObject.SetActive(true);
+    }
+    public void CheckWin()
+    {
+        if (gm.CheackGameOver())
+        {
+            Win.gameObject.SetActive(true);
+        }
     }
 }

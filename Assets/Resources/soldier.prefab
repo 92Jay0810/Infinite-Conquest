@@ -368,6 +368,7 @@ MonoBehaviour:
   attackRange: 1
   attackInterval: 3
   moveSpeed: 4
+  player: {fileID: 0}
 --- !u!114 &-1994241768132821783
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -57,6 +57,10 @@ public class CollectChar : MonoBehaviourPunCallbacks
                 CollectResource();
                 collectTimer = 0.0f;
             }
+            if (player != null && !player.alive)
+            {
+                PhotonNetwork.Destroy(this.gameObject);
+            }
         }
     }
     protected void SelectCharacter()

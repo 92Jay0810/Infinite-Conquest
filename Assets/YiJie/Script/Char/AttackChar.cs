@@ -21,6 +21,8 @@ public class AttackChar : MonoBehaviourPunCallbacks
     protected bool isSelected = false; //是否有被選中
     protected bool isRun = false;
     protected Vector2 RunTarget;
+
+    public Player player;
     //photon
     private PhotonView pv;
     virtual protected void Start()
@@ -52,6 +54,10 @@ public class AttackChar : MonoBehaviourPunCallbacks
             if (isRun && !isSelected)
             {
                 run();
+            }
+            if (player != null && !player.alive)
+            {
+                PhotonNetwork.Destroy(this.gameObject);
             }
         }
     }

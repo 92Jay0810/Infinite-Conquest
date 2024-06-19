@@ -21,7 +21,14 @@ public class Castle : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-
+        if (pv.IsMine)
+        {
+            if (hp <= 0)
+            {
+                player.Dead();
+                PhotonNetwork.Destroy(this.gameObject);
+            }
+        }
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
