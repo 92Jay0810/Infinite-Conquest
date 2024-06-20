@@ -30,11 +30,13 @@ public class GameSceneManger : MonoBehaviourPunCallbacks
     public void initGame()
     {
         initGround();
+        initResources();
         initPlayer();
-        foreach(var kvp in PhotonNetwork.CurrentRoom.Players)
+        foreach (var kvp in PhotonNetwork.CurrentRoom.Players)
         {
             alivePlayerMap[kvp.Value] = true;
         }
+
     }
     private void initGround()
     {
@@ -65,6 +67,49 @@ public class GameSceneManger : MonoBehaviourPunCallbacks
         for (int i = 0; i < 6; i++)
         {
             ground_Sprite[i].sprite = ground_resource[spriteIndices[i]];
+        }
+    }
+    private void initResources()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            int resourceCount = 20; // 生成的資源數量
+            Vector3[] resourcePositions = new Vector3[resourceCount];
+            int[] resourceTypes = new int[resourceCount];
+
+            for (int i = 0; i < resourceCount; i++)
+            {
+                resourcePositions[i] = new Vector3(Random.Range(-180f, 180f), Random.Range(-60f, 180f), 0);
+                resourceTypes[i] = Random.Range(0, 5);
+            }
+            // 通過 RPC 同步給所有客戶端
+            pv.RPC("SyncResources", RpcTarget.All, resourcePositions, resourceTypes);
+        }
+    }
+    [PunRPC]
+    private void SyncResources(Vector3[] resourcePositions, int[] resourceTypes)
+    {
+        for (int i = 0; i < resourcePositions.Length; i++)
+        {
+            GameObject resourceObject;
+            switch (resourceTypes[i])
+            {
+                case 0:
+                    resourceObject = PhotonNetwork.Instantiate("tree", resourcePositions[i], Quaternion.identity);
+                    break;
+                case 1:
+                    resourceObject = PhotonNetwork.Instantiate("stone", resourcePositions[i], Quaternion.identity);
+                    break;
+                case 2:
+                    resourceObject = PhotonNetwork.Instantiate("steel", resourcePositions[i], Quaternion.identity);
+                    break;
+                case 3:
+                    resourceObject = PhotonNetwork.Instantiate("gold", resourcePositions[i], Quaternion.identity);
+                    break;
+                case 4:
+                    resourceObject = PhotonNetwork.Instantiate("wheat", resourcePositions[i], Quaternion.identity);
+                    break;
+            }
         }
     }
     private void initPlayer()
@@ -121,10 +166,6 @@ public class GameSceneManger : MonoBehaviourPunCallbacks
         {
             alivePlayerMap[info.Sender] = false;
         }
-        /* if(PhotonNetwork.IsMasterClient && CheackGameOver())
-        {
-            讓結果顯示或是讓player自己呼叫CheackGameOver 來展示結果
-        } */
     }
     public bool CheackGameOver()
     {
