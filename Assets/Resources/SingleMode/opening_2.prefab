@@ -1,0 +1,100 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4198676215383635534
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4198676215383635535}
+  - component: {fileID: 4198676215383635529}
+  - component: {fileID: 4198676215383635528}
+  - component: {fileID: 5604691104628230288}
+  m_Layer: 5
+  m_Name: opening_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &4198676215383635535
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4198676215383635534}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -26}
+  m_SizeDelta: {x: 1000, y: 700}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &4198676215383635529
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4198676215383635534}
+  m_CullTransparentMesh: 1
+--- !u!114 &4198676215383635528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4198676215383635534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 50
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 5
+    m_MaxSize: 50
+    m_Alignment: 3
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1.3
+  m_Text: "\u9019\u4E00\u767C\u73FE\u5FB9\u5E95\u6539\u8B8A\u4E86\u4E16\u754C\u7684\u904B\u4F5C\u65B9\u5F0F\u3002\u50B3\u7D71\u7684\u5B78\u9662\u5DF2\u4E0D\u518D\u50C5\u50C5\u6559\u6388\u79D1\u5B78\u548C\u4EBA\u6587\u77E5\u8B58\uFF0C\u800C\u662F\u8F49\u8B8A\u70BA\u9B54\u6CD5\u5B78\u9662\uFF0C\u5C08\u9580\u7814\u7A76\u9019\u4E9B\u795E\u79D8\u7684\u7406\u5316\u5B78\u548C\u76F8\u95DC\u5BE6\u9A57\u6280\r\u5DE7\u3002\n\u4F46\u597D\u666F\u4E0D\u5E38\uFF0C\u67D0\u4E9B\u5B78\u9662\u638C\u63E1\u4E86\u5F37\u5927\u7684\u529B\u91CF\u4FBF\u60F3\u6210\u70BA\u4E16\u754C\u7684\u4E3B\u5BB0\uFF0C\u958B\u59CB\u5411\u5404\u570B\u653F\u5E9C\u9032\u653B\u3002
+    \u6469\u6C99\u570B\u7684\u5E1D\u570B\u5B78\u9662\u6210\u529F\u638C\u63E1\u4E86\u6469\u6C99\u570B\u4E26\u4F01\u5716\u8B93\u6240\u6709\u5883\u5167\u5B78\u9662\u81E3\u670D\uFF0C\u65BC\u662F\u958B\u59CB\u5C0D\u5404\u5927\u5B78\u9662\u767C\u8D77\u9032\u653B\u3002
+    \r\n\u5712\u660E\uFF0C\u592E\u7A7A\uFF0C\u5357\u6D0B\uFF0C\u5EF6\u5E73\u7D1B\u7D1B\u81E3\u670D\u65BC\u5E1D\u570B\u5B78\u9662
+    \u3002\r\n"
+--- !u!114 &5604691104628230288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4198676215383635534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a1ad494a1c3f9c47afad55a7b8e51be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 100
+  destroyHeight: 1000
