@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Flower;
@@ -8,24 +8,62 @@ using UnityEngine.UI;
 public class opening : MonoBehaviour
 {
     FlowerSystem fs;
+    private int progress = 0;
+    private bool gameEnd = false;
     [SerializeField] GameObject openingText_1;
     [SerializeField] GameObject openingText_2;
+    private string playername = "";
     [SerializeField] GameObject InputPlayerField;
-    // Start is called before the first frame update
+    [SerializeField] GameObject playerbutton;
     void Start()
     {
         fs = FlowerManager.Instance.CreateFlowerSystem("default", false);
         fs.SetupDialog();
-        //UI StageŸ“Y›õ—pCİ3D—VE”äŠr—L—pCèû¦š¤•Ğİcanva’†
+        //UI Stageæ²’ä»€éº¼ç”¨ï¼Œåœ¨3DéŠæˆ²æ¯”è¼ƒæœ‰ç”¨ï¼Œé¡¯ç¤ºåœ–ç‰‡åœ¨canvaä¸­
         //fs.SetupUIStage("default", "DefaultUIStagePrefab", 10);
-        fs.ReadTextFromResource("SingleMode/test");
         fs.RegisterCommand("CreateOpeningText_1", CreateOpeningText_1);
         fs.RegisterCommand("CreateOpeningText_2", CreateOpeningText_2);
+        fs.RegisterCommand("InputPlayerText", InputPlayerText);
+        fs.SetVariable("playername", playername);
     }
 
 
     void Update()
     {
+        if (fs.isCompleted && !gameEnd)
+        {
+            switch (progress)
+            {
+                case 0:
+                    fs.ReadTextFromResource("SingleMode/opening_1");
+                    progress = 1;
+                    break;
+                case 1:
+                    fs.SetupButtonGroup();
+                        fs.SetupButton("åŒæ„.", () =>
+                        {
+                            gameEnd = false;
+                            fs.RemoveButtonGroup();
+                            fs.SetTextList(new List<string> { "é‚£ä½ å…ˆå»è¨“ç·´å ´æ‰¾æ•™å®˜å§ã€‚[w]" });
+                            progress = 2;
+                        });
+                    fs.SetupButton("ä¸åŒæ„", () =>
+                    {
+                        gameEnd = false;
+                        fs.RemoveButtonGroup();
+                        fs.SetTextList(new List<string> { "çœŸçš„ä¸é¡˜æ„å—?[w]" });
+                    });
+                    gameEnd = true;
+                    break;
+                case 2:
+                    fs.ReadTextFromResource("SingleMode/opening_2");
+                    progress = 3;
+                    break;
+                case 3:
+
+                    break;
+            }
+        }
         if (Input.GetKeyDown(KeyCode.Space))
         {
             fs.Next();
@@ -33,40 +71,43 @@ public class opening : MonoBehaviour
     }
     private void CreateOpeningText_1(List<string> properties)
     {
-        //æQ›”˜b“Icanva
+        //å…ˆæ‰¾å°è©±çš„canva
         GameObject canvas = GameObject.Find("DefaultDialogPrefab(Clone)");
-        // İ Canvas “Iq•¨ŒˆÊ’u‘nŒš•¶š prefab
+        // åœ¨ Canvas çš„å­ç‰©ä»¶ä½ç½®å‰µå»ºæ–‡å­— prefab
         GameObject spawnedText = Instantiate(openingText_1, canvas.transform);
-        // İ’u‰nˆÊ’u
+        // è¨­ç½®åˆå§‹ä½ç½®
         spawnedText.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -400);
     }
     private void CreateOpeningText_2(List<string> properties)
     {
-        //æQ›”˜b“Icanva
+        //å…ˆæ‰¾å°è©±çš„canva
         GameObject canvas = GameObject.Find("DefaultDialogPrefab(Clone)");
-        // İ Canvas “Iq•¨ŒˆÊ’u‘nŒš•¶š prefab
+        // åœ¨ Canvas çš„å­ç‰©ä»¶ä½ç½®å‰µå»ºæ–‡å­— prefab
         GameObject spawnedText = Instantiate(openingText_2, canvas.transform);
-        // İ’u‰nˆÊ’u
+        // è¨­ç½®åˆå§‹ä½ç½®
         spawnedText.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -450);
     }
     private void InputPlayerText(List<string> properties)
     {
-        //æQ›”˜b“Icanva
+        //å…ˆæ‰¾å°è©±çš„canva
         GameObject canvas = GameObject.Find("DefaultDialogPrefab(Clone)");
-        // İ Canvas “Iq•¨ŒˆÊ’u‘nŒš•¶š prefab
+        // åœ¨ Canvas çš„å­ç‰©ä»¶ä½ç½®å‰µå»ºæ–‡å­— prefab
         GameObject InputPlayerField_prefab = Instantiate(InputPlayerField, canvas.transform);
-        //İ’u‰nˆÊ’u
-        InputPlayerField_prefab.GetComponent<Transform>().position = new Vector2(-50, -100);
-        //ú‰Á’ñŒğ–Œ
-        InputField inputField = InputPlayerField_prefab.GetComponent<InputField>();
-        inputField.onEndEdit.AddListener(OnSubmit);
-
+        InputPlayerField_prefab.GetComponent<RectTransform>().anchoredPosition = new Vector2(-50, -100);
+        GameObject Playerbutton_prefab = Instantiate(playerbutton, canvas.transform);
+        Playerbutton_prefab.GetComponent<RectTransform>().anchoredPosition = new Vector2(250, -100);
+        //å¢åŠ æäº¤äº‹ä»¶
+        Button buttonComponent = Playerbutton_prefab.GetComponent<Button>();
+        buttonComponent.onClick.AddListener(() =>
+        {
+            // æ›´æ–°å­—ä¸²
+            playername = InputPlayerField_prefab.GetComponent<InputField>().text;
+            fs.SetVariable("playername", playername);
+            fs.Resume();
+            fs.Next();
+            // åˆªé™¤ InputField å’ŒæŒ‰éˆ•
+            Destroy(InputPlayerField_prefab);
+            Destroy(Playerbutton_prefab);
+        });
     }
-    //Šß‰Æ–¼âi–¢˜ôŠ®
-    void OnSubmit(string input)
-    {
-       // myString = input;  XVš‹ø
-       //  UpdateDisplayText(); XVèû¦•¶š
-    }
-
 }

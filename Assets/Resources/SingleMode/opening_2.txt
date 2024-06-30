@@ -1,0 +1,5 @@
+﻿[remove,char1,spFadeOut_1000]
+[remove,bg1,spFadeOut_1000]
+<到達訓練場後>[w]
+錏鎶:「你就是[#playername]吧，我是琥椏學院的教官，我叫錏鎶」 [w]
+[#playername]:「教官好，請問是有甚麼訓練要做呢?」[w]
