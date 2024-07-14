@@ -15,6 +15,8 @@ public class opening : MonoBehaviour
     private string playername = "";
     [SerializeField] GameObject InputPlayerField;
     [SerializeField] GameObject playerbutton;
+    [SerializeField] Image learningmode;
+    Image learningmode_prefab;
     void Start()
     {
         fs = FlowerManager.Instance.CreateFlowerSystem("default", false);
@@ -25,6 +27,7 @@ public class opening : MonoBehaviour
         fs.RegisterCommand("CreateOpeningText_2", CreateOpeningText_2);
         fs.RegisterCommand("InputPlayerText", InputPlayerText);
         fs.SetVariable("playername", playername);
+        fs.RegisterCommand("learningMode", learningMode);
     }
 
 
@@ -40,13 +43,13 @@ public class opening : MonoBehaviour
                     break;
                 case 1:
                     fs.SetupButtonGroup();
-                        fs.SetupButton("同意.", () =>
-                        {
-                            gameEnd = false;
-                            fs.RemoveButtonGroup();
-                            fs.SetTextList(new List<string> { "那你先去訓練場找教官吧。[w]" });
-                            progress = 2;
-                        });
+                    fs.SetupButton("同意.", () =>
+                    {
+                        gameEnd = false;
+                        fs.RemoveButtonGroup();
+                        fs.SetTextList(new List<string> { "那你先去訓練場找教官吧。[w]" });
+                        progress = 2;
+                    });
                     fs.SetupButton("不同意", () =>
                     {
                         gameEnd = false;
@@ -60,7 +63,17 @@ public class opening : MonoBehaviour
                     progress = 3;
                     break;
                 case 3:
-
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        progress = 4;
+                        if (learningmode_prefab != null)
+                        {
+                            Destroy(learningmode_prefab.gameObject);
+                        }
+                    }
+                    break;
+                case 4:
+                    fs.SetTextList(new List<string> { "結束[w]" });
                     break;
             }
         }
@@ -108,6 +121,30 @@ public class opening : MonoBehaviour
             // 刪除 InputField 和按鈕
             Destroy(InputPlayerField_prefab);
             Destroy(Playerbutton_prefab);
+        });
+    }
+    private void learningMode(List<string> properties)
+    {
+        //先找對話的canva
+        GameObject canvas = GameObject.Find("DefaultDialogPrefab(Clone)");
+        // 在 Canvas 的子物件位置創建prefab
+        learningmode_prefab = Instantiate(learningmode, canvas.transform);
+        learningmode_prefab.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+        //在learningMode圖片下，尋找按鈕及文字
+        Button nextButton = learningmode_prefab.transform.Find("next").GetComponent<Button>();
+        Button previousButton = learningmode_prefab.transform.Find("previous").GetComponent<Button>();
+        Text showText = learningmode_prefab.transform.Find("showText").GetComponent<Text>();
+        Image learning_Image = learningmode_prefab.transform.Find("learning_Image").GetComponent<Image>();
+        Button promptButton = learningmode_prefab.transform.Find("prompt").GetComponent<Button>();
+        Text promptText = learningmode_prefab.transform.Find("promptText").GetComponent<Text>();
+        nextButton.onClick.AddListener(() =>
+        {
+        });
+        previousButton.onClick.AddListener(() =>
+        {
+        });
+        promptButton.onClick.AddListener(() =>
+        {
         });
     }
 }

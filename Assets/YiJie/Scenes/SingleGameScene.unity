@@ -239,6 +239,7 @@ MonoBehaviour:
   openingText_2: {fileID: 4198676215383635534, guid: 7622ac0bc6af8cf499283b180a440fe2, type: 3}
   InputPlayerField: {fileID: 8103814629810182887, guid: 998c51fb519554546a94012a1ae3c63b, type: 3}
   playerbutton: {fileID: 6956934878734668005, guid: 4f8a5da2bad4956479765eca12419ea7, type: 3}
+  learningmode: {fileID: 6748901085196009285, guid: b6e32184ace5c574b8545dd849c7fd52, type: 3}
 --- !u!1 &1344301408
 GameObject:
   m_ObjectHideFlags: 0
