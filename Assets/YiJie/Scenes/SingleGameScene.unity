@@ -240,6 +240,7 @@ MonoBehaviour:
   InputPlayerField: {fileID: 8103814629810182887, guid: 998c51fb519554546a94012a1ae3c63b, type: 3}
   playerbutton: {fileID: 6956934878734668005, guid: 4f8a5da2bad4956479765eca12419ea7, type: 3}
   learningmode: {fileID: 6748901085196009285, guid: b6e32184ace5c574b8545dd849c7fd52, type: 3}
+  ch1LearnAsset: {fileID: 4900000, guid: 638547b7f8a98f542a56719e7062425a, type: 3}
 --- !u!1 &1344301408
 GameObject:
   m_ObjectHideFlags: 0

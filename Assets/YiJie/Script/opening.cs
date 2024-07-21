@@ -17,6 +17,11 @@ public class opening : MonoBehaviour
     [SerializeField] GameObject playerbutton;
     [SerializeField] Image learningmode;
     Image learningmode_prefab;
+    //learning mode variable
+    public TextAsset ch1LearnAsset;
+    private List<string> pages;
+    private int currentPageIndex = 0;
+    private const int charsPerPage = 50; // 每頁的字數
     void Start()
     {
         fs = FlowerManager.Instance.CreateFlowerSystem("default", false);
@@ -38,7 +43,7 @@ public class opening : MonoBehaviour
             switch (progress)
             {
                 case 0:
-                    fs.ReadTextFromResource("SingleMode/opening_1");
+                    fs.ReadTextFromResource("SingleMode/ch1/opening_1");
                     progress = 1;
                     break;
                 case 1:
@@ -59,7 +64,7 @@ public class opening : MonoBehaviour
                     gameEnd = true;
                     break;
                 case 2:
-                    fs.ReadTextFromResource("SingleMode/opening_2");
+                    fs.ReadTextFromResource("SingleMode/ch1/opening_2");
                     progress = 3;
                     break;
                 case 3:
@@ -137,11 +142,37 @@ public class opening : MonoBehaviour
         Image learning_Image = learningmode_prefab.transform.Find("learning_Image").GetComponent<Image>();
         Button promptButton = learningmode_prefab.transform.Find("prompt").GetComponent<Button>();
         Text promptText = learningmode_prefab.transform.Find("promptText").GetComponent<Text>();
+
+        //讀取檔案
+        string content = ch1LearnAsset.text;
+        // 分頁
+        pages = new List<string>();
+        for (int i = 0; i < content.Length; i += charsPerPage)
+        {
+            pages.Add(content.Substring(i, Mathf.Min(charsPerPage, content.Length - i)));
+        }
+        //初始化
+        showText.text= pages[currentPageIndex];
+
         nextButton.onClick.AddListener(() =>
         {
+            if (currentPageIndex < pages.Count - 1)
+            {
+                currentPageIndex++;
+                showText.text = pages[currentPageIndex];
+                previousButton.interactable = currentPageIndex > 0;
+                nextButton.interactable = currentPageIndex < pages.Count - 1;
+            }
         });
         previousButton.onClick.AddListener(() =>
         {
+            if (currentPageIndex > 0)
+            {
+                currentPageIndex--;
+                showText.text = pages[currentPageIndex];
+                previousButton.interactable = currentPageIndex > 0;
+                nextButton.interactable = currentPageIndex < pages.Count - 1;
+            }
         });
         promptButton.onClick.AddListener(() =>
         {
