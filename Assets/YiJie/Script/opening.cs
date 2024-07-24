@@ -19,9 +19,8 @@ public class opening : MonoBehaviour
     Image learningmode_prefab;
     //learning mode variable
     public TextAsset ch1LearnAsset;
-    private List<string> pages;
+    private List<Knowledge> knowledgePoints;
     private int currentPageIndex = 0;
-    private const int charsPerPage = 50; // 每頁的字數
     void Start()
     {
         fs = FlowerManager.Instance.CreateFlowerSystem("default", false);
@@ -128,6 +127,17 @@ public class opening : MonoBehaviour
             Destroy(Playerbutton_prefab);
         });
     }
+    public class Knowledge
+    {
+        public KnowledgeType Type;
+        public string Content;
+    }
+
+    public enum KnowledgeType
+    {
+        Text,
+        Image
+    }
     private void learningMode(List<string> properties)
     {
         //先找對話的canva
@@ -145,23 +155,35 @@ public class opening : MonoBehaviour
 
         //讀取檔案
         string content = ch1LearnAsset.text;
+        knowledgePoints = new List<Knowledge>();
         // 分頁
-        pages = new List<string>();
-        for (int i = 0; i < content.Length; i += charsPerPage)
+        string[] parts = content.Split(new[] { "[knowledge]" }, System.StringSplitOptions.RemoveEmptyEntries);
+        foreach (string part in parts)
         {
-            pages.Add(content.Substring(i, Mathf.Min(charsPerPage, content.Length - i)));
+            Knowledge knowledge = new Knowledge();
+                if (part.Contains("[text]"))
+                {
+                    knowledge.Type = KnowledgeType.Text;
+                    knowledge.Content = part.Substring("[text]".Length+2).Trim(); ;
+                }
+                else if (part.Contains("[image]"))
+                {
+                    knowledge.Type = KnowledgeType.Image;
+                // +2為了去除換行
+                knowledge.Content = part.Substring("\n[image]".Length+2).Trim();
+            }
+            knowledgePoints.Add(knowledge);
         }
         //初始化
-        showText.text= pages[currentPageIndex];
-
+        DisplayCurrentPage(showText,learning_Image);
         nextButton.onClick.AddListener(() =>
         {
-            if (currentPageIndex < pages.Count - 1)
+            if (currentPageIndex < knowledgePoints.Count - 1)
             {
                 currentPageIndex++;
-                showText.text = pages[currentPageIndex];
+                DisplayCurrentPage(showText, learning_Image);
                 previousButton.interactable = currentPageIndex > 0;
-                nextButton.interactable = currentPageIndex < pages.Count - 1;
+                nextButton.interactable = currentPageIndex < knowledgePoints.Count - 1;
             }
         });
         previousButton.onClick.AddListener(() =>
@@ -169,13 +191,33 @@ public class opening : MonoBehaviour
             if (currentPageIndex > 0)
             {
                 currentPageIndex--;
-                showText.text = pages[currentPageIndex];
+                DisplayCurrentPage(showText, learning_Image);
                 previousButton.interactable = currentPageIndex > 0;
-                nextButton.interactable = currentPageIndex < pages.Count - 1;
+                nextButton.interactable = currentPageIndex < knowledgePoints.Count - 1;
             }
         });
         promptButton.onClick.AddListener(() =>
         {
         });
+        void DisplayCurrentPage(Text contentText , Image contentImage)
+        {
+            if (knowledgePoints.Count > 0)
+            {
+                Knowledge currentKnowledge = knowledgePoints[currentPageIndex];
+                if (currentKnowledge.Type == KnowledgeType.Text)
+                {
+                    contentText.text = currentKnowledge.Content;
+                    contentText.gameObject.SetActive(true);
+                    contentImage.gameObject.SetActive(false);
+                }
+                else if (currentKnowledge.Type == KnowledgeType.Image)
+                {
+                    contentImage.sprite = Resources.Load<Sprite>(currentKnowledge.Content);
+                    contentImage.gameObject.SetActive(true);
+                    contentText.gameObject.SetActive(false);
+                }
+            }
+        }
     }
+
 }
