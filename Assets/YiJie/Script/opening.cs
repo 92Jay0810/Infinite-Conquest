@@ -170,7 +170,7 @@ public class opening : MonoBehaviour
                 {
                     knowledge.Type = KnowledgeType.Image;
                 // +2為了去除換行
-                knowledge.Content = part.Substring("\n[image]".Length+2).Trim();
+                knowledge.Content = part.Substring("[image]".Length+2).Trim();
             }
             knowledgePoints.Add(knowledge);
         }
