@@ -21,6 +21,9 @@ public class opening : MonoBehaviour
     public TextAsset ch1LearnAsset;
     private List<Knowledge> knowledgePoints;
     private int currentPageIndex = 0;
+    //彩蛋 如果都一次願意，出現隱藏文字
+    int not_allow1 = 0;
+    int not_allow2 = 0;
     void Start()
     {
         fs = FlowerManager.Instance.CreateFlowerSystem("default", false);
@@ -77,7 +80,59 @@ public class opening : MonoBehaviour
                     }
                     break;
                 case 4:
-                    fs.SetTextList(new List<string> { "結束[w]" });
+                    fs.ReadTextFromResource("SingleMode/ch1/opening_3");
+                    progress = 5;
+                    break;
+                case 5:
+                    fs.SetupButtonGroup();
+                    fs.SetupButton("要知道.", () =>
+                    {
+                        gameEnd = false;
+                        fs.RemoveButtonGroup();
+                        progress = 6;
+                    });
+                    fs.SetupButton("不要知道", () =>
+                    {
+                        not_allow1++;
+                        gameEnd = false;
+                        fs.RemoveButtonGroup();
+                        fs.SetTextList(new List<string> { "[#playername]:「那還是算了吧」[w] " +
+                            "冴衙:「真的不願意嗎?」[w]" });
+                    });
+                    gameEnd = true;
+                    break;
+                case 6:
+                    fs.ReadTextFromResource("SingleMode/ch1/opening_4");
+                    progress = 7;
+                    break;
+                case 7:
+                    fs.SetupButtonGroup();
+                    fs.SetupButton("願意.", () =>
+                    {
+                        gameEnd = false;
+                        fs.RemoveButtonGroup();
+                        fs.SetTextList(new List<string> { "[#playername] :「願意」[w]"+
+                            "冴衙:「好，我相信我不會看錯人的，你一定能夠在帝國學院的野心中成功守住我們學院的。」[w]" });
+                        if (not_allow1 == 0 && not_allow2 == 0)
+                        {
+                            fs.SetTextList(new List<string> { "[#playername] :「從我選擇了解這件事情開始，我就注定要成為這名戰士了，更何況身為這所學校的學生，能為學校做出貢獻就是我的光榮。」[w]"+
+                            "冴衙:「說得好，我相信我不會看錯人的，你一定能夠在帝國學院的野心中成功守住我們學院的。」[w] "});
+                        }
+                        progress = 8;
+                    });
+                    fs.SetupButton("不願意", () =>
+                    {
+                        not_allow2++;
+                        gameEnd = false;
+                        fs.RemoveButtonGroup();
+                        fs.SetTextList(new List<string> { "[#playername]:「那還是算了吧」[w] " +
+                            "冴衙:「真的不願意嗎?」[w]" });
+                    });
+                    gameEnd = true;
+                    break;
+                case 8:
+                    fs.SetTextList(new List<string> { "序章結束進入第一章" });
+                    gameEnd = true;
                     break;
             }
         }
