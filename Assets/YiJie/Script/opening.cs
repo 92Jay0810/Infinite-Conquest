@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Flower;
-using System;
 using UnityEngine.UI;
+using OpenAI;
 
 public class opening : MonoBehaviour
 {
@@ -21,6 +21,11 @@ public class opening : MonoBehaviour
     public TextAsset ch1LearnAsset;
     private List<Knowledge> knowledgePoints;
     private int currentPageIndex = 0;
+
+    //Open AI
+    private OpenAIApi openai = new OpenAIApi("");
+    private string prompt = "指令：你現在是理化老師，用簡單的語言向國中生解釋這些內容，並舉例說明這個概念和公式是如何應用的。讓他們能夠容易理解並能夠在日常生活中找到相關例子。";
+    private List<ChatMessage> messages = new List<ChatMessage>();
     //彩蛋 如果都一次願意，出現隱藏文字
     int not_allow1 = 0;
     int not_allow2 = 0;
@@ -206,7 +211,7 @@ public class opening : MonoBehaviour
         Text showText = learningmode_prefab.transform.Find("showText").GetComponent<Text>();
         Image learning_Image = learningmode_prefab.transform.Find("learning_Image").GetComponent<Image>();
         Button promptButton = learningmode_prefab.transform.Find("prompt").GetComponent<Button>();
-        Text promptText = learningmode_prefab.transform.Find("promptText").GetComponent<Text>();
+        Text promptText = learningmode_prefab.transform.Find("Scroll View/Viewport/Content/promptText").GetComponent<Text>();
 
         //讀取檔案
         string content = ch1LearnAsset.text;
@@ -251,18 +256,47 @@ public class opening : MonoBehaviour
                 nextButton.interactable = currentPageIndex < knowledgePoints.Count - 1;
             }
         });
-        promptButton.onClick.AddListener(() =>
+        // call OpenAI
+        promptButton.onClick.AddListener(async () =>
         {
+            promptText.text = "";
+            messages.Clear();
+            var newMessage = new ChatMessage()
+            {
+                Role = "user",
+                Content = prompt + "\n" +"資料： "+ showText.text,
+            };
+            messages.Add(newMessage);
+            Debug.Log("傳送chat內容："+newMessage.Content);
+            // Complete the instruction
+            var completionResponse = await openai.CreateChatCompletion(new CreateChatCompletionRequest()
+            {
+                Model = "gpt-4o",
+                Messages = messages
+            });
+            if (completionResponse.Choices != null && completionResponse.Choices.Count > 0)
+            {
+                var Response_message = completionResponse.Choices[0].Message;
+                Response_message.Content = Response_message.Content.Trim();
+                promptText.text = Response_message.Content;
+                Debug.Log("chat回覆：" + Response_message.Content);
+            }
+            else
+            {
+                Debug.LogWarning("No text was generated from this prompt.");
+            }
         });
         void DisplayCurrentPage(Text contentText , Image contentImage)
         {
             if (knowledgePoints.Count > 0)
             {
                 Knowledge currentKnowledge = knowledgePoints[currentPageIndex];
+                promptText.text = "";
                 if (currentKnowledge.Type == KnowledgeType.Text)
                 {
                     contentText.text = currentKnowledge.Content;
                     contentText.gameObject.SetActive(true);
+                    promptButton.gameObject.SetActive(true);
                     contentImage.gameObject.SetActive(false);
                 }
                 else if (currentKnowledge.Type == KnowledgeType.Image)
@@ -270,6 +304,7 @@ public class opening : MonoBehaviour
                     contentImage.sprite = Resources.Load<Sprite>(currentKnowledge.Content);
                     contentImage.gameObject.SetActive(true);
                     contentText.gameObject.SetActive(false);
+                    promptButton.gameObject.SetActive(false);
                 }
             }
         }
