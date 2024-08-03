@@ -5,19 +5,16 @@ using Flower;
 using UnityEngine.UI;
 using OpenAI;
 
-public class opening : MonoBehaviour
+public class  ch2 : MonoBehaviour
 {
     FlowerSystem fs;
     private int progress = 0;
     private bool gameEnd = false;
-    [SerializeField] GameObject openingText_1;
-    [SerializeField] GameObject openingText_2;
-    private string playername = "";
-    [SerializeField] GameObject InputPlayerField;
-    [SerializeField] GameObject playerbutton;
+    private string playername = "玩家名";
+
+    //learning mode 
     [SerializeField] Image learningmode;
     Image learningmode_prefab;
-    //learning mode variable
     public TextAsset ch1LearnAsset;
     private List<Knowledge> knowledgePoints;
     private int currentPageIndex = 0;
@@ -26,18 +23,10 @@ public class opening : MonoBehaviour
     private OpenAIApi openai = new OpenAIApi("");
     private string prompt = "指令：你現在是理化老師，用簡單的語言向國中生解釋這些內容，並舉例說明這個概念和公式是如何應用的。讓他們能夠容易理解並能夠在日常生活中找到相關例子。";
     private List<ChatMessage> messages = new List<ChatMessage>();
-    //彩蛋 如果都一次願意，出現隱藏文字
-    int not_allow1 = 0;
-    int not_allow2 = 0;
     void Start()
     {
         fs = FlowerManager.Instance.CreateFlowerSystem("default", false);
         fs.SetupDialog();
-        //UI Stage沒什麼用，在3D遊戲比較有用，顯示圖片在canva中
-        //fs.SetupUIStage("default", "DefaultUIStagePrefab", 10);
-        fs.RegisterCommand("CreateOpeningText_1", CreateOpeningText_1);
-        fs.RegisterCommand("CreateOpeningText_2", CreateOpeningText_2);
-        fs.RegisterCommand("InputPlayerText", InputPlayerText);
         fs.SetVariable("playername", playername);
         fs.RegisterCommand("learningMode", learningMode);
     }
@@ -50,7 +39,7 @@ public class opening : MonoBehaviour
             switch (progress)
             {
                 case 0:
-                    fs.ReadTextFromResource("SingleMode/ch1/opening_1");
+                    fs.ReadTextFromResource("SingleMode/ch2/ch2_1");
                     progress = 1;
                     break;
                 case 1:
@@ -71,73 +60,7 @@ public class opening : MonoBehaviour
                     gameEnd = true;
                     break;
                 case 2:
-                    fs.ReadTextFromResource("SingleMode/ch1/opening_2");
-                    progress = 3;
-                    break;
-                case 3:
-                    if (Input.GetKeyDown(KeyCode.E))
-                    {
-                        progress = 4;
-                        if (learningmode_prefab != null)
-                        {
-                            Destroy(learningmode_prefab.gameObject);
-                        }
-                    }
-                    break;
-                case 4:
-                    fs.ReadTextFromResource("SingleMode/ch1/opening_3");
-                    progress = 5;
-                    break;
-                case 5:
-                    fs.SetupButtonGroup();
-                    fs.SetupButton("要知道.", () =>
-                    {
-                        gameEnd = false;
-                        fs.RemoveButtonGroup();
-                        progress = 6;
-                    });
-                    fs.SetupButton("不要知道", () =>
-                    {
-                        not_allow1++;
-                        gameEnd = false;
-                        fs.RemoveButtonGroup();
-                        fs.SetTextList(new List<string> { "[#playername]:「那還是算了吧」[w] " +
-                            "冴衙:「真的不願意嗎?」[w]" });
-                    });
-                    gameEnd = true;
-                    break;
-                case 6:
-                    fs.ReadTextFromResource("SingleMode/ch1/opening_4");
-                    progress = 7;
-                    break;
-                case 7:
-                    fs.SetupButtonGroup();
-                    fs.SetupButton("願意.", () =>
-                    {
-                        gameEnd = false;
-                        fs.RemoveButtonGroup();
-                        fs.SetTextList(new List<string> { "[#playername] :「願意」[w]"+
-                            "冴衙:「好，我相信我不會看錯人的，你一定能夠在帝國學院的野心中成功守住我們學院的。」[w]" });
-                        if (not_allow1 == 0 && not_allow2 == 0)
-                        {
-                            fs.SetTextList(new List<string> { "[#playername] :「從我選擇了解這件事情開始，我就注定要成為這名戰士了，更何況身為這所學校的學生，能為學校做出貢獻就是我的光榮。」[w]"+
-                            "冴衙:「說得好，我相信我不會看錯人的，你一定能夠在帝國學院的野心中成功守住我們學院的。」[w] "});
-                        }
-                        progress = 8;
-                    });
-                    fs.SetupButton("不願意", () =>
-                    {
-                        not_allow2++;
-                        gameEnd = false;
-                        fs.RemoveButtonGroup();
-                        fs.SetTextList(new List<string> { "[#playername]:「那還是算了吧」[w] " +
-                            "冴衙:「真的不願意嗎?」[w]" });
-                    });
-                    gameEnd = true;
-                    break;
-                case 8:
-                    fs.SetTextList(new List<string> { "序章結束進入第一章" });
-                    gameEnd = true;
+                    fs.SetTextList(new List<string> { "結束[w]" });
                     break;
             }
         }
@@ -146,47 +69,7 @@ public class opening : MonoBehaviour
             fs.Next();
         }
     }
-    private void CreateOpeningText_1(List<string> properties)
-    {
-        //先找對話的canva
-        GameObject canvas = GameObject.Find("DefaultDialogPrefab(Clone)");
-        // 在 Canvas 的子物件位置創建文字 prefab
-        GameObject spawnedText = Instantiate(openingText_1, canvas.transform);
-        // 設置初始位置
-        spawnedText.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -400);
-    }
-    private void CreateOpeningText_2(List<string> properties)
-    {
-        //先找對話的canva
-        GameObject canvas = GameObject.Find("DefaultDialogPrefab(Clone)");
-        // 在 Canvas 的子物件位置創建文字 prefab
-        GameObject spawnedText = Instantiate(openingText_2, canvas.transform);
-        // 設置初始位置
-        spawnedText.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -450);
-    }
-    private void InputPlayerText(List<string> properties)
-    {
-        //先找對話的canva
-        GameObject canvas = GameObject.Find("DefaultDialogPrefab(Clone)");
-        // 在 Canvas 的子物件位置創建文字 prefab
-        GameObject InputPlayerField_prefab = Instantiate(InputPlayerField, canvas.transform);
-        InputPlayerField_prefab.GetComponent<RectTransform>().anchoredPosition = new Vector2(-50, -100);
-        GameObject Playerbutton_prefab = Instantiate(playerbutton, canvas.transform);
-        Playerbutton_prefab.GetComponent<RectTransform>().anchoredPosition = new Vector2(250, -100);
-        //增加提交事件
-        Button buttonComponent = Playerbutton_prefab.GetComponent<Button>();
-        buttonComponent.onClick.AddListener(() =>
-        {
-            // 更新字串
-            playername = InputPlayerField_prefab.GetComponent<InputField>().text;
-            fs.SetVariable("playername", playername);
-            fs.Resume();
-            fs.Next();
-            // 刪除 InputField 和按鈕
-            Destroy(InputPlayerField_prefab);
-            Destroy(Playerbutton_prefab);
-        });
-    }
+   
     public class Knowledge
     {
         public KnowledgeType Type;
