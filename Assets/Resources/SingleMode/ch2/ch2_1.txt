@@ -95,3 +95,4 @@
 [image,bg1,SingleMode/ch2/tigerroom2,0,0,0,spFadeIn_500]
 [image,player,SingleMode/ch2/human4,0,0,1]
 [#playername]:「這個應該就是校長要我拿的資料了吧，趕緊把他帶到校門口」[w]
+[learningMode]

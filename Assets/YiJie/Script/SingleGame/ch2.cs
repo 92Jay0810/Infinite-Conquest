@@ -15,7 +15,7 @@ public class  ch2 : MonoBehaviour
     //learning mode 
     [SerializeField] Image learningmode;
     Image learningmode_prefab;
-    public TextAsset ch1LearnAsset;
+    public TextAsset ch2LearnAsset;
     private List<Knowledge> knowledgePoints;
     private int currentPageIndex = 0;
 
@@ -43,21 +43,14 @@ public class  ch2 : MonoBehaviour
                     progress = 1;
                     break;
                 case 1:
-                    fs.SetupButtonGroup();
-                    fs.SetupButton("同意.", () =>
+                    if (Input.GetKeyDown(KeyCode.E))
                     {
-                        gameEnd = false;
-                        fs.RemoveButtonGroup();
-                        fs.SetTextList(new List<string> { "那你先去訓練場找教官吧。[w]" });
                         progress = 2;
-                    });
-                    fs.SetupButton("不同意", () =>
-                    {
-                        gameEnd = false;
-                        fs.RemoveButtonGroup();
-                        fs.SetTextList(new List<string> { "真的不願意嗎?[w]" });
-                    });
-                    gameEnd = true;
+                        if (learningmode_prefab != null)
+                        {
+                            Destroy(learningmode_prefab.gameObject);
+                        }
+                    }
                     break;
                 case 2:
                     fs.SetTextList(new List<string> { "結束[w]" });
@@ -97,7 +90,7 @@ public class  ch2 : MonoBehaviour
         Text promptText = learningmode_prefab.transform.Find("Scroll View/Viewport/Content/promptText").GetComponent<Text>();
 
         //讀取檔案
-        string content = ch1LearnAsset.text;
+        string content = ch2LearnAsset.text;
         knowledgePoints = new List<Knowledge>();
         // 分頁
         string[] parts = content.Split(new[] { "[knowledge]" }, System.StringSplitOptions.RemoveEmptyEntries);
