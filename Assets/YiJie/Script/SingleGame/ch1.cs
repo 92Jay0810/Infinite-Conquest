@@ -208,10 +208,12 @@ public class ch1 : MonoBehaviour
         //在learningMode圖片下，尋找按鈕及文字
         Button nextButton = learningmode_prefab.transform.Find("next").GetComponent<Button>();
         Button previousButton = learningmode_prefab.transform.Find("previous").GetComponent<Button>();
-        Text showText = learningmode_prefab.transform.Find("showText").GetComponent<Text>();
+        Text showText = learningmode_prefab.transform.Find("QuestionScrollView/Viewport/Content/showText").GetComponent<Text>();
         Image learning_Image = learningmode_prefab.transform.Find("learning_Image").GetComponent<Image>();
-        Button promptButton = learningmode_prefab.transform.Find("prompt").GetComponent<Button>();
-        Text promptText = learningmode_prefab.transform.Find("Scroll View/Viewport/Content/promptText").GetComponent<Text>();
+        Button promptcallButton = learningmode_prefab.transform.Find("promptcall").GetComponent<Button>();
+        GameObject promptPanel = learningmode_prefab.transform.Find("PromptPanel").gameObject;
+        Button promptButton = learningmode_prefab.transform.Find("PromptPanel/prompt").GetComponent<Button>();
+        Text promptText = learningmode_prefab.transform.Find("PromptPanel/Scroll View/Viewport/Content/promptText").GetComponent<Text>();
 
         //讀取檔案
         string content = ch1LearnAsset.text;
@@ -255,6 +257,11 @@ public class ch1 : MonoBehaviour
                 previousButton.interactable = currentPageIndex > 0;
                 nextButton.interactable = currentPageIndex < knowledgePoints.Count - 1;
             }
+        });
+        promptcallButton.onClick.AddListener(() =>
+        {
+            bool isActive = promptPanel.gameObject.activeSelf;
+            promptPanel.gameObject.SetActive(!isActive);
         });
         // call OpenAI
         promptButton.onClick.AddListener(async () =>

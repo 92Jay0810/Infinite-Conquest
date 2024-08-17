@@ -27,7 +27,7 @@ public class  ch2 : MonoBehaviour
 
     //train mode
     [SerializeField] Image trainmode;
-    bool isAnswer;
+    string Checkanswer_string="";
     void Start()
     {
         fs = FlowerManager.Instance.CreateFlowerSystem("default", false);
@@ -73,6 +73,14 @@ public class  ch2 : MonoBehaviour
                     }
                     break;
                 case 4:
+                    fs.ReadTextFromResource("SingleMode/ch2/ch2_3");
+                    progress = 5;
+                    break;
+                case 5:
+                    fs.ReadTextFromResource("SingleMode/ch2/ch2_4");
+                    progress = 6;
+                    break;
+                case 6:
                     fs.SetTextList(new List<string> { "結束[w]" });
                     break;
             }
@@ -104,10 +112,12 @@ public class  ch2 : MonoBehaviour
         //在learningMode圖片下，尋找按鈕及文字
         Button nextButton = learningmode_prefab.transform.Find("next").GetComponent<Button>();
         Button previousButton = learningmode_prefab.transform.Find("previous").GetComponent<Button>();
-        Text showText = learningmode_prefab.transform.Find("showText").GetComponent<Text>();
+        Text showText = learningmode_prefab.transform.Find("QuestionScrollView/Viewport/Content/showText").GetComponent<Text>();
         Image learning_Image = learningmode_prefab.transform.Find("learning_Image").GetComponent<Image>();
-        Button promptButton = learningmode_prefab.transform.Find("prompt").GetComponent<Button>();
-        Text promptText = learningmode_prefab.transform.Find("Scroll View/Viewport/Content/promptText").GetComponent<Text>();
+        Button promptcallButton = learningmode_prefab.transform.Find("promptcall").GetComponent<Button>();
+        GameObject promptPanel = learningmode_prefab.transform.Find("PromptPanel").gameObject;
+        Button promptButton = learningmode_prefab.transform.Find("PromptPanel/prompt").GetComponent<Button>();
+        Text promptText = learningmode_prefab.transform.Find("PromptPanel/Scroll View/Viewport/Content/promptText").GetComponent<Text>();
 
         //讀取檔案
         string content = ch2LearnAsset.text;
@@ -151,6 +161,11 @@ public class  ch2 : MonoBehaviour
                 previousButton.interactable = currentPageIndex > 0;
                 nextButton.interactable = currentPageIndex < knowledgePoints.Count - 1;
             }
+        });
+        promptcallButton.onClick.AddListener(() =>
+        {
+            bool isActive = promptPanel.gameObject.activeSelf;
+            promptPanel.gameObject.SetActive(!isActive);
         });
         // call OpenAI
         promptButton.onClick.AddListener(async () =>
@@ -217,31 +232,61 @@ public class  ch2 : MonoBehaviour
         GameObject questionScroll = learningmode_prefab.transform.Find("question/questionScroll").gameObject;
         Text questionText = learningmode_prefab.transform.Find("question/questionScroll/Viewport/Content/questionText").GetComponent<Text>();
         Button Solution_Question_Button = learningmode_prefab.transform.Find("Solution_Question").GetComponent<Button>();
-        Text SloutionText = learningmode_prefab.transform.Find("question/SolutionScroll/Viewport/Content/SloutionText").GetComponent<Text>();
         GameObject SloutionScroll = learningmode_prefab.transform.Find("question/SolutionScroll").gameObject;
+        Text SloutionText = learningmode_prefab.transform.Find("question/SolutionScroll/Viewport/Content/SloutionText").GetComponent<Text>();
+        GameObject option= learningmode_prefab.transform.Find("option").gameObject;
+        Button option_1 =learningmode_prefab.transform.Find("option/Choice/1/Button").GetComponent<Button>();
+        Button option_2 = learningmode_prefab.transform.Find("option/Choice/2/Button").GetComponent<Button>();
+        Button option_3= learningmode_prefab.transform.Find("option/Choice/3/Button").GetComponent<Button>();
+        Button option_4 = learningmode_prefab.transform.Find("option/Choice/4/Button").GetComponent<Button>();
         Button Next_Button = learningmode_prefab.transform.Find("Next").GetComponent<Button>();
         Button Check_Button = learningmode_prefab.transform.Find("Check").GetComponent<Button>();
         Text answerText = learningmode_prefab.transform.Find("answerText").GetComponent<Text>();
-        Button promptButton = learningmode_prefab.transform.Find("prompt").GetComponent<Button>();
-        Text promptText = learningmode_prefab.transform.Find("promptTextscroll/Viewport/Content/promptText").GetComponent<Text>();
+        Button promptcallButton = learningmode_prefab.transform.Find("promptcall").GetComponent<Button>();
+        Image promptPanel = learningmode_prefab.transform.Find("Panel").GetComponent<Image>();
+        Button promptButton = learningmode_prefab.transform.Find("Panel/prompt").GetComponent<Button>();
+        Text promptText = learningmode_prefab.transform.Find("Panel/promptTextscroll/Viewport/Content/promptText").GetComponent<Text>();
 
-        initQuestion(Check_Button, Next_Button, Solution_Question_Button, promptButton , answerText);
+        // 處理選擇邏輯
+        Button[] optionButtons = { option_1, option_2, option_3, option_4 };
+        foreach (Button Choice_option in optionButtons)
+        {
+            Choice_option.onClick.AddListener(() =>
+            {
+                // 重製顏色
+                foreach (Button btn in optionButtons)
+                {
+                    btn.GetComponent<Image>().color = Color.white;
+                }
+                // 改變選中按鈕顏色
+                Choice_option.GetComponent<Image>().color = Color.green;
+
+                answerText.text = "你选择了: " + Choice_option.GetComponentInChildren<Text>().text;
+                Checkanswer_string = Choice_option.GetComponentInChildren<Text>().text;
+            });
+        }
+        initQuestion(Check_Button, Next_Button, option, optionButtons, Solution_Question_Button , answerText);
+
+       
+        promptcallButton.onClick.AddListener(() =>
+        {
+            bool isActive = promptPanel.gameObject.activeSelf;
+            promptPanel.gameObject.SetActive(!isActive);
+        });
+        Check_Button.onClick.AddListener(() =>{
+            Check_Button.gameObject.SetActive(false);
+            Next_Button.gameObject.SetActive(true);
+            option.gameObject.SetActive(false);
+            answerText.text = "你的答案是" + Checkanswer_string + "解答為" + (Random.Range(0, 4) + 1).ToString();
+            Solution_Question_Button.interactable = true;
+        });
 
         Solution_Question_Button.onClick.AddListener(() =>
         {
             questionScroll.SetActive(!questionScroll.activeSelf);
             SloutionScroll.SetActive(!SloutionScroll.activeSelf);
         });
-        Check_Button.onClick.AddListener(() =>{
-            Check_Button.gameObject.SetActive(false);
-            Next_Button.gameObject.SetActive(true);
-            isAnswer = true;
-            answerText.text = "解答為" + (Random.Range(0, 4) + 1).ToString();
-            Solution_Question_Button.interactable = true;
-            promptButton.interactable = false;
-        });
-
-        Next_Button.onClick.AddListener( () =>initQuestion(Check_Button, Next_Button, Solution_Question_Button, promptButton ,answerText));
+        Next_Button.onClick.AddListener( () =>initQuestion(Check_Button, Next_Button, option, optionButtons, Solution_Question_Button ,answerText));
 
 
         // call OpenAI
@@ -276,12 +321,17 @@ public class  ch2 : MonoBehaviour
         });*/
 
     }
-    private void initQuestion(Button check_button,Button next_button,Button Solution_Question_Button, Button promptButton ,Text answerText)
+    private void initQuestion(Button check_button,Button next_button, GameObject option, Button[] optionButtons, Button Solution_Question_Button ,Text answerText)
     {
         check_button.gameObject.SetActive(true);
         next_button.gameObject.SetActive(false);
+        option.SetActive(true);
+        //重製所有按鈕為白色
+        foreach (Button Choice_option in optionButtons)
+        {
+            Choice_option.GetComponent<Image>().color = Color.white;
+        }
         Solution_Question_Button.interactable = false;
-        promptButton.interactable = true;
         answerText.text = "請回答題目後，按下確認顯示答案";
     }
 }
