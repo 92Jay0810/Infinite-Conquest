@@ -5,7 +5,7 @@ using Flower;
 using UnityEngine.UI;
 using OpenAI;
 
-public class  ch2 : MonoBehaviour
+public class  ch3 : MonoBehaviour
 {
     FlowerSystem fs;
     private int progress = 0;
@@ -27,7 +27,6 @@ public class  ch2 : MonoBehaviour
 
     //train mode
     [SerializeField] Image trainmode;
-    Image trainmode_prefab;
     string Checkanswer_string="";
     void Start()
     {
@@ -46,42 +45,10 @@ public class  ch2 : MonoBehaviour
             switch (progress)
             {
                 case 0:
-                    fs.ReadTextFromResource("SingleMode/ch2/ch2_1");
+                    fs.ReadTextFromResource("SingleMode/ch3/ch3_1");
                     progress = 1;
                     break;
                 case 1:
-                    if (Input.GetKeyDown(KeyCode.E))
-                    {
-                        progress = 2;
-                        if (learningmode_prefab != null)
-                        {
-                            Destroy(learningmode_prefab.gameObject);
-                        }
-                    }
-                    break;
-                case 2:
-                    fs.ReadTextFromResource("SingleMode/ch2/ch2_2");
-                    progress = 3;
-                    break;
-                case 3:
-                    if (Input.GetKeyDown(KeyCode.E))
-                    {
-                        progress = 4;
-                        if (learningmode_prefab != null)
-                        {
-                            Destroy(learningmode_prefab.gameObject);
-                        }
-                    }
-                    break;
-                case 4:
-                    fs.ReadTextFromResource("SingleMode/ch2/ch2_3");
-                    progress = 5;
-                    break;
-                case 5:
-                    fs.ReadTextFromResource("SingleMode/ch2/ch2_4");
-                    progress = 6;
-                    break;
-                case 6:
                     fs.SetTextList(new List<string> { "結束[w]" });
                     break;
             }
@@ -227,34 +194,29 @@ public class  ch2 : MonoBehaviour
         //先找對話的canva
         GameObject canvas = GameObject.Find("DefaultDialogPrefab(Clone)");
         // 在 Canvas 的子物件位置創建prefab
-        trainmode_prefab = Instantiate(trainmode, canvas.transform);
-        trainmode_prefab.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+        learningmode_prefab = Instantiate(trainmode, canvas.transform);
+        learningmode_prefab.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
         //在learningMode圖片下，尋找按鈕及文字
-        GameObject questionScroll = trainmode_prefab.transform.Find("question/questionScroll").gameObject;
-        Text questionText = trainmode_prefab.transform.Find("question/questionScroll/Viewport/Content/questionText").GetComponent<Text>();
-        Button Solution_Question_Button = trainmode_prefab.transform.Find("Solution_Question").GetComponent<Button>();
-        GameObject SloutionScroll = trainmode_prefab.transform.Find("question/SolutionScroll").gameObject;
-        Text SloutionText = trainmode_prefab.transform.Find("question/SolutionScroll/Viewport/Content/SloutionText").GetComponent<Text>();
-        GameObject option= trainmode_prefab.transform.Find("option").gameObject;
-        GameObject choice= trainmode_prefab.transform.Find("option/Choice").gameObject;
-        Button Choice_1 = trainmode_prefab.transform.Find("option/Choice/1/Button").GetComponent<Button>();
-        Button Choice_2 = trainmode_prefab.transform.Find("option/Choice/2/Button").GetComponent<Button>();
-        Button Choice_3 = trainmode_prefab.transform.Find("option/Choice/3/Button").GetComponent<Button>();
-        Button Choice_4 = trainmode_prefab.transform.Find("option/Choice/4/Button").GetComponent<Button>();
-        GameObject TrueFalse = trainmode_prefab.transform.Find("option/TrueFalse").gameObject;
-        Button TrueFalse_true = trainmode_prefab.transform.Find("option/TrueFalse/true/Button").GetComponent<Button>();
-        Button TrueFalse_false= trainmode_prefab.transform.Find("option/TrueFalse/false/Button").GetComponent<Button>();
-        InputField ask= trainmode_prefab.transform.Find("option/ask").GetComponent<InputField>();
-        Button Next_Button = trainmode_prefab.transform.Find("Next").GetComponent<Button>();
-        Button Check_Button = trainmode_prefab.transform.Find("Check").GetComponent<Button>();
-        Text answerText = trainmode_prefab.transform.Find("answerText").GetComponent<Text>();
-        Button promptcallButton = trainmode_prefab.transform.Find("promptcall").GetComponent<Button>();
-        Image promptPanel = trainmode_prefab.transform.Find("Panel").GetComponent<Image>();
-        Button promptButton = trainmode_prefab.transform.Find("Panel/prompt").GetComponent<Button>();
-        Text promptText = trainmode_prefab.transform.Find("Panel/promptTextscroll/Viewport/Content/promptText").GetComponent<Text>();
+        GameObject questionScroll = learningmode_prefab.transform.Find("question/questionScroll").gameObject;
+        Text questionText = learningmode_prefab.transform.Find("question/questionScroll/Viewport/Content/questionText").GetComponent<Text>();
+        Button Solution_Question_Button = learningmode_prefab.transform.Find("Solution_Question").GetComponent<Button>();
+        GameObject SloutionScroll = learningmode_prefab.transform.Find("question/SolutionScroll").gameObject;
+        Text SloutionText = learningmode_prefab.transform.Find("question/SolutionScroll/Viewport/Content/SloutionText").GetComponent<Text>();
+        GameObject option= learningmode_prefab.transform.Find("option").gameObject;
+        Button option_1 =learningmode_prefab.transform.Find("option/Choice/1/Button").GetComponent<Button>();
+        Button option_2 = learningmode_prefab.transform.Find("option/Choice/2/Button").GetComponent<Button>();
+        Button option_3= learningmode_prefab.transform.Find("option/Choice/3/Button").GetComponent<Button>();
+        Button option_4 = learningmode_prefab.transform.Find("option/Choice/4/Button").GetComponent<Button>();
+        Button Next_Button = learningmode_prefab.transform.Find("Next").GetComponent<Button>();
+        Button Check_Button = learningmode_prefab.transform.Find("Check").GetComponent<Button>();
+        Text answerText = learningmode_prefab.transform.Find("answerText").GetComponent<Text>();
+        Button promptcallButton = learningmode_prefab.transform.Find("promptcall").GetComponent<Button>();
+        Image promptPanel = learningmode_prefab.transform.Find("Panel").GetComponent<Image>();
+        Button promptButton = learningmode_prefab.transform.Find("Panel/prompt").GetComponent<Button>();
+        Text promptText = learningmode_prefab.transform.Find("Panel/promptTextscroll/Viewport/Content/promptText").GetComponent<Text>();
 
         // 處理選擇邏輯
-        Button[] optionButtons = { Choice_1, Choice_2, Choice_3, Choice_4 };
+        Button[] optionButtons = { option_1, option_2, option_3, option_4 };
         foreach (Button Choice_option in optionButtons)
         {
             Choice_option.onClick.AddListener(() =>
@@ -271,29 +233,9 @@ public class  ch2 : MonoBehaviour
                 Checkanswer_string = Choice_option.GetComponentInChildren<Text>().text;
             });
         }
+        initQuestion(Check_Button, Next_Button, option, optionButtons, Solution_Question_Button , answerText);
 
-        TrueFalse_true.onClick.AddListener(() =>
-        {
-            TrueFalse_true.GetComponent<Image>().color = Color.green;
-            TrueFalse_false.GetComponent<Image>().color = Color.white;
-            answerText.text = "你选择了: True";
-            Checkanswer_string = "true";
- 
-        });
-        TrueFalse_false.onClick.AddListener(() =>
-        {
-            TrueFalse_true.GetComponent<Image>().color = Color.white;
-            TrueFalse_false.GetComponent<Image>().color = Color.green;
-            answerText.text = "你选择了: false";
-            Checkanswer_string = "false";
-
-        });
-        ask.onEndEdit.AddListener(inputText =>
-        {
-            answerText.text = "你的回答: " + inputText;
-            Checkanswer_string = inputText;
-        });
-        initQuestion(Check_Button, Next_Button, option, choice, TrueFalse, ask, Solution_Question_Button , answerText);
+       
         promptcallButton.onClick.AddListener(() =>
         {
             bool isActive = promptPanel.gameObject.activeSelf;
@@ -312,7 +254,7 @@ public class  ch2 : MonoBehaviour
             questionScroll.SetActive(!questionScroll.activeSelf);
             SloutionScroll.SetActive(!SloutionScroll.activeSelf);
         });
-        Next_Button.onClick.AddListener( () =>initQuestion(Check_Button, Next_Button, option,choice ,TrueFalse,ask,Solution_Question_Button ,answerText));
+        Next_Button.onClick.AddListener( () =>initQuestion(Check_Button, Next_Button, option, optionButtons, Solution_Question_Button ,answerText));
 
 
         // call OpenAI
@@ -347,61 +289,17 @@ public class  ch2 : MonoBehaviour
         });*/
 
     }
-    private void initQuestion(Button check_button,Button next_button, GameObject option,GameObject choice, GameObject TrueFalse, InputField askField, Button Solution_Question_Button ,Text answerText)
+    private void initQuestion(Button check_button,Button next_button, GameObject option, Button[] optionButtons, Button Solution_Question_Button ,Text answerText)
     {
-
         check_button.gameObject.SetActive(true);
-        /*check_button.onClick.RemoveAllListeners(); // Clear previous listeners
-        check_button.onClick.AddListener(() =>
-        {
-            answerText.text = "你选择了: True";
-        });*/
         next_button.gameObject.SetActive(false);
+        option.SetActive(true);
+        //重製所有按鈕為白色
+        foreach (Button Choice_option in optionButtons)
+        {
+            Choice_option.GetComponent<Image>().color = Color.white;
+        }
         Solution_Question_Button.interactable = false;
         answerText.text = "請回答題目後，按下確認顯示答案";
-        Checkanswer_string = "";
-        // Randomly select question type
-        int questionType = Random.Range(0, 3); // 0: Multiple Choice, 1: True/False, 2: Short Answer
-        option.SetActive(true);
-        // Update UI based on question type
-        Debug.Log(questionType);
-        switch (questionType)
-        {
-            case 0: // Multiple Choice
-                Button Choice_1 = choice.transform.Find("1/Button").GetComponent<Button>();
-                Button Choice_2 = choice.transform.Find("2/Button").GetComponent<Button>();
-                Button Choice_3 = choice.transform.Find("3/Button").GetComponent<Button>();
-                Button Choice_4 = choice.transform.Find("4/Button").GetComponent<Button>();
-                Button[] optionButtons = { Choice_1, Choice_2, Choice_3, Choice_4 };
-                foreach (Button btn in optionButtons)
-                {
-                    btn.gameObject.SetActive(true);
-                    btn.GetComponent<Image>().color = Color.white; // Reset button color
-                }
-                choice.SetActive(true);
-                TrueFalse.SetActive(false);
-                askField.gameObject.SetActive(false);
-                break;
-
-            case 1: // True/False
-                Button true_button = TrueFalse.transform.Find("true/Button").GetComponent<Button>();
-                true_button.gameObject.SetActive(true);
-                true_button.GetComponent<Image>().color = Color.white; // Reset button color
-                Button false_button = TrueFalse.transform.Find("false/Button").GetComponent<Button>();
-                false_button.gameObject.SetActive(true);
-                false_button.GetComponent<Image>().color = Color.white; // Reset button color
-                choice.SetActive(false);
-                TrueFalse.SetActive(true);
-                askField.gameObject.SetActive(false);
-                break;
-
-            case 2: // Short Answer
-                askField.text = ""; // Clear the input field
-                choice.SetActive(false);
-                TrueFalse.SetActive(false);
-                askField.gameObject.SetActive(true);
-                break;
-        }
-
     }
 }

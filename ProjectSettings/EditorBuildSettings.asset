@@ -23,4 +23,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/YiJie/Scenes/ch2Scene.unity
     guid: 6596aabeb5c5e1c459d18373d59ae383
+  - enabled: 1
+    path: Assets/YiJie/Scenes/ch3Scene.unity
+    guid: d6afd0850fdf8e146a8836ba9336273c
   m_configObjects: {}
