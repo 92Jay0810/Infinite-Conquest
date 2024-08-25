@@ -1,9 +1,11 @@
 ﻿using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Flower;
 using UnityEngine.UI;
 using OpenAI;
+using MySql.Data.MySqlClient;
 
 public class  ch2 : MonoBehaviour
 {
@@ -29,6 +31,14 @@ public class  ch2 : MonoBehaviour
     [SerializeField] Image trainmode;
     Image trainmode_prefab;
     string Checkanswer_string="";
+
+    //train mode DB
+    string server = "localhost";
+    string database = "questionnare"; // 替換為你的資料庫名稱
+    string user = "root";
+    string password = "123";
+    private MySqlConnection connection;
+
     void Start()
     {
         fs = FlowerManager.Instance.CreateFlowerSystem("default", false);
@@ -224,6 +234,9 @@ public class  ch2 : MonoBehaviour
 
     private void trainMode(List<string> properties)
     {
+        //之後實作資料庫成功後的邏輯
+        if (initDB())
+        {
         //先找對話的canva
         GameObject canvas = GameObject.Find("DefaultDialogPrefab(Clone)");
         // 在 Canvas 的子物件位置創建prefab
@@ -252,7 +265,6 @@ public class  ch2 : MonoBehaviour
         Image promptPanel = trainmode_prefab.transform.Find("Panel").GetComponent<Image>();
         Button promptButton = trainmode_prefab.transform.Find("Panel/prompt").GetComponent<Button>();
         Text promptText = trainmode_prefab.transform.Find("Panel/promptTextscroll/Viewport/Content/promptText").GetComponent<Text>();
-
         // 處理選擇邏輯
         Button[] optionButtons = { Choice_1, Choice_2, Choice_3, Choice_4 };
         foreach (Button Choice_option in optionButtons)
@@ -303,7 +315,7 @@ public class  ch2 : MonoBehaviour
             Check_Button.gameObject.SetActive(false);
             Next_Button.gameObject.SetActive(true);
             option.gameObject.SetActive(false);
-            answerText.text = "你的答案是" + Checkanswer_string + "解答為" + (Random.Range(0, 4) + 1).ToString();
+            answerText.text = "你的答案是" + Checkanswer_string + "解答為" + (UnityEngine.Random.Range(0, 4) + 1).ToString();
             Solution_Question_Button.interactable = true;
         });
 
@@ -346,6 +358,12 @@ public class  ch2 : MonoBehaviour
             }
         });*/
 
+        }
+        else
+        {
+            Debug.Log("開啟資料庫失敗，請按下e退出");
+        }
+        
     }
     private void initQuestion(Button check_button,Button next_button, GameObject option,GameObject choice, GameObject TrueFalse, InputField askField, Button Solution_Question_Button ,Text answerText)
     {
@@ -361,7 +379,7 @@ public class  ch2 : MonoBehaviour
         answerText.text = "請回答題目後，按下確認顯示答案";
         Checkanswer_string = "";
         // Randomly select question type
-        int questionType = Random.Range(0, 3); // 0: Multiple Choice, 1: True/False, 2: Short Answer
+        int questionType = UnityEngine.Random.Range(0, 3); // 0: Multiple Choice, 1: True/False, 2: Short Answer
         option.SetActive(true);
         // Update UI based on question type
         Debug.Log(questionType);
@@ -403,5 +421,28 @@ public class  ch2 : MonoBehaviour
                 break;
         }
 
+    }
+
+    private bool initDB()
+    {
+        string connectionString = $"Server={server};Database={database};User ID={user};Password={password};Pooling=false;";
+        try
+        {
+            connection = new MySqlConnection(connectionString);
+            connection.Open();
+            return true;  // 連接成功，返回 true
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("Failed to connect to MySQL database: " + ex.Message);
+            return false;  // 連接失敗，返回 false
+        }
+        finally
+        {
+            if (connection != null)
+            {
+                connection.Close();
+            }
+        }
     }
 }
