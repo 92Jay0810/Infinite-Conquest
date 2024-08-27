@@ -243,11 +243,12 @@ public class  ch2 : MonoBehaviour
         trainmode_prefab = Instantiate(trainmode, canvas.transform);
         trainmode_prefab.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
         //在learningMode圖片下，尋找按鈕及文字
+        GameObject question = trainmode_prefab.transform.Find("question").gameObject;
         GameObject questionScroll = trainmode_prefab.transform.Find("question/questionScroll").gameObject;
         Text questionText = trainmode_prefab.transform.Find("question/questionScroll/Viewport/Content/questionText").GetComponent<Text>();
         Button Solution_Question_Button = trainmode_prefab.transform.Find("Solution_Question").GetComponent<Button>();
-        GameObject SloutionScroll = trainmode_prefab.transform.Find("question/SolutionScroll").gameObject;
-        Text SloutionText = trainmode_prefab.transform.Find("question/SolutionScroll/Viewport/Content/SloutionText").GetComponent<Text>();
+        GameObject SolutionScroll = trainmode_prefab.transform.Find("question/SolutionScroll").gameObject;
+        Text SolutionText = trainmode_prefab.transform.Find("question/SolutionScroll/Viewport/Content/SloutionText").GetComponent<Text>();
         GameObject option= trainmode_prefab.transform.Find("option").gameObject;
         GameObject choice= trainmode_prefab.transform.Find("option/Choice").gameObject;
         Button Choice_1 = trainmode_prefab.transform.Find("option/Choice/1/Button").GetComponent<Button>();
@@ -305,26 +306,19 @@ public class  ch2 : MonoBehaviour
             answerText.text = "你的回答: " + inputText;
             Checkanswer_string = inputText;
         });
-        initQuestion(Check_Button, Next_Button, option, choice, TrueFalse, ask, Solution_Question_Button , answerText, questionText);
+        initQuestion(Check_Button, Next_Button, question ,option, choice, TrueFalse, ask, Solution_Question_Button , answerText, questionText);
         promptcallButton.onClick.AddListener(() =>
         {
             bool isActive = promptPanel.gameObject.activeSelf;
             promptPanel.gameObject.SetActive(!isActive);
         });
-        Check_Button.onClick.AddListener(() =>{
-            Check_Button.gameObject.SetActive(false);
-            Next_Button.gameObject.SetActive(true);
-            option.gameObject.SetActive(false);
-            answerText.text = "你的答案是" + Checkanswer_string + "解答為" + (UnityEngine.Random.Range(0, 4) + 1).ToString();
-            Solution_Question_Button.interactable = true;
-        });
-
+     
         Solution_Question_Button.onClick.AddListener(() =>
         {
             questionScroll.SetActive(!questionScroll.activeSelf);
-            SloutionScroll.SetActive(!SloutionScroll.activeSelf);
+            SolutionScroll.SetActive(!SolutionScroll.activeSelf);
         });
-        Next_Button.onClick.AddListener( () =>initQuestion(Check_Button, Next_Button, option,choice ,TrueFalse,ask,Solution_Question_Button ,answerText, questionText));
+        Next_Button.onClick.AddListener( () =>initQuestion(Check_Button, Next_Button, question, option,choice ,TrueFalse,ask,Solution_Question_Button ,answerText, questionText));
 
 
         // call OpenAI
@@ -365,7 +359,7 @@ public class  ch2 : MonoBehaviour
         }
         
     }
-    private void initQuestion(Button check_button,Button next_button, GameObject option,GameObject choice, GameObject TrueFalse, InputField askField, Button Solution_Question_Button ,Text answerText, Text questionText)
+    private void initQuestion(Button check_button,Button next_button, GameObject question, GameObject option,GameObject choice, GameObject TrueFalse, InputField askField, Button Solution_Question_Button ,Text answerText, Text questionText)
     {
         // 打开数据库连接
         if (connection.State != System.Data.ConnectionState.Open)
@@ -381,19 +375,18 @@ public class  ch2 : MonoBehaviour
             }
         }
         check_button.gameObject.SetActive(true);
-        /*check_button.onClick.RemoveAllListeners(); // Clear previous listeners
-        check_button.onClick.AddListener(() =>
-        {
-            answerText.text = "你选择了: True";
-        });*/
         next_button.gameObject.SetActive(false);
         Solution_Question_Button.interactable = false;
+        GameObject questionScroll = question.transform.Find("questionScroll").gameObject;
+        GameObject SolutionScroll = question.transform.Find("SolutionScroll").gameObject;
+        questionScroll.SetActive(true);
+        SolutionScroll.SetActive(false);
+        Text Solutiontext = SolutionScroll.transform.Find("Viewport/Content/SloutionText").GetComponent<Text>();
         answerText.text = "請回答題目後，按下確認顯示答案";
         Checkanswer_string = "";
         // Randomly select question type
         int questionType = UnityEngine.Random.Range(0, 3); // 0: Multiple Choice, 1: True/False, 2: Short Answer
         option.SetActive(true);
-        // Update UI based on question type
         Debug.Log(questionType);
         switch (questionType)
         {
@@ -416,13 +409,26 @@ public class  ch2 : MonoBehaviour
                 MySqlCommand command0 = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 0 AND ChapterID = 2 ORDER BY RAND() LIMIT 1", connection);
                 MySqlDataReader reader0 = command0.ExecuteReader();
                 String QuestionID ="" ;
+                string random_question_descript_choice = "";
+                string tempAnswerOptionID_choice = "";
                 if (reader0.Read()) // 使用 if 因為只會返回一條記錄
                 {
-                    string random_question_descript = reader0["Description"].ToString();
-                    Debug.Log(random_question_descript);
-                    questionText.text = random_question_descript;
+                    random_question_descript_choice = reader0["Description"].ToString();
+                    Debug.Log(random_question_descript_choice);
+                    questionText.text = random_question_descript_choice;
                     QuestionID = reader0["QuestionID"].ToString();
+                    tempAnswerOptionID_choice = reader0["AnswerOptionID"].ToString();
+                    Solutiontext.text= reader0["Explanation"].ToString();
                 }
+                check_button.onClick.RemoveAllListeners(); // Clear previous listeners
+                    check_button.onClick.AddListener(() =>
+                    {
+                        check_button.gameObject.SetActive(false);
+                        next_button.gameObject.SetActive(true);
+                        option.gameObject.SetActive(false);
+                        answerText.text = "你的答案是" + Checkanswer_string + "解答為" + tempAnswerOptionID_choice;
+                        Solution_Question_Button.interactable = true;
+                     });
                 if (reader0 != null && !reader0.IsClosed)
                 {
                     reader0.Close();
@@ -476,13 +482,25 @@ public class  ch2 : MonoBehaviour
                 //隨機 取得是非題並且章節為2 的題目
                 MySqlCommand command = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 1 AND ChapterID = 2 ORDER BY RAND() LIMIT 1", connection);
                 MySqlDataReader reader = command.ExecuteReader();
-
+                string random_question_descript = "";
+                string tempAnswerOptionID = "";
                 if (reader.Read()) // 使用 if 因為只會返回一條記錄
                 {
-                    string random_question_descript = reader["Description"].ToString();
+                    random_question_descript = reader["Description"].ToString();
                     Debug.Log(random_question_descript);
                     questionText.text = random_question_descript;
+                    tempAnswerOptionID =  reader["AnswerOptionID"].ToString()=="1" ? "true"  : "false" ;
+                    Solutiontext.text = reader["Explanation"].ToString();
                 }
+                check_button.onClick.RemoveAllListeners(); // Clear previous listeners
+                    check_button.onClick.AddListener(() =>
+                    {
+                        check_button.gameObject.SetActive(false);
+                        next_button.gameObject.SetActive(true);
+                        option.gameObject.SetActive(false);
+                        answerText.text = "你的答案是" + Checkanswer_string + "解答為" + tempAnswerOptionID;
+                        Solution_Question_Button.interactable = true;
+                    });
                 reader.Close();
                 break;
 
@@ -494,13 +512,23 @@ public class  ch2 : MonoBehaviour
                 //隨機 取得是非題並且章節為2 的題目
                 MySqlCommand command1 = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 2 AND ChapterID = 2 ORDER BY RAND() LIMIT 1", connection);
                 MySqlDataReader reader1 = command1.ExecuteReader();
-
+                string random_question_descript_ask = "";
                 if (reader1.Read()) // 使用 if 因為只會返回一條記錄
                 {
-                    string random_question_descript = reader1["Description"].ToString();
-                    Debug.Log(random_question_descript);
-                    questionText.text = random_question_descript;
-                }
+                    random_question_descript_ask = reader1["Description"].ToString();
+                    Debug.Log(random_question_descript_ask);
+                    questionText.text = random_question_descript_ask;
+                    Solutiontext.text = reader1["Explanation"].ToString();
+                } 
+                check_button.onClick.RemoveAllListeners(); // Clear previous listeners
+                    check_button.onClick.AddListener(() =>
+                    {
+                        check_button.gameObject.SetActive(false);
+                        next_button.gameObject.SetActive(true);
+                        option.gameObject.SetActive(false);
+                        answerText.text = "你的答案是" + Checkanswer_string + "解答為空";
+                        Solution_Question_Button.interactable = true;
+                    });
                 reader1.Close();
                 break;
         }
