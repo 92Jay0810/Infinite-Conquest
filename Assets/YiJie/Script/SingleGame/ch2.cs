@@ -77,9 +77,9 @@ public class  ch2 : MonoBehaviour
                     if (Input.GetKeyDown(KeyCode.E))
                     {
                         progress = 4;
-                        if (learningmode_prefab != null)
+                        if (trainmode_prefab != null)
                         {
-                            Destroy(learningmode_prefab.gameObject);
+                            Destroy(trainmode_prefab.gameObject);
                         }
                     }
                     break;
@@ -234,7 +234,7 @@ public class  ch2 : MonoBehaviour
 
     private void trainMode(List<string> properties)
     {
-        //之後實作資料庫成功後的邏輯
+        //先初始化DB並確認是否有連接
         if (initDB())
         {
         //先找對話的canva
@@ -305,7 +305,7 @@ public class  ch2 : MonoBehaviour
             answerText.text = "你的回答: " + inputText;
             Checkanswer_string = inputText;
         });
-        initQuestion(Check_Button, Next_Button, option, choice, TrueFalse, ask, Solution_Question_Button , answerText);
+        initQuestion(Check_Button, Next_Button, option, choice, TrueFalse, ask, Solution_Question_Button , answerText, questionText);
         promptcallButton.onClick.AddListener(() =>
         {
             bool isActive = promptPanel.gameObject.activeSelf;
@@ -324,7 +324,7 @@ public class  ch2 : MonoBehaviour
             questionScroll.SetActive(!questionScroll.activeSelf);
             SloutionScroll.SetActive(!SloutionScroll.activeSelf);
         });
-        Next_Button.onClick.AddListener( () =>initQuestion(Check_Button, Next_Button, option,choice ,TrueFalse,ask,Solution_Question_Button ,answerText));
+        Next_Button.onClick.AddListener( () =>initQuestion(Check_Button, Next_Button, option,choice ,TrueFalse,ask,Solution_Question_Button ,answerText, questionText));
 
 
         // call OpenAI
@@ -365,9 +365,21 @@ public class  ch2 : MonoBehaviour
         }
         
     }
-    private void initQuestion(Button check_button,Button next_button, GameObject option,GameObject choice, GameObject TrueFalse, InputField askField, Button Solution_Question_Button ,Text answerText)
+    private void initQuestion(Button check_button,Button next_button, GameObject option,GameObject choice, GameObject TrueFalse, InputField askField, Button Solution_Question_Button ,Text answerText, Text questionText)
     {
-
+        // 打开数据库连接
+        if (connection.State != System.Data.ConnectionState.Open)
+        {
+            try
+            {
+                connection.Open();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError("Failed to open the database connection: " + ex.Message);
+                return;
+            }
+        }
         check_button.gameObject.SetActive(true);
         /*check_button.onClick.RemoveAllListeners(); // Clear previous listeners
         check_button.onClick.AddListener(() =>
@@ -399,18 +411,79 @@ public class  ch2 : MonoBehaviour
                 choice.SetActive(true);
                 TrueFalse.SetActive(false);
                 askField.gameObject.SetActive(false);
+              
+                //隨機 取得選擇題題目並且章節為2 的題目
+                MySqlCommand command0 = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 0 AND ChapterID = 2 ORDER BY RAND() LIMIT 1", connection);
+                MySqlDataReader reader0 = command0.ExecuteReader();
+                String QuestionID ="" ;
+                if (reader0.Read()) // 使用 if 因為只會返回一條記錄
+                {
+                    string random_question_descript = reader0["Description"].ToString();
+                    Debug.Log(random_question_descript);
+                    questionText.text = random_question_descript;
+                    QuestionID = reader0["QuestionID"].ToString();
+                }
+                if (reader0 != null && !reader0.IsClosed)
+                {
+                    reader0.Close();
+                }
+                Text option_1 = choice.transform.Find("1/Viewport/Content/questionText").GetComponent<Text>();
+                Text option_2 = choice.transform.Find("2/Viewport/Content/questionText").GetComponent<Text>();
+                Text option_3 = choice.transform.Find("3/Viewport/Content/questionText").GetComponent<Text>();
+                Text option_4 = choice.transform.Find("4/Viewport/Content/questionText").GetComponent<Text>();
+                // Replace @QuestionID with the actual QuestionID
+                MySqlCommand commandOption = new MySqlCommand("SELECT * FROM questionnare.options WHERE QuestionID = @QuestionID ORDER BY OptionID", connection);
+                commandOption.Parameters.AddWithValue("@QuestionID", QuestionID);
+                MySqlDataReader readerOption = commandOption.ExecuteReader();
+                if (readerOption.HasRows)
+                {
+                    while (readerOption.Read())
+                    {
+                        int optionID = Convert.ToInt32(readerOption["OptionID"]);
+                        string optionText = readerOption["Description"].ToString();
+                        switch (optionID)
+                        {
+                            case 1:
+                                option_1.text = optionText;
+                                break;
+                            case 2:
+                                option_2.text = optionText;
+                                break;
+                            case 3:
+                                option_3.text = optionText;
+                                break;
+                            case 4:
+                                option_4.text = optionText;
+                                break;
+                        }
+                    }
+                }
+                readerOption.Close();
                 break;
 
-            case 1: // True/False
+            case 1: //    True_False
+                TrueFalse.SetActive(true);
                 Button true_button = TrueFalse.transform.Find("true/Button").GetComponent<Button>();
                 true_button.gameObject.SetActive(true);
                 true_button.GetComponent<Image>().color = Color.white; // Reset button color
                 Button false_button = TrueFalse.transform.Find("false/Button").GetComponent<Button>();
                 false_button.gameObject.SetActive(true);
                 false_button.GetComponent<Image>().color = Color.white; // Reset button color
+
                 choice.SetActive(false);
-                TrueFalse.SetActive(true);
                 askField.gameObject.SetActive(false);
+
+                //隨機 取得是非題並且章節為2 的題目
+                MySqlCommand command = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 1 AND ChapterID = 2 ORDER BY RAND() LIMIT 1", connection);
+                MySqlDataReader reader = command.ExecuteReader();
+
+                if (reader.Read()) // 使用 if 因為只會返回一條記錄
+                {
+                    string random_question_descript = reader["Description"].ToString();
+                    Debug.Log(random_question_descript);
+                    questionText.text = random_question_descript;
+                }
+                reader.Close();
                 break;
 
             case 2: // Short Answer
@@ -418,9 +491,24 @@ public class  ch2 : MonoBehaviour
                 choice.SetActive(false);
                 TrueFalse.SetActive(false);
                 askField.gameObject.SetActive(true);
+                //隨機 取得是非題並且章節為2 的題目
+                MySqlCommand command1 = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 2 AND ChapterID = 2 ORDER BY RAND() LIMIT 1", connection);
+                MySqlDataReader reader1 = command1.ExecuteReader();
+
+                if (reader1.Read()) // 使用 if 因為只會返回一條記錄
+                {
+                    string random_question_descript = reader1["Description"].ToString();
+                    Debug.Log(random_question_descript);
+                    questionText.text = random_question_descript;
+                }
+                reader1.Close();
                 break;
         }
-
+        // 在操作完成后关闭数据库连接
+        if (connection.State == System.Data.ConnectionState.Open)
+        {
+            connection.Close();
+        }
     }
 
     private bool initDB()
