@@ -31,12 +31,20 @@ public class  ch2 : MonoBehaviour
     [SerializeField] Image trainmode;
     Image trainmode_prefab;
     string Checkanswer_string="";
+    const int max_answer_count = 10;
+    int answer_count = 0;
+    int correct_answer_count = 0;
 
     //train mode DB
+    /*
     string server = "localhost";
-    string database = "questionnare"; // 替換為你的資料庫名稱
+    string database = "questionnare"; // 資料庫名稱
     string user = "root";
-    string password = "123";
+    string password = "123";*/
+    string server = "34.80.93.104";
+    string database = "questionnare"; // 資料庫名稱
+    string user = "ss";
+    string password = "worinidaya";
     private MySqlConnection connection;
 
     void Start()
@@ -256,8 +264,8 @@ public class  ch2 : MonoBehaviour
         Button Choice_3 = trainmode_prefab.transform.Find("option/Choice/3/Button").GetComponent<Button>();
         Button Choice_4 = trainmode_prefab.transform.Find("option/Choice/4/Button").GetComponent<Button>();
         GameObject TrueFalse = trainmode_prefab.transform.Find("option/TrueFalse").gameObject;
-        Button TrueFalse_true = trainmode_prefab.transform.Find("option/TrueFalse/true/Button").GetComponent<Button>();
-        Button TrueFalse_false= trainmode_prefab.transform.Find("option/TrueFalse/false/Button").GetComponent<Button>();
+        Button TrueFalse_true = trainmode_prefab.transform.Find("option/TrueFalse/true").GetComponent<Button>();
+        Button TrueFalse_false= trainmode_prefab.transform.Find("option/TrueFalse/false").GetComponent<Button>();
         InputField ask= trainmode_prefab.transform.Find("option/ask").GetComponent<InputField>();
         Button Next_Button = trainmode_prefab.transform.Find("Next").GetComponent<Button>();
         Button Check_Button = trainmode_prefab.transform.Find("Check").GetComponent<Button>();
@@ -356,6 +364,27 @@ public class  ch2 : MonoBehaviour
         else
         {
             Debug.Log("開啟資料庫失敗，請按下e退出");
+            //先找對話的canva
+            GameObject canvas = GameObject.Find("DefaultDialogPrefab(Clone)");
+            // 在 Canvas 的子物件位置創建prefab
+            // 創建一個新的 GameObject 來持有 Text 組件
+            GameObject textObject = new GameObject("DisplayText");
+            textObject.transform.SetParent(canvas.transform, false);
+            // 添加 Text 組件
+            Text textComponent = textObject.AddComponent<Text>();
+            textComponent.text = "開啟資料庫失敗，請按下e退出";
+            // 設置文本的一些基本屬性
+            textComponent.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+            textComponent.fontSize = 24;
+            textComponent.color = Color.black;
+            // 設置 RectTransform
+            RectTransform rectTransform = textComponent.GetComponent<RectTransform>();
+            rectTransform.anchoredPosition = new Vector2(0, 0);
+            rectTransform.sizeDelta = new Vector2(200, 50); // 設置文本區域的寬度和高度
+            // 設置文本在父物件中的對齊方式
+            rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+            rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            rectTransform.pivot = new Vector2(0.5f, 0.5f);
         }
         
     }
@@ -408,7 +437,7 @@ public class  ch2 : MonoBehaviour
                 //隨機 取得選擇題題目並且章節為2 的題目
                 MySqlCommand command0 = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 0 AND ChapterID = 2 ORDER BY RAND() LIMIT 1", connection);
                 MySqlDataReader reader0 = command0.ExecuteReader();
-                String QuestionID ="" ;
+                string QuestionID ="" ;
                 string random_question_descript_choice = "";
                 string tempAnswerOptionID_choice = "";
                 if (reader0.Read()) // 使用 if 因為只會返回一條記錄
@@ -426,7 +455,18 @@ public class  ch2 : MonoBehaviour
                         check_button.gameObject.SetActive(false);
                         next_button.gameObject.SetActive(true);
                         option.gameObject.SetActive(false);
-                        answerText.text = "你的答案是" + Checkanswer_string + "解答為" + tempAnswerOptionID_choice;
+                        answer_count++;
+                        Debug.Log(" answer_count" + answer_count);
+                        if (Checkanswer_string == tempAnswerOptionID_choice)
+                        {
+                            correct_answer_count++;
+                            Debug.Log("  correct_answer_count" + correct_answer_count);
+                            answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID_choice+" 正確! ";
+                        }
+                        else
+                        {
+                            answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID_choice+" 錯誤 ";
+                        }
                         Solution_Question_Button.interactable = true;
                      });
                 if (reader0 != null && !reader0.IsClosed)
@@ -469,10 +509,10 @@ public class  ch2 : MonoBehaviour
 
             case 1: //    True_False
                 TrueFalse.SetActive(true);
-                Button true_button = TrueFalse.transform.Find("true/Button").GetComponent<Button>();
+                Button true_button = TrueFalse.transform.Find("true").GetComponent<Button>();
                 true_button.gameObject.SetActive(true);
                 true_button.GetComponent<Image>().color = Color.white; // Reset button color
-                Button false_button = TrueFalse.transform.Find("false/Button").GetComponent<Button>();
+                Button false_button = TrueFalse.transform.Find("false").GetComponent<Button>();
                 false_button.gameObject.SetActive(true);
                 false_button.GetComponent<Image>().color = Color.white; // Reset button color
 
@@ -498,7 +538,18 @@ public class  ch2 : MonoBehaviour
                         check_button.gameObject.SetActive(false);
                         next_button.gameObject.SetActive(true);
                         option.gameObject.SetActive(false);
-                        answerText.text = "你的答案是" + Checkanswer_string + "解答為" + tempAnswerOptionID;
+                        answer_count++;
+                        Debug.Log(" answer_count" + answer_count);
+                        if (Checkanswer_string == tempAnswerOptionID)
+                        {
+                            correct_answer_count++;
+                            Debug.Log("  correct_answer_count" + correct_answer_count);
+                            answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID + " 正確! ";
+                        }
+                        else
+                        {
+                            answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID + " 錯誤 ";
+                        }
                         Solution_Question_Button.interactable = true;
                     });
                 reader.Close();
@@ -526,7 +577,19 @@ public class  ch2 : MonoBehaviour
                         check_button.gameObject.SetActive(false);
                         next_button.gameObject.SetActive(true);
                         option.gameObject.SetActive(false);
-                        answerText.text = "你的答案是" + Checkanswer_string + "解答為空";
+                        answer_count++;
+                        Debug.Log(" answer_count" + answer_count);
+                        answerText.text = "你的答案是" + Checkanswer_string + "解答正在尋求專家解答";
+                        if (UnityEngine.Random.Range(0,1)==1?true:false)
+                        {
+                            correct_answer_count++;
+                            Debug.Log("  correct_answer_count" + correct_answer_count);
+                            answerText.text = " 你的答案是    " + Checkanswer_string + " 專家評價為 " + "高" + " 通過!";
+                        }
+                        else
+                        {
+                            answerText.text = " 你的答案是    " + Checkanswer_string + " 專家評價為 " + "低" + " 不通過 ";
+                        }
                         Solution_Question_Button.interactable = true;
                     });
                 reader1.Close();
