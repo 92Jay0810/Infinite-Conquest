@@ -82,24 +82,102 @@ public class  ch2 : MonoBehaviour
                     progress = 3;
                     break;
                 case 3:
+                    fs.SetupButtonGroup();
+                    fs.SetupButton("回去觀看學習模式.", () =>
+                    {
+                        gameEnd = false;
+                        fs.RemoveButtonGroup();
+                        progress = 4;
+                    });
+                    fs.SetupButton("進入戰鬥", () =>
+                    {
+                        gameEnd = false;
+                        fs.RemoveButtonGroup();
+                        progress = 6;
+                    });
+                    gameEnd = true;
+                    break;
+                case 4:
+                    fs.ReadTextFromResource("SingleMode/ch2/learnmode");
+                    progress = 5;
+                    break;
+                case 5:
                     if (Input.GetKeyDown(KeyCode.E))
                     {
-                        progress = 4;
+                        progress = 3;
+                        if (learningmode_prefab != null)
+                        {
+                            Destroy(learningmode_prefab.gameObject);
+                        }
+                    }
+                    break;
+                case 6:
+                    fs.ReadTextFromResource("SingleMode/ch2/trainmode");
+                    progress = 7;
+                    break;
+                case 7:
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        progress = 8;
                         if (trainmode_prefab != null)
                         {
                             Destroy(trainmode_prefab.gameObject);
                         }
                     }
                     break;
-                case 4:
+                case 8:
                     fs.ReadTextFromResource("SingleMode/ch2/ch2_3");
-                    progress = 5;
+                    progress = 9;
                     break;
-                case 5:
+                case 9:
+                    fs.SetupButtonGroup();
+                    fs.SetupButton("回去觀看學習模式.", () =>
+                    {
+                        gameEnd = false;
+                        fs.RemoveButtonGroup();
+                        progress = 10;
+                    });
+                    fs.SetupButton("進入戰鬥", () =>
+                    {
+                        gameEnd = false;
+                        fs.RemoveButtonGroup();
+                        progress = 12;
+                    });
+                    gameEnd = true;
+                    break;
+                case 10:
+                    fs.ReadTextFromResource("SingleMode/ch2/learnmode");
+                    progress = 11;
+                    break;
+                case 11:
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        progress = 9;
+                        if (learningmode_prefab != null)
+                        {
+                            Destroy(learningmode_prefab.gameObject);
+                        }
+                    }
+                    break;
+                case 12:
+                    fs.ReadTextFromResource("SingleMode/ch2/trainmode");
+                    progress = 13;
+                    break;
+                case 13:
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        progress = 14;
+                        if (trainmode_prefab != null)
+                        {
+                            Destroy(trainmode_prefab.gameObject);
+                        }
+                    }
+                    break;
+                case 14:
                     fs.ReadTextFromResource("SingleMode/ch2/ch2_4");
-                    progress = 6;
+                    progress = 15;
                     break;
-                case 6:
+                case 15:
                     fs.SetTextList(new List<string> { "結束[w]" });
                     break;
             }

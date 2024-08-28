@@ -78,4 +78,4 @@
 [image,char1,SingleMode/ch2/CIA-2,200,-300,1,spFadeIn_500]
 [remove,player,spFadeOut_500]
 [image,player,SingleMode/ch2/human5,40,-300,1,spFadeIn_500]
-<進入與程楻學院校長的戰鬥，此處為檢驗關卡，無提示>] [w]
+<進入與程楻學院校長的戰鬥，此處為檢驗關卡，無提示> [w]

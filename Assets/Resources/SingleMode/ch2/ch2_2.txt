@@ -36,4 +36,3 @@
 [image,tgs2,SingleMode/ch2/tgs2-1,120,-400,1,spFadeIn_ 250]
 [remove,cgs4,spFadeOut_250]
 [image,cgs4,SingleMode/ch2/cgs1-1,240,-400,1,spFadeIn_ 250]
-[trainMode]
