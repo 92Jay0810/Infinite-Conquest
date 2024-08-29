@@ -19,11 +19,10 @@ public class StartSceneManager : MonoBehaviourPunCallbacks
     public void OnclickStartSingle(){
         string playerName = GetPlayerName();
         if(playerName.Length > 0){
-        PhotonNetwork.LocalPlayer.NickName = playerName;
-        PhotonNetwork.ConnectUsingSettings();
-        SceneToLoad = "SingleLobbyScene";
-        print("Click單人遊戲");
-       }else{
+            print("Click單人遊戲");
+            SceneManager.LoadScene("ch1Scene");
+        }
+        else{
         print("Invalid RoomName or PlayerName");
        }
     }
