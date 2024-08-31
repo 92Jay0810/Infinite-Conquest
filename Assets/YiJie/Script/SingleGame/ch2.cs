@@ -31,9 +31,11 @@ public class  ch2 : MonoBehaviour
     [SerializeField] Image trainmode;
     Image trainmode_prefab;
     string Checkanswer_string="";
-    const int max_answer_count = 10;
+    const int max_answer_count = 5;
     int answer_count = 0;
     int correct_answer_count = 0;
+    [SerializeField] Image train_result;
+    Image train_result_prefab;
 
     //train mode DB
     /*
@@ -116,13 +118,15 @@ public class  ch2 : MonoBehaviour
                     progress = 7;
                     break;
                 case 7:
-                    if (Input.GetKeyDown(KeyCode.E))
+                    if (Input.GetKeyDown(KeyCode.R))
                     {
-                        progress = 8;
+                        progress = 3;
                         if (trainmode_prefab != null)
                         {
                             Destroy(trainmode_prefab.gameObject);
                         }
+                        answer_count = 0;
+                        correct_answer_count = 0;
                     }
                     break;
                 case 8:
@@ -323,89 +327,98 @@ public class  ch2 : MonoBehaviour
         //先初始化DB並確認是否有連接
         if (initDB())
         {
-        //先找對話的canva
-        GameObject canvas = GameObject.Find("DefaultDialogPrefab(Clone)");
-        // 在 Canvas 的子物件位置創建prefab
-        trainmode_prefab = Instantiate(trainmode, canvas.transform);
-        trainmode_prefab.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
-        //在learningMode圖片下，尋找按鈕及文字
-        GameObject question = trainmode_prefab.transform.Find("question").gameObject;
-        GameObject questionScroll = trainmode_prefab.transform.Find("question/questionScroll").gameObject;
-        Text questionText = trainmode_prefab.transform.Find("question/questionScroll/Viewport/Content/questionText").GetComponent<Text>();
-        Button Solution_Question_Button = trainmode_prefab.transform.Find("Solution_Question").GetComponent<Button>();
-        GameObject SolutionScroll = trainmode_prefab.transform.Find("question/SolutionScroll").gameObject;
-        Text SolutionText = trainmode_prefab.transform.Find("question/SolutionScroll/Viewport/Content/SloutionText").GetComponent<Text>();
-        GameObject option= trainmode_prefab.transform.Find("option").gameObject;
-        GameObject choice= trainmode_prefab.transform.Find("option/Choice").gameObject;
-        Button Choice_1 = trainmode_prefab.transform.Find("option/Choice/1/Button").GetComponent<Button>();
-        Button Choice_2 = trainmode_prefab.transform.Find("option/Choice/2/Button").GetComponent<Button>();
-        Button Choice_3 = trainmode_prefab.transform.Find("option/Choice/3/Button").GetComponent<Button>();
-        Button Choice_4 = trainmode_prefab.transform.Find("option/Choice/4/Button").GetComponent<Button>();
-        GameObject TrueFalse = trainmode_prefab.transform.Find("option/TrueFalse").gameObject;
-        Button TrueFalse_true = trainmode_prefab.transform.Find("option/TrueFalse/true").GetComponent<Button>();
-        Button TrueFalse_false= trainmode_prefab.transform.Find("option/TrueFalse/false").GetComponent<Button>();
-        InputField ask= trainmode_prefab.transform.Find("option/ask").GetComponent<InputField>();
-        Button Next_Button = trainmode_prefab.transform.Find("Next").GetComponent<Button>();
-        Button Check_Button = trainmode_prefab.transform.Find("Check").GetComponent<Button>();
-        Text answerText = trainmode_prefab.transform.Find("answerText").GetComponent<Text>();
-        Button promptcallButton = trainmode_prefab.transform.Find("promptcall").GetComponent<Button>();
-        Image promptPanel = trainmode_prefab.transform.Find("Panel").GetComponent<Image>();
-        Button promptButton = trainmode_prefab.transform.Find("Panel/prompt").GetComponent<Button>();
-        Text promptText = trainmode_prefab.transform.Find("Panel/promptTextscroll/Viewport/Content/promptText").GetComponent<Text>();
-        // 處理選擇邏輯
-        Button[] optionButtons = { Choice_1, Choice_2, Choice_3, Choice_4 };
-        foreach (Button Choice_option in optionButtons)
-        {
-            Choice_option.onClick.AddListener(() =>
+            //先找對話的canva
+            GameObject canvas = GameObject.Find("DefaultDialogPrefab(Clone)");
+            // 在 Canvas 的子物件位置創建prefab
+            trainmode_prefab = Instantiate(trainmode, canvas.transform);
+            trainmode_prefab.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+            //在learningMode圖片下，尋找按鈕及文字
+            GameObject question = trainmode_prefab.transform.Find("question").gameObject;
+            GameObject questionScroll = trainmode_prefab.transform.Find("question/questionScroll").gameObject;
+            Text questionText = trainmode_prefab.transform.Find("question/questionScroll/Viewport/Content/questionText").GetComponent<Text>();
+            Button Solution_Question_Button = trainmode_prefab.transform.Find("Solution_Question").GetComponent<Button>();
+            GameObject SolutionScroll = trainmode_prefab.transform.Find("question/SolutionScroll").gameObject;
+            Text SolutionText = trainmode_prefab.transform.Find("question/SolutionScroll/Viewport/Content/SloutionText").GetComponent<Text>();
+            GameObject option = trainmode_prefab.transform.Find("option").gameObject;
+            GameObject choice = trainmode_prefab.transform.Find("option/Choice").gameObject;
+            Button Choice_1 = trainmode_prefab.transform.Find("option/Choice/1/Button").GetComponent<Button>();
+            Button Choice_2 = trainmode_prefab.transform.Find("option/Choice/2/Button").GetComponent<Button>();
+            Button Choice_3 = trainmode_prefab.transform.Find("option/Choice/3/Button").GetComponent<Button>();
+            Button Choice_4 = trainmode_prefab.transform.Find("option/Choice/4/Button").GetComponent<Button>();
+            GameObject TrueFalse = trainmode_prefab.transform.Find("option/TrueFalse").gameObject;
+            Button TrueFalse_true = trainmode_prefab.transform.Find("option/TrueFalse/true").GetComponent<Button>();
+            Button TrueFalse_false = trainmode_prefab.transform.Find("option/TrueFalse/false").GetComponent<Button>();
+            InputField ask = trainmode_prefab.transform.Find("option/ask").GetComponent<InputField>();
+            Button Next_Button = trainmode_prefab.transform.Find("Next").GetComponent<Button>();
+            Button Check_Button = trainmode_prefab.transform.Find("Check").GetComponent<Button>();
+            Text answerText = trainmode_prefab.transform.Find("answerText").GetComponent<Text>();
+            Button promptcallButton = trainmode_prefab.transform.Find("promptcall").GetComponent<Button>();
+            Image promptPanel = trainmode_prefab.transform.Find("Panel").GetComponent<Image>();
+            Button promptButton = trainmode_prefab.transform.Find("Panel/prompt").GetComponent<Button>();
+            Text promptText = trainmode_prefab.transform.Find("Panel/promptTextscroll/Viewport/Content/promptText").GetComponent<Text>();
+            // 處理選擇邏輯
+            Button[] optionButtons = { Choice_1, Choice_2, Choice_3, Choice_4 };
+            foreach (Button Choice_option in optionButtons)
             {
+                Choice_option.onClick.AddListener(() =>
+                {
                 // 重製顏色
                 foreach (Button btn in optionButtons)
-                {
-                    btn.GetComponent<Image>().color = Color.white;
-                }
+                    {
+                        btn.GetComponent<Image>().color = Color.white;
+                    }
                 // 改變選中按鈕顏色
                 Choice_option.GetComponent<Image>().color = Color.green;
 
-                answerText.text = "你选择了: " + Choice_option.GetComponentInChildren<Text>().text;
-                Checkanswer_string = Choice_option.GetComponentInChildren<Text>().text;
+                    answerText.text = "你选择了: " + Choice_option.GetComponentInChildren<Text>().text;
+                    Checkanswer_string = Choice_option.GetComponentInChildren<Text>().text;
+                });
+            }
+
+            TrueFalse_true.onClick.AddListener(() =>
+            {
+                TrueFalse_true.GetComponent<Image>().color = Color.green;
+                TrueFalse_false.GetComponent<Image>().color = Color.white;
+                answerText.text = "你选择了: True";
+                Checkanswer_string = "true";
+
             });
-        }
+            TrueFalse_false.onClick.AddListener(() =>
+            {
+                TrueFalse_true.GetComponent<Image>().color = Color.white;
+                TrueFalse_false.GetComponent<Image>().color = Color.green;
+                answerText.text = "你选择了: false";
+                Checkanswer_string = "false";
 
-        TrueFalse_true.onClick.AddListener(() =>
-        {
-            TrueFalse_true.GetComponent<Image>().color = Color.green;
-            TrueFalse_false.GetComponent<Image>().color = Color.white;
-            answerText.text = "你选择了: True";
-            Checkanswer_string = "true";
- 
-        });
-        TrueFalse_false.onClick.AddListener(() =>
-        {
-            TrueFalse_true.GetComponent<Image>().color = Color.white;
-            TrueFalse_false.GetComponent<Image>().color = Color.green;
-            answerText.text = "你选择了: false";
-            Checkanswer_string = "false";
+            });
+            ask.onEndEdit.AddListener(inputText =>
+            {
+                answerText.text = "你的回答: " + inputText;
+                Checkanswer_string = inputText;
+            });
+            initQuestion(Check_Button, Next_Button, question, option, choice, TrueFalse, ask, Solution_Question_Button, answerText, questionText);
+            promptcallButton.onClick.AddListener(() =>
+            {
+                bool isActive = promptPanel.gameObject.activeSelf;
+                promptPanel.gameObject.SetActive(!isActive);
+            });
 
-        });
-        ask.onEndEdit.AddListener(inputText =>
-        {
-            answerText.text = "你的回答: " + inputText;
-            Checkanswer_string = inputText;
-        });
-        initQuestion(Check_Button, Next_Button, question ,option, choice, TrueFalse, ask, Solution_Question_Button , answerText, questionText);
-        promptcallButton.onClick.AddListener(() =>
-        {
-            bool isActive = promptPanel.gameObject.activeSelf;
-            promptPanel.gameObject.SetActive(!isActive);
-        });
-     
-        Solution_Question_Button.onClick.AddListener(() =>
-        {
-            questionScroll.SetActive(!questionScroll.activeSelf);
-            SolutionScroll.SetActive(!SolutionScroll.activeSelf);
-        });
-        Next_Button.onClick.AddListener( () =>initQuestion(Check_Button, Next_Button, question, option,choice ,TrueFalse,ask,Solution_Question_Button ,answerText, questionText));
-
+            Solution_Question_Button.onClick.AddListener(() =>
+            {
+                questionScroll.SetActive(!questionScroll.activeSelf);
+                SolutionScroll.SetActive(!SolutionScroll.activeSelf);
+            });
+            Next_Button.onClick.AddListener(() =>
+            {
+                if (answer_count < max_answer_count)
+                {
+                    initQuestion(Check_Button, Next_Button, question, option, choice, TrueFalse, ask, Solution_Question_Button, answerText, questionText);
+                }
+                else
+                {
+                    DisplayResult();
+                }
+            });
 
         // call OpenAI
         /*promptButton.onClick.AddListener(async () =>
@@ -441,7 +454,7 @@ public class  ch2 : MonoBehaviour
         }
         else
         {
-            Debug.Log("開啟資料庫失敗，請按下e退出");
+            Debug.Log("開啟資料庫失敗，請按下R退出");
             //先找對話的canva
             GameObject canvas = GameObject.Find("DefaultDialogPrefab(Clone)");
             // 在 Canvas 的子物件位置創建prefab
@@ -450,7 +463,7 @@ public class  ch2 : MonoBehaviour
             textObject.transform.SetParent(canvas.transform, false);
             // 添加 Text 組件
             Text textComponent = textObject.AddComponent<Text>();
-            textComponent.text = "開啟資料庫失敗，請按下e退出";
+            textComponent.text = "開啟資料庫失敗，請按下R退出";
             // 設置文本的一些基本屬性
             textComponent.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
             textComponent.fontSize = 24;
@@ -702,4 +715,52 @@ public class  ch2 : MonoBehaviour
             }
         }
     }
-}
+
+    void DisplayResult()
+    {
+        if (trainmode_prefab != null)
+        {
+            Destroy(trainmode_prefab.gameObject);
+        }
+        Debug.Log("display result");
+        //這裡根據正確率決定跳入哪裡，透過按鈕改變prograss變數
+        //先找對話的canva
+        GameObject canvas = GameObject.Find("DefaultDialogPrefab(Clone)");
+        // 在 Canvas 的子物件位置創建prefab
+        train_result_prefab= Instantiate(train_result, canvas.transform);
+        train_result_prefab.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+        //在learningMode圖片下，尋找按鈕及文字
+        Text corrent_count_text = train_result_prefab.transform.Find("corrent_count_text").GetComponent<Text>();
+        Button Pass_Button = train_result_prefab.transform.Find("Pass").GetComponent<Button>();
+        Button Retry_Button = train_result_prefab.transform.Find("Retry").GetComponent<Button>();
+        corrent_count_text.text = correct_answer_count.ToString();
+        if (correct_answer_count >= answer_count * 0.6)
+        {
+            Pass_Button.gameObject.SetActive(true);
+            Pass_Button.onClick.AddListener(() =>
+            {
+                if (train_result_prefab != null)
+                {
+                    Destroy(train_result_prefab.gameObject);
+                }
+                progress = 8;
+            });
+            Retry_Button.gameObject.SetActive(false);
+        }
+        else
+        {
+            Pass_Button.gameObject.SetActive(false);
+            Retry_Button.gameObject.SetActive(true);
+            Retry_Button.onClick.AddListener(() =>
+            {
+                if (train_result_prefab != null)
+                {
+                    Destroy(train_result_prefab.gameObject);
+                }
+                progress = 3;
+            });
+        }
+        answer_count = 0;
+        correct_answer_count = 0;
+    }
+    }
