@@ -24,7 +24,11 @@ public class  ch2 : MonoBehaviour
 
     //Open AI
     private OpenAIApi openai = new OpenAIApi("");
-    private string prompt = "指令：你現在是理化老師，用簡單的語言向國中生解釋這些內容，並舉例說明這個概念和公式是如何應用的。讓他們能夠容易理解並能夠在日常生活中找到相關例子。";
+    private string learn_prompt = "指令：\n 你現在是理化老師，用簡單的語言向國中生解釋這些內容，並舉例說明這個概念和公式是如何應用的。讓他們能夠容易理解並能夠在日常生活中找到相關例子。";
+    private string train_prompt = "指令：\n 你現在是理化老師，請根據下列的題目內容（以及選項，如果有）生成一段簡短的指導，幫助使用者理解如何解答這道題目。對於選擇題，請引導用戶如何審查選項並做出最佳選擇；對於是非題，請引導用戶如何判斷陳述的正確性；對於問答題，請指導用戶如何組織並表達他們的答案。";
+    private string judge_prompt = "指令：\n 請根據下列題目和使用者的回答，進行評價並返回如下格式的字串：'評價：高'、'評價：中'、或 '評價：低'。評價應基於回答的完整性、準確性和深度來決定，以國中生程度來判定。";
+    private string detail_prompt = "指令：\n 你現在是理化老師，請根據下列題目、選項（若有的話）和詳解，為用戶生成一個詳細的解釋。解釋應該幫助用戶理解題目的重點，為什麼正確答案是正確的，並說明其他選項為什麼不正確，讓用戶在下一次遇到類似問題時能夠更好地解答。";
+
     private List<ChatMessage> messages = new List<ChatMessage>();
 
     //train mode
@@ -278,7 +282,7 @@ public class  ch2 : MonoBehaviour
             var newMessage = new ChatMessage()
             {
                 Role = "user",
-                Content = prompt + "\n" +"資料： "+ showText.text,
+                Content = learn_prompt + "\n" +"資料： "+ showText.text,
             };
             messages.Add(newMessage);
             Debug.Log("傳送chat內容："+newMessage.Content);
@@ -353,11 +357,12 @@ public class  ch2 : MonoBehaviour
             InputField ask = trainmode_prefab.transform.Find("option/ask").GetComponent<InputField>();
             Button Next_Button = trainmode_prefab.transform.Find("Next").GetComponent<Button>();
             Button Check_Button = trainmode_prefab.transform.Find("Check").GetComponent<Button>();
-            Text answerText = trainmode_prefab.transform.Find("answerText").GetComponent<Text>();
+            Text answerText = trainmode_prefab.transform.Find("answerScroll/Viewport/Content/answerText").GetComponent<Text>();
             Button promptcallButton = trainmode_prefab.transform.Find("promptcall").GetComponent<Button>();
             Image promptPanel = trainmode_prefab.transform.Find("Panel").GetComponent<Image>();
             Button promptButton = trainmode_prefab.transform.Find("Panel/prompt").GetComponent<Button>();
             Text promptText = trainmode_prefab.transform.Find("Panel/promptTextscroll/Viewport/Content/promptText").GetComponent<Text>();
+            promptText.text = "";
             // 處理選擇邏輯
             Button[] optionButtons = { Choice_1, Choice_2, Choice_3, Choice_4 };
             foreach (Button Choice_option in optionButtons)
@@ -423,6 +428,7 @@ public class  ch2 : MonoBehaviour
             {
                 if (answer_count < max_answer_count)
                 {
+                    promptText.text = "";
                     initQuestion(Check_Button, Next_Button, question, option, choice, TrueFalse, ask, Solution_Question_Button, answerText, questionText);
                 }
                 else
@@ -431,15 +437,46 @@ public class  ch2 : MonoBehaviour
                 }
             });
 
-        // call OpenAI
-        /*promptButton.onClick.AddListener(async () =>
+            // call OpenAI
+        promptButton.onClick.AddListener(async () =>
         {
             promptText.text = "";
             messages.Clear();
+            string QuestionTypeString = "";
+            string OptionString = "選項：\n";
+            if (choice.activeSelf)
+            {
+                QuestionTypeString = "選擇題";
+                Text option_1 = choice.transform.Find("1/Viewport/Content/questionText").GetComponent<Text>();
+                Text option_2 = choice.transform.Find("2/Viewport/Content/questionText").GetComponent<Text>();
+                Text option_3 = choice.transform.Find("3/Viewport/Content/questionText").GetComponent<Text>();
+                Text option_4 = choice.transform.Find("4/Viewport/Content/questionText").GetComponent<Text>();
+                OptionString += "(1)"+option_1.text + "\n (2) " + option_2.text + "\n (3) " + option_3.text + "\n (4) " + option_4.text;
+
+            }
+            else if (TrueFalse.activeSelf)
+            {
+                QuestionTypeString = "是非題";
+                OptionString += " 是 \n 否 " ;
+            }
+            else
+            {
+                QuestionTypeString = "問答題";
+            }
+            //如果題目詳解切換按鈕可以互動，表示已經回答完題目，則進行題目和詳解的詳細說明與解答
+            string MessageContent=" ";
+            if (Solution_Question_Button.interactable)
+            {
+                MessageContent = detail_prompt +"\n 題目類型："+QuestionTypeString +"\n 題目：\n " + questionText.text+"\n"+OptionString+" \n 詳解：\n"+SolutionText.text;
+            }
+            else
+            {
+                MessageContent = train_prompt + "\n 題目類型：" + QuestionTypeString + "\n 題目：\n " + questionText.text + "\n" + OptionString;
+            }
             var newMessage = new ChatMessage()
             {
                 Role = "user",
-                Content = prompt + "\n" + "資料： " ,
+                Content = MessageContent,
             };
             messages.Add(newMessage);
             Debug.Log("傳送chat內容：" + newMessage.Content);
@@ -460,7 +497,7 @@ public class  ch2 : MonoBehaviour
             {
                 Debug.LogWarning("No text was generated from this prompt.");
             }
-        });*/
+        });
 
         }
         else
@@ -674,23 +711,50 @@ public class  ch2 : MonoBehaviour
                     Solutiontext.text = reader1["Explanation"].ToString();
                 } 
                 check_button.onClick.RemoveAllListeners(); // Clear previous listeners
-                    check_button.onClick.AddListener(() =>
+                    check_button.onClick.AddListener( async () =>
                     {
                         check_button.gameObject.SetActive(false);
                         next_button.gameObject.SetActive(true);
                         option.gameObject.SetActive(false);
                         answer_count++;
                         Debug.Log(" answer_count" + answer_count);
-                        answerText.text = "你的答案是" + Checkanswer_string + "解答正在尋求專家解答";
-                        if (UnityEngine.Random.Range(0,1)==1?true:false)
+                        answerText.text = "你的答案是" + Checkanswer_string + "解答評價中，正在尋求專家評價";
+                        messages.Clear();
+                        var newMessage = new ChatMessage()
                         {
-                            correct_answer_count++;
-                            Debug.Log("  correct_answer_count" + correct_answer_count);
-                            answerText.text = " 你的答案是    " + Checkanswer_string + " 專家評價為 " + "高" + " 通過!";
+                            Role = "user",
+                            Content =judge_prompt+"\n 題目：\n"+questionText.text+ "\n使用者回答：\n"+Checkanswer_string,
+                        };
+                        messages.Add(newMessage);
+                        Debug.Log("傳送chat內容：" + newMessage.Content);
+                        // Complete the instruction
+                        var completionResponse = await openai.CreateChatCompletion(new CreateChatCompletionRequest()
+                        {
+                            Model = "gpt-4o",
+                            Messages = messages
+                        });
+                        if (completionResponse.Choices != null && completionResponse.Choices.Count > 0)
+                        {
+                            var Response_message = completionResponse.Choices[0].Message;
+                            Response_message.Content = Response_message.Content.Trim();    
+                            Debug.Log("chat回覆：" + Response_message.Content);
+                            string judge_string = "";
+                            if (Response_message.Content== "評價：高"|| Response_message.Content == "評價：中")
+                            {
+                                judge_string = "通過!";
+                                correct_answer_count++;
+                                Debug.Log("  correct_answer_count" + correct_answer_count);
+                            }
+                            else
+                            {
+                                judge_string = "不通過!";
+                            }
+                            answerText.text = " 專家回答：" + Response_message.Content + " " + judge_string+ " 你的答案是    " + Checkanswer_string ;
+                        
                         }
                         else
                         {
-                            answerText.text = " 你的答案是    " + Checkanswer_string + " 專家評價為 " + "低" + " 不通過 ";
+                            Debug.LogWarning("No text was generated from this prompt.");
                         }
                         Solution_Question_Button.interactable = true;
                     });
