@@ -141,7 +141,7 @@ public class  ch2 : MonoBehaviour
                         fs.RemoveButtonGroup();
                         progress = 10;
                     });
-                    fs.SetupButton("進入戰鬥", () =>
+                    fs.SetupButton("進入最終戰鬥", () =>
                     {
                         gameEnd = false;
                         fs.RemoveButtonGroup();
@@ -164,17 +164,19 @@ public class  ch2 : MonoBehaviour
                     }
                     break;
                 case 12:
-                    fs.ReadTextFromResource("SingleMode/ch2/trainmode");
+                    fs.ReadTextFromResource("SingleMode/ch2/checkmode");
                     progress = 13;
                     break;
                 case 13:
-                    if (Input.GetKeyDown(KeyCode.E))
+                    if (Input.GetKeyDown(KeyCode.R))
                     {
-                        progress = 14;
+                        progress = 9;
                         if (trainmode_prefab != null)
                         {
                             Destroy(trainmode_prefab.gameObject);
                         }
+                        answer_count = 0;
+                        correct_answer_count = 0;
                     }
                     break;
                 case 14:
@@ -182,7 +184,7 @@ public class  ch2 : MonoBehaviour
                     progress = 15;
                     break;
                 case 15:
-                    fs.SetTextList(new List<string> { "結束[w]" });
+                    fs.SetTextList(new List<string> { "結束，進入下一章[w]" });
                     break;
             }
         }
@@ -397,13 +399,22 @@ public class  ch2 : MonoBehaviour
                 Checkanswer_string = inputText;
             });
             initQuestion(Check_Button, Next_Button, question, option, choice, TrueFalse, ask, Solution_Question_Button, answerText, questionText);
-            promptcallButton.onClick.AddListener(() =>
+            //pass by txt file， true  repersent train_mode false represent check_mode，check_mode no hint 
+            if (properties[0] == "true")
             {
-                bool isActive = promptPanel.gameObject.activeSelf;
-                promptPanel.gameObject.SetActive(!isActive);
-            });
-
-            Solution_Question_Button.onClick.AddListener(() =>
+                promptcallButton.onClick.AddListener(() =>
+                   {
+                    
+                        promptcallButton.interactable = true;
+                       bool isActive = promptPanel.gameObject.activeSelf;
+                       promptPanel.gameObject.SetActive(!isActive);
+                   });
+            }
+            else
+            {
+                promptcallButton.interactable = false;
+            }
+                Solution_Question_Button.onClick.AddListener(() =>
             {
                 questionScroll.SetActive(!questionScroll.activeSelf);
                 SolutionScroll.SetActive(!SolutionScroll.activeSelf);
@@ -416,7 +427,7 @@ public class  ch2 : MonoBehaviour
                 }
                 else
                 {
-                    DisplayResult();
+                    DisplayResult(properties[0]);
                 }
             });
 
@@ -716,7 +727,7 @@ public class  ch2 : MonoBehaviour
         }
     }
 
-    void DisplayResult()
+    void DisplayResult(String trainORcheck)
     {
         if (trainmode_prefab != null)
         {
@@ -743,7 +754,14 @@ public class  ch2 : MonoBehaviour
                 {
                     Destroy(train_result_prefab.gameObject);
                 }
-                progress = 8;
+                if (trainORcheck == "true")
+                {
+                    progress = 8;
+                }
+                else
+                {
+                    progress = 14;
+                }
             });
             Retry_Button.gameObject.SetActive(false);
         }
@@ -757,7 +775,14 @@ public class  ch2 : MonoBehaviour
                 {
                     Destroy(train_result_prefab.gameObject);
                 }
-                progress = 3;
+                if (trainORcheck == "true")
+                {
+                    progress = 3;
+                }
+                else
+                {
+                    progress = 9;
+                }
             });
         }
         answer_count = 0;
