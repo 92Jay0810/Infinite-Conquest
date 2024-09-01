@@ -10,7 +10,8 @@ public class  ch3 : MonoBehaviour
     FlowerSystem fs;
     private int progress = 0;
     private bool gameEnd = false;
-    private string playername = "玩家名";
+    // private string playername = LoginAndRegister.LoggedInUsername ;
+    private string playername =""  ;
 
     //learning mode 
     [SerializeField] Image learningmode;
@@ -30,7 +31,7 @@ public class  ch3 : MonoBehaviour
     string Checkanswer_string="";
     void Start()
     {
-        fs = FlowerManager.Instance.CreateFlowerSystem("default", false);
+        fs = FlowerManager.Instance.CreateFlowerSystem("default", true);
         fs.SetupDialog();
         fs.SetVariable("playername", playername);
         fs.RegisterCommand("learningMode", learningMode);

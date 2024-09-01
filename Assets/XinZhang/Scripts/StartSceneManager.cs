@@ -8,49 +8,31 @@ using Photon.Realtime;
 
 public class StartSceneManager : MonoBehaviourPunCallbacks
 {
-    [SerializeField] InputField inputPlayerName;
     private string SceneToLoad;
+    string userName= LoginAndRegister.LoggedInUsername;
+    [SerializeField] Text welcomeText;
 
-    public string GetPlayerName(){
-        string playerName = inputPlayerName.text;
-        return playerName.Trim();//擷取調空白字元
+    private void Start()
+    {
+       welcomeText.text= "您好! "+userName+" \n \n今天要玩什麼模式呢?";
     }
-
     public void OnclickStartSingle(){
-        string playerName = GetPlayerName();
-        if(playerName.Length > 0){
             print("Click單人遊戲");
             SceneManager.LoadScene("ch1Scene");
-        }
-        else{
-        print("Invalid RoomName or PlayerName");
-       }
     }
 
     public void OnclickStartMulti(){
-        string playerName = GetPlayerName();
-        if(playerName.Length > 0){
-        PhotonNetwork.LocalPlayer.NickName = playerName;
+        PhotonNetwork.LocalPlayer.NickName = userName;
         PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.ConnectUsingSettings();
         SceneToLoad = "MultiLobbyScene";
-        PlayerPrefs.SetString("PlayerName", playerName);
+        PlayerPrefs.SetString("PlayerName", userName);
         print("Click多人遊戲");
-       }else{
-        print("Invalid RoomName or PlayerName");
-       }
     }
-    // public void OnclickStartMulti(){
-    //     PhotonNetwork.ConnectUsingSettings();
-    //     SceneToLoad = "MultiLobbyScene";
-    //     print("Click多人遊戲");
-        
-    // }
 
     public override void OnConnectedToMaster()
     {
         print("connect");
         SceneManager.LoadScene(SceneToLoad);
     }
-
 }

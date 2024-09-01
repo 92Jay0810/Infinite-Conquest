@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Flower;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using OpenAI;
 
 public class ch1 : MonoBehaviour
@@ -12,9 +13,7 @@ public class ch1 : MonoBehaviour
     private bool gameEnd = false;
     [SerializeField] GameObject openingText_1;
     [SerializeField] GameObject openingText_2;
-    private string playername = "";
-    [SerializeField] GameObject InputPlayerField;
-    [SerializeField] GameObject playerbutton;
+    private string playername = LoginAndRegister.LoggedInUsername;
     [SerializeField] Image learningmode;
     Image learningmode_prefab;
     //learning mode variable
@@ -31,13 +30,12 @@ public class ch1 : MonoBehaviour
     int not_allow2 = 0;
     void Start()
     {
-        fs = FlowerManager.Instance.CreateFlowerSystem("default", false);
+        fs = FlowerManager.Instance.CreateFlowerSystem("default", true);
         fs.SetupDialog();
         //UI Stage沒什麼用，在3D遊戲比較有用，顯示圖片在canva中
         //fs.SetupUIStage("default", "DefaultUIStagePrefab", 10);
         fs.RegisterCommand("CreateOpeningText_1", CreateOpeningText_1);
         fs.RegisterCommand("CreateOpeningText_2", CreateOpeningText_2);
-        fs.RegisterCommand("InputPlayerText", InputPlayerText);
         fs.SetVariable("playername", playername);
         fs.RegisterCommand("learningMode", learningMode);
     }
@@ -136,7 +134,12 @@ public class ch1 : MonoBehaviour
                     gameEnd = true;
                     break;
                 case 8:
+                    fs.ReadTextFromResource("SingleMode/ch1/opening_5");
+                    progress = 9;
+                    break;
+                case 9:
                     fs.SetTextList(new List<string> { "序章結束進入第一章" });
+                    SceneManager.LoadScene("ch2Scene");
                     gameEnd = true;
                     break;
             }
@@ -164,29 +167,7 @@ public class ch1 : MonoBehaviour
         // 設置初始位置
         spawnedText.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -450);
     }
-    private void InputPlayerText(List<string> properties)
-    {
-        //先找對話的canva
-        GameObject canvas = GameObject.Find("DefaultDialogPrefab(Clone)");
-        // 在 Canvas 的子物件位置創建文字 prefab
-        GameObject InputPlayerField_prefab = Instantiate(InputPlayerField, canvas.transform);
-        InputPlayerField_prefab.GetComponent<RectTransform>().anchoredPosition = new Vector2(-50, -100);
-        GameObject Playerbutton_prefab = Instantiate(playerbutton, canvas.transform);
-        Playerbutton_prefab.GetComponent<RectTransform>().anchoredPosition = new Vector2(250, -100);
-        //增加提交事件
-        Button buttonComponent = Playerbutton_prefab.GetComponent<Button>();
-        buttonComponent.onClick.AddListener(() =>
-        {
-            // 更新字串
-            playername = InputPlayerField_prefab.GetComponent<InputField>().text;
-            fs.SetVariable("playername", playername);
-            fs.Resume();
-            fs.Next();
-            // 刪除 InputField 和按鈕
-            Destroy(InputPlayerField_prefab);
-            Destroy(Playerbutton_prefab);
-        });
-    }
+ 
     public class Knowledge
     {
         public KnowledgeType Type;
