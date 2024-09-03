@@ -12,8 +12,8 @@ public class  ch2 : MonoBehaviour
     FlowerSystem fs;
     private int progress = 0;
     private bool gameEnd = false;
-    private string playername = LoginAndRegister.LoggedInUsername;
-
+   private string playername = LoginAndRegister.LoggedInUsername;
+    //private string playername = "";
     //learning mode 
     [SerializeField] Image learningmode;
  

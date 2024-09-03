@@ -235,8 +235,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50b90c75059966c4ca45d925ab1c0c45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  learningmode: {fileID: 0}
-  ch2LearnAsset: {fileID: 0}
+  learningmode: {fileID: 6748901085196009285, guid: d3a8c5d31ed060f429146eca274629aa, type: 3}
+  ch3LearnAsset: {fileID: 4900000, guid: 0bf100e3df1888147b797949269461b6, type: 3}
   trainmode: {fileID: 0}
 --- !u!1 &1344301408
 GameObject:

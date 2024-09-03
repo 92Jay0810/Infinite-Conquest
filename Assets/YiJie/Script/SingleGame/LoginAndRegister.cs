@@ -23,8 +23,8 @@ public class LoginAndRegister : MonoBehaviour
     string user = "ss";
     string password = "worinidaya";
 
-
-    public static string LoggedInUsername { get; private set; } // 用於在其他場景中訪問使用者名稱
+    // 用於在其他場景中訪問使用者名稱
+    public static string LoggedInUsername { get; private set; } = "";
 
     private void Start()
     {
