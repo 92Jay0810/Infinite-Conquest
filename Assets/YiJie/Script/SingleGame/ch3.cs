@@ -32,6 +32,7 @@ public class  ch3 : MonoBehaviour
     void Start()
     {
         fs = FlowerManager.Instance.CreateFlowerSystem("default", true);
+        fs.SetScreenReference(1920, 1080);
         fs.SetupDialog();
         fs.SetVariable("playername", playername);
         fs.RegisterCommand("learningMode", learningMode);
@@ -94,26 +95,89 @@ public class  ch3 : MonoBehaviour
                     }
                     break;
                 case 6:
-                    fs.ReadTextFromResource("SingleMode/ch2/trainmode");
+                    fs.ReadTextFromResource("SingleMode/ch3/ch3_3");
                     progress = 7;
                     break;
                 case 7:
+                    //fs.ReadTextFromResource("SingleMode/ch2/trainmode");
+                    progress = 8;
+                    break;
+                case 8:
+                    /*
                     if (Input.GetKeyDown(KeyCode.R))
                     {
                         progress = 3;
-                        /*if (trainmode_prefab != null)
+                        if (trainmode_prefab != null)
                         {
                             Destroy(trainmode_prefab.gameObject);
                         }
                         answer_count = 0;
-                        correct_answer_count = 0;*/
-                    }
-                    break;
-                case 8:
-                    fs.ReadTextFromResource("SingleMode/ch2/ch2_3");
+                        correct_answer_count = 0;
+                    }*/
                     progress = 9;
                     break;
                 case 9:
+                    fs.ReadTextFromResource("SingleMode/ch3/ch3_4");
+                    progress = 10;
+                    break;
+
+                case 10:
+                    fs.SetupButtonGroup();
+                    fs.SetupButton("回去觀看學習模式.", () =>
+                    {
+                        gameEnd = false;
+                        fs.RemoveButtonGroup();
+                        progress = 11;
+                    });
+                    fs.SetupButton("進入戰鬥", () =>
+                    {
+                        gameEnd = false;
+                        fs.RemoveButtonGroup();
+                        progress = 13;
+                    });
+                    gameEnd = true;
+                    break;
+                case 11:
+                    fs.ReadTextFromResource("SingleMode/ch2/learnmode");
+                    progress = 12;
+                    break;
+                case 12:
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        progress = 10;
+                        if (learningmode_prefab != null)
+                        {
+                            Destroy(learningmode_prefab.gameObject);
+                        }
+                    }
+                    break;
+                case 13:
+                    fs.ReadTextFromResource("SingleMode/ch3/ch3_5");
+                    progress = 14;
+                    break;
+                case 14:
+                    //fs.ReadTextFromResource("SingleMode/ch2/trainmode");
+                    progress = 15;
+                    break;
+                case 15:
+                    /*
+                     if (Input.GetKeyDown(KeyCode.R))
+                     {
+                         progress = 3;
+                         if (trainmode_prefab != null)
+                         {
+                             Destroy(trainmode_prefab.gameObject);
+                         }
+                         answer_count = 0;
+                         correct_answer_count = 0;
+                     }*/
+                    progress = 16;
+                    break;
+                case 16:
+                    fs.ReadTextFromResource("SingleMode/ch3/ch3_6");
+                    progress = 17;
+                    break;
+                case 17:
                     fs.SetTextList(new List<string> { "結束[w]" });
                     break;
             }

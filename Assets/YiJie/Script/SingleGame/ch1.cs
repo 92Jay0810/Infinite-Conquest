@@ -31,6 +31,7 @@ public class ch1 : MonoBehaviour
     void Start()
     {
         fs = FlowerManager.Instance.CreateFlowerSystem("default", true);
+        fs.SetScreenReference(1920, 1080);
         fs.SetupDialog();
         //UI Stage沒什麼用，在3D遊戲比較有用，顯示圖片在canva中
         //fs.SetupUIStage("default", "DefaultUIStagePrefab", 10);

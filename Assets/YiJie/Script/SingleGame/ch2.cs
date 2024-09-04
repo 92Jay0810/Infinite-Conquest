@@ -54,8 +54,9 @@ public class  ch2 : MonoBehaviour
 
     void Start()
     {
-            fs = FlowerManager.Instance.CreateFlowerSystem("default", true);
-            fs.SetupDialog();
+        fs = FlowerManager.Instance.CreateFlowerSystem("default", true);
+        fs.SetScreenReference(1920, 1080);
+        fs.SetupDialog();
         fs.SetVariable("playername", playername);
         fs.RegisterCommand("learningMode", learningMode);
         fs.RegisterCommand("trainMode", trainMode);
