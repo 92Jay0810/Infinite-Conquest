@@ -25,6 +25,7 @@ public class LoginAndRegister : MonoBehaviour
 
     // 用於在其他場景中訪問使用者名稱
     public static string LoggedInUsername { get; private set; } = "";
+    public static int LoggedInUserID { get; private set; } = 0;
 
     private void Start()
     {
@@ -69,25 +70,34 @@ public class LoginAndRegister : MonoBehaviour
         {
             connection.Open();
 
-            MySqlCommand cmd = new MySqlCommand("SELECT password FROM users WHERE username = @username", connection);
+            MySqlCommand cmd = new MySqlCommand("SELECT id, password FROM users WHERE username = @username", connection);
             cmd.Parameters.AddWithValue("@username", Login_username);
+            using (MySqlDataReader reader = cmd.ExecuteReader())
+            {
+                if (reader.Read())
+                {
+                    int userID = reader.GetInt32("id");
+                    string storedPassword = reader.GetString("password");
 
-            string storedPassword = cmd.ExecuteScalar()?.ToString();
+                    if (storedPassword == Login_password) // 建議在實際應用中使用哈希比對
+                    {
+                        feedbackText.text = "登錄成功";
+                        LoggedInUsername = Login_username; // 保存使用者名稱
+                        LoggedInUserID = userID; // 保存userID
+                        Debug.Log("  LoggedInUserID:"+LoggedInUserID);
+                        SceneManager.LoadScene("StartScene"); // 跳轉到下一個場景
+                    }
+                    else
+                    {
+                        feedbackText.text = "密碼錯誤";
+                    }
+                }
+                else
+                {
+                    feedbackText.text = "帳號不存在";
+                }
+            }
 
-            if (storedPassword == null)
-            {
-                feedbackText.text = "帳號不存在";
-            }
-            else if (storedPassword == Login_password) // 建議在實際應用中使用哈希比對
-            {
-                feedbackText.text = "登錄成功";
-                LoggedInUsername = Login_username; // 保存使用者名稱
-                SceneManager.LoadScene("StartScene"); // 跳轉到下一個場景
-            }
-            else
-            {
-                feedbackText.text = "密碼錯誤";
-            }
         }
     }
     public void OnRegisterButtonClick()

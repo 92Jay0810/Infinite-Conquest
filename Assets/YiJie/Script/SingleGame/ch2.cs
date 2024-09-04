@@ -12,11 +12,11 @@ public class  ch2 : MonoBehaviour
     FlowerSystem fs;
     private int progress = 0;
     private bool gameEnd = false;
-   private string playername = LoginAndRegister.LoggedInUsername;
-    //private string playername = "";
+    private string playername = LoginAndRegister.LoggedInUsername;
+    private int playerid= LoginAndRegister.LoggedInUserID;
+
     //learning mode 
-    [SerializeField] Image learningmode;
- 
+    [SerializeField] Image learningmode; 
     Image learningmode_prefab;
     public TextAsset ch2LearnAsset;
     private List<Knowledge> knowledgePoints;
@@ -28,7 +28,6 @@ public class  ch2 : MonoBehaviour
     private string train_prompt = "指令：\n 你現在是理化老師，請根據下列的題目內容（以及選項，如果有）生成一段簡短的指導，幫助使用者理解如何解答這道題目。對於選擇題，請引導用戶如何審查選項並做出最佳選擇；對於是非題，請引導用戶如何判斷陳述的正確性；對於問答題，請指導用戶如何組織並表達他們的答案。";
     private string judge_prompt = "指令：\n 請根據下列題目和使用者的回答，進行評價並返回如下格式的字串：'評價：高'、'評價：中'、或 '評價：低'。評價應基於回答的完整性、準確性和深度來決定，以國中生程度來判定。";
     private string detail_prompt = "指令：\n 你現在是理化老師，請根據下列題目、選項（若有的話）和詳解，為用戶生成一個詳細的解釋。解釋應該幫助用戶理解題目的重點，為什麼正確答案是正確的，並說明其他選項為什麼不正確，讓用戶在下一次遇到類似問題時能夠更好地解答。";
-
     private List<ChatMessage> messages = new List<ChatMessage>();
 
     //train mode
@@ -577,16 +576,19 @@ public class  ch2 : MonoBehaviour
                 MySqlCommand command0 = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 0 AND ChapterID = 2 ORDER BY RAND() LIMIT 1", connection);
                 MySqlDataReader reader0 = command0.ExecuteReader();
                 string QuestionID ="" ;
-                string random_question_descript_choice = "";
                 string tempAnswerOptionID_choice = "";
                 if (reader0.Read()) // 使用 if 因為只會返回一條記錄
                 {
-                    random_question_descript_choice = reader0["Description"].ToString();
+                    string  random_question_descript_choice = reader0["Description"].ToString();
                     Debug.Log(random_question_descript_choice);
                     questionText.text = random_question_descript_choice;
                     QuestionID = reader0["QuestionID"].ToString();
                     tempAnswerOptionID_choice = reader0["AnswerOptionID"].ToString();
                     Solutiontext.text= reader0["Explanation"].ToString();
+                }
+                if (reader0 != null && !reader0.IsClosed)
+                {
+                    reader0.Close();
                 }
                 check_button.onClick.RemoveAllListeners(); // Clear previous listeners
                     check_button.onClick.AddListener(() =>
@@ -608,10 +610,6 @@ public class  ch2 : MonoBehaviour
                         }
                         Solution_Question_Button.interactable = true;
                      });
-                if (reader0 != null && !reader0.IsClosed)
-                {
-                    reader0.Close();
-                }
                 Text option_1 = choice.transform.Find("1/Viewport/Content/questionText").GetComponent<Text>();
                 Text option_2 = choice.transform.Find("2/Viewport/Content/questionText").GetComponent<Text>();
                 Text option_3 = choice.transform.Find("3/Viewport/Content/questionText").GetComponent<Text>();
@@ -661,15 +659,18 @@ public class  ch2 : MonoBehaviour
                 //隨機 取得是非題並且章節為2 的題目
                 MySqlCommand command = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 1 AND ChapterID = 2 ORDER BY RAND() LIMIT 1", connection);
                 MySqlDataReader reader = command.ExecuteReader();
-                string random_question_descript = "";
                 string tempAnswerOptionID = "";
                 if (reader.Read()) // 使用 if 因為只會返回一條記錄
                 {
-                    random_question_descript = reader["Description"].ToString();
+                    string random_question_descript = reader["Description"].ToString();
                     Debug.Log(random_question_descript);
                     questionText.text = random_question_descript;
                     tempAnswerOptionID =  reader["AnswerOptionID"].ToString()=="1" ? "true"  : "false" ;
                     Solutiontext.text = reader["Explanation"].ToString();
+                }
+                if (reader != null && !reader.IsClosed)
+                {
+                    reader.Close();
                 }
                 check_button.onClick.RemoveAllListeners(); // Clear previous listeners
                     check_button.onClick.AddListener(() =>
@@ -691,7 +692,6 @@ public class  ch2 : MonoBehaviour
                         }
                         Solution_Question_Button.interactable = true;
                     });
-                reader.Close();
                 break;
 
             case 2: // Short Answer
@@ -702,16 +702,19 @@ public class  ch2 : MonoBehaviour
                 //隨機 取得是非題並且章節為2 的題目
                 MySqlCommand command1 = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 2 AND ChapterID = 2 ORDER BY RAND() LIMIT 1", connection);
                 MySqlDataReader reader1 = command1.ExecuteReader();
-                string random_question_descript_ask = "";
                 if (reader1.Read()) // 使用 if 因為只會返回一條記錄
                 {
-                    random_question_descript_ask = reader1["Description"].ToString();
+                    string random_question_descript_ask = reader1["Description"].ToString();
                     Debug.Log(random_question_descript_ask);
                     questionText.text = random_question_descript_ask;
                     Solutiontext.text = reader1["Explanation"].ToString();
-                } 
+                }
+                if (reader1 != null && !reader1.IsClosed)
+                {
+                    reader1.Close();
+                }
                 check_button.onClick.RemoveAllListeners(); // Clear previous listeners
-                    check_button.onClick.AddListener( async () =>
+                check_button.onClick.AddListener( async () =>
                     {
                         check_button.gameObject.SetActive(false);
                         next_button.gameObject.SetActive(true);
@@ -758,7 +761,6 @@ public class  ch2 : MonoBehaviour
                         }
                         Solution_Question_Button.interactable = true;
                     });
-                reader1.Close();
                 break;
         }
         // 在操作完成后关闭数据库连接
@@ -852,4 +854,51 @@ public class  ch2 : MonoBehaviour
         answer_count = 0;
         correct_answer_count = 0;
     }
+
+    //每回答一題，就insert一次，還未測試
+    private void insertOrUpdateUserAnswerAnalysis(int userID, int chapterID, bool isCorrect)
+    {
+        // 打开数据库连接
+        if (connection.State != System.Data.ConnectionState.Open)
+        {
+            try
+            {
+                connection.Open();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError("Failed to open the database connection: " + ex.Message);
+                return;
+            }
+        }
+
+        try
+        {
+            int incrementCorrectAnswerCount = isCorrect ? 1 : 0;
+            string query = @"
+            INSERT INTO UserAnswerAnalysis (UserID, ChapterID, TotalAnswerCount, CorrectAnswerCount) 
+            VALUES (@UserID, @ChapterID, 1, @CorrectAnswerCount)
+            ON DUPLICATE KEY UPDATE 
+            TotalAnswerCount = TotalAnswerCount + 1,
+            CorrectAnswerCount = CorrectAnswerCount + @CorrectAnswerCount";
+
+            MySqlCommand command = new MySqlCommand(query, connection);
+            command.Parameters.AddWithValue("@UserID", userID);
+            command.Parameters.AddWithValue("@ChapterID", chapterID);
+            command.Parameters.AddWithValue("@CorrectAnswerCount", incrementCorrectAnswerCount);
+
+            command.ExecuteNonQuery();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("Failed to insert/update user answer analysis: " + ex.Message);
+        }
+        finally
+        {
+            if (connection != null && connection.State == System.Data.ConnectionState.Open)
+            {
+                connection.Close();
+            }
+        }
     }
+}
