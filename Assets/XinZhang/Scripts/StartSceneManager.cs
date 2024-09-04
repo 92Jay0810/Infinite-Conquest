@@ -18,7 +18,8 @@ public class StartSceneManager : MonoBehaviourPunCallbacks
     }
     public void OnclickStartSingle(){
             print("Click單人遊戲");
-            SceneManager.LoadScene("ch1Scene");
+           // SceneManager.LoadScene("ch1Scene");
+            SceneManager.LoadScene("ch2Scene");
     }
 
     public void OnclickStartMulti(){

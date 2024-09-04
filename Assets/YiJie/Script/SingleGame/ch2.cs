@@ -590,26 +590,6 @@ public class  ch2 : MonoBehaviour
                 {
                     reader0.Close();
                 }
-                check_button.onClick.RemoveAllListeners(); // Clear previous listeners
-                    check_button.onClick.AddListener(() =>
-                    {
-                        check_button.gameObject.SetActive(false);
-                        next_button.gameObject.SetActive(true);
-                        option.gameObject.SetActive(false);
-                        answer_count++;
-                        Debug.Log(" answer_count" + answer_count);
-                        if (Checkanswer_string == tempAnswerOptionID_choice)
-                        {
-                            correct_answer_count++;
-                            Debug.Log("  correct_answer_count" + correct_answer_count);
-                            answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID_choice+" 正確! ";
-                        }
-                        else
-                        {
-                            answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID_choice+" 錯誤 ";
-                        }
-                        Solution_Question_Button.interactable = true;
-                     });
                 Text option_1 = choice.transform.Find("1/Viewport/Content/questionText").GetComponent<Text>();
                 Text option_2 = choice.transform.Find("2/Viewport/Content/questionText").GetComponent<Text>();
                 Text option_3 = choice.transform.Find("3/Viewport/Content/questionText").GetComponent<Text>();
@@ -641,7 +621,30 @@ public class  ch2 : MonoBehaviour
                         }
                     }
                 }
-                readerOption.Close();
+                readerOption.Close();   
+                check_button.onClick.RemoveAllListeners(); // Clear previous listeners
+                check_button.onClick.AddListener(() =>
+                    {
+                        check_button.gameObject.SetActive(false);
+                        next_button.gameObject.SetActive(true);
+                        option.gameObject.SetActive(false);
+                        answer_count++;
+                        Debug.Log(" answer_count" + answer_count);
+                        if (Checkanswer_string == tempAnswerOptionID_choice)
+                        {
+                            correct_answer_count++;
+                            Debug.Log("  correct_answer_count" + correct_answer_count);
+                            answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID_choice+" 正確! ";
+                            insertOrUpdateUserAnswerAnalysis(playerid, 2, true);
+
+                        }
+                        else
+                        {
+                            answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID_choice+" 錯誤 ";
+                            insertOrUpdateUserAnswerAnalysis(playerid, 2, false);
+                        }
+                        Solution_Question_Button.interactable = true;
+                     });
                 break;
 
             case 1: //    True_False
@@ -685,10 +688,12 @@ public class  ch2 : MonoBehaviour
                             correct_answer_count++;
                             Debug.Log("  correct_answer_count" + correct_answer_count);
                             answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID + " 正確! ";
+                            insertOrUpdateUserAnswerAnalysis(playerid, 2, true);
                         }
                         else
                         {
                             answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID + " 錯誤 ";
+                            insertOrUpdateUserAnswerAnalysis(playerid, 2, false);
                         }
                         Solution_Question_Button.interactable = true;
                     });
@@ -719,9 +724,10 @@ public class  ch2 : MonoBehaviour
                         check_button.gameObject.SetActive(false);
                         next_button.gameObject.SetActive(true);
                         option.gameObject.SetActive(false);
-                        answer_count++;
+                        //後面call LLM可能失敗，先不加，到後面再處理
+                        //answer_count++;
                         Debug.Log(" answer_count" + answer_count);
-                        answerText.text = "你的答案是" + Checkanswer_string + "解答評價中，正在尋求專家評價";
+                        answerText.text = "解答評價中，正在尋求專家評價 \n" + "你的答案是：\n" + Checkanswer_string ;
                         messages.Clear();
                         var newMessage = new ChatMessage()
                         {
@@ -744,20 +750,25 @@ public class  ch2 : MonoBehaviour
                             string judge_string = "";
                             if (Response_message.Content== "評價：高"|| Response_message.Content == "評價：中")
                             {
+                                answer_count++;
                                 judge_string = "通過!";
                                 correct_answer_count++;
                                 Debug.Log("  correct_answer_count" + correct_answer_count);
+                                insertOrUpdateUserAnswerAnalysis(playerid, 2, true);
                             }
                             else
                             {
+                                answer_count++;
                                 judge_string = "不通過!";
+                                insertOrUpdateUserAnswerAnalysis(playerid, 2, false);
                             }
-                            answerText.text = " 專家回答：" + Response_message.Content + " " + judge_string+ " 你的答案是    " + Checkanswer_string ;
+                            answerText.text = " 專家回答：" + Response_message.Content + " " + judge_string+ " \n 你的答案是    " + Checkanswer_string ;
                         
                         }
                         else
                         {
                             Debug.LogWarning("No text was generated from this prompt.");
+                            answerText.text = "專家失蹤了! 請確認一下網路狀況  \n 你的答案是"  + Checkanswer_string ;
                         }
                         Solution_Question_Button.interactable = true;
                     });
@@ -858,6 +869,10 @@ public class  ch2 : MonoBehaviour
     //每回答一題，就insert一次，還未測試
     private void insertOrUpdateUserAnswerAnalysis(int userID, int chapterID, bool isCorrect)
     {
+        if (userID == 0)
+        {
+            return;
+        }
         // 打开数据库连接
         if (connection.State != System.Data.ConnectionState.Open)
         {
