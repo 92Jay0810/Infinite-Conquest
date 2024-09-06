@@ -237,7 +237,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   learningmode: {fileID: 6748901085196009285, guid: d3a8c5d31ed060f429146eca274629aa, type: 3}
   ch3LearnAsset: {fileID: 4900000, guid: 0bf100e3df1888147b797949269461b6, type: 3}
-  trainmode: {fileID: 0}
+  trainmode: {fileID: 6447478523199383883, guid: ca0b8bdda16840c4ca46e2e75e91187d, type: 3}
+  train_result: {fileID: 4937072438247560012, guid: 95cdf0eb93f40f14d91a9775615482fa, type: 3}
 --- !u!1 &1344301408
 GameObject:
   m_ObjectHideFlags: 0

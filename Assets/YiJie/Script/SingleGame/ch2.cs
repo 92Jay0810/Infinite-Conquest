@@ -6,6 +6,7 @@ using Flower;
 using UnityEngine.UI;
 using OpenAI;
 using MySql.Data.MySqlClient;
+using UnityEngine.SceneManagement;
 
 public class  ch2 : MonoBehaviour
 {
@@ -189,6 +190,9 @@ public class  ch2 : MonoBehaviour
                     break;
                 case 15:
                     fs.SetTextList(new List<string> { "結束，進入下一章[w]" });
+                    UpdateCurrentChapter(playerid, 3);
+                    SceneManager.LoadScene("ch3Scene");
+                    gameEnd = true;
                     break;
             }
         }
@@ -912,6 +916,39 @@ public class  ch2 : MonoBehaviour
         finally
         {
             if (connection != null && connection.State == System.Data.ConnectionState.Open)
+            {
+                connection.Close();
+            }
+        }
+    }
+
+    private void UpdateCurrentChapter(int userID, int chapterID)
+    {
+        if (userID == 0)
+        {
+            return;
+        }
+        string updateQuery = @"
+        UPDATE users 
+        SET currentChapter = @ChapterID 
+        WHERE id = @UserID AND currentChapter < @ChapterID ";
+
+        using (MySqlCommand command = new MySqlCommand(updateQuery, connection))
+        {
+            command.Parameters.AddWithValue("@ChapterID", chapterID);
+            command.Parameters.AddWithValue("@UserID", userID);
+
+            try
+            {
+                connection.Open();
+                command.ExecuteNonQuery();
+                Debug.Log("Updated currentChapter to " + chapterID);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError("Failed to update currentChapter: " + ex.Message);
+            }
+            finally
             {
                 connection.Close();
             }

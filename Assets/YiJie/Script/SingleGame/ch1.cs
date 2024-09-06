@@ -1,10 +1,12 @@
 ﻿using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Flower;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using OpenAI;
+using MySql.Data.MySqlClient;
 
 public class ch1 : MonoBehaviour
 {
@@ -14,9 +16,11 @@ public class ch1 : MonoBehaviour
     [SerializeField] GameObject openingText_1;
     [SerializeField] GameObject openingText_2;
     private string playername = LoginAndRegister.LoggedInUsername;
+    private int playerid = LoginAndRegister.LoggedInUserID;
+
+    //learning mode variable
     [SerializeField] Image learningmode;
     Image learningmode_prefab;
-    //learning mode variable
     public TextAsset ch1LearnAsset;
     private List<Knowledge> knowledgePoints;
     private int currentPageIndex = 0;
@@ -28,6 +32,13 @@ public class ch1 : MonoBehaviour
     //彩蛋 如果都一次願意，出現隱藏文字
     int not_allow1 = 0;
     int not_allow2 = 0;
+
+    //DB
+    string server = "34.80.93.104";
+    string database = "questionnare"; // 資料庫名稱
+    string user = "ss";
+    string password = "worinidaya";
+    private MySqlConnection connection;
     void Start()
     {
         fs = FlowerManager.Instance.CreateFlowerSystem("default", true);
@@ -39,6 +50,36 @@ public class ch1 : MonoBehaviour
         fs.RegisterCommand("CreateOpeningText_2", CreateOpeningText_2);
         fs.SetVariable("playername", playername);
         fs.RegisterCommand("learningMode", learningMode);
+        if (initDB())
+        {
+
+        }
+            else
+            {
+                Debug.Log("開啟資料庫失敗，請確認網路連線在重試");
+                //先找對話的canva
+                GameObject canvas = GameObject.Find("DefaultDialogPrefab(Clone)");
+                // 在 Canvas 的子物件位置創建prefab
+                // 創建一個新的 GameObject 來持有 Text 組件
+                GameObject textObject = new GameObject("DisplayText");
+                textObject.transform.SetParent(canvas.transform, false);
+                // 添加 Text 組件
+                Text textComponent = textObject.AddComponent<Text>();
+                textComponent.text = "開啟資料庫失敗，請確認網路連線在重試";
+                // 設置文本的一些基本屬性
+                textComponent.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+                textComponent.fontSize = 24;
+                textComponent.color = Color.black;
+                // 設置 RectTransform
+                RectTransform rectTransform = textComponent.GetComponent<RectTransform>();
+                rectTransform.anchoredPosition = new Vector2(0, 0);
+                rectTransform.sizeDelta = new Vector2(200, 50); // 設置文本區域的寬度和高度
+                                                                // 設置文本在父物件中的對齊方式
+                rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+                rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+                rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            }
+        
     }
 
 
@@ -139,7 +180,8 @@ public class ch1 : MonoBehaviour
                     progress = 9;
                     break;
                 case 9:
-                    fs.SetTextList(new List<string> { "序章結束進入第一章" });
+                    fs.SetTextList(new List<string> { "序章結束進入第一章[w]" });
+                    UpdateCurrentChapter(playerid, 2);
                     SceneManager.LoadScene("ch2Scene");
                     gameEnd = true;
                     break;
@@ -295,6 +337,63 @@ public class ch1 : MonoBehaviour
                     contentText.gameObject.SetActive(false);
                     promptButton.gameObject.SetActive(false);
                 }
+            }
+        }
+    }
+
+
+    private bool initDB()
+    {
+        string connectionString = $"Server={server};Database={database};User ID={user};Password={password};Pooling=false;";
+        try
+        {
+            connection = new MySqlConnection(connectionString);
+            connection.Open();
+            return true;  // 連接成功，返回 true
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("Failed to connect to MySQL database: " + ex.Message);
+            return false;  // 連接失敗，返回 false
+        }
+        finally
+        {
+            if (connection != null)
+            {
+                connection.Close();
+            }
+        }
+    }
+
+    private void UpdateCurrentChapter(int userID, int chapterID)
+    {
+        if (userID == 0)
+        {
+            return;
+        }
+        string updateQuery = @"
+        UPDATE users 
+        SET currentChapter = @ChapterID 
+        WHERE id = @UserID AND currentChapter < @ChapterID ";
+
+        using (MySqlCommand command = new MySqlCommand(updateQuery, connection))
+        {
+            command.Parameters.AddWithValue("@ChapterID", chapterID);
+            command.Parameters.AddWithValue("@UserID", userID);
+
+            try
+            {
+                connection.Open();
+                command.ExecuteNonQuery();
+                Debug.Log("Updated currentChapter to " + chapterID);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError("Failed to update currentChapter: " + ex.Message);
+            }
+            finally
+            {
+                connection.Close();
             }
         }
     }

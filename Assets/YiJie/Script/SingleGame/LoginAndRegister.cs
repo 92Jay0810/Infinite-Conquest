@@ -1,4 +1,5 @@
-﻿using MySql.Data.MySqlClient;
+﻿using System;
+using MySql.Data.MySqlClient;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -68,36 +69,43 @@ public class LoginAndRegister : MonoBehaviour
         string connectionString = $"Server={server};Database={database};User ID={user};Password={password};Pooling=false;";
         using (MySqlConnection connection = new MySqlConnection(connectionString))
         {
-            connection.Open();
-
-            MySqlCommand cmd = new MySqlCommand("SELECT id, password FROM users WHERE username = @username", connection);
-            cmd.Parameters.AddWithValue("@username", Login_username);
-            using (MySqlDataReader reader = cmd.ExecuteReader())
+            try
             {
-                if (reader.Read())
-                {
-                    int userID = reader.GetInt32("id");
-                    string storedPassword = reader.GetString("password");
+                connection.Open();
 
-                    if (storedPassword == Login_password) // 建議在實際應用中使用哈希比對
+                MySqlCommand cmd = new MySqlCommand("SELECT id, password FROM users WHERE username = @username", connection);
+                cmd.Parameters.AddWithValue("@username", Login_username);
+                using (MySqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
                     {
-                        feedbackText.text = "登錄成功";
-                        LoggedInUsername = Login_username; // 保存使用者名稱
-                        LoggedInUserID = userID; // 保存userID
-                        Debug.Log("  LoggedInUserID:"+LoggedInUserID);
-                        SceneManager.LoadScene("StartScene"); // 跳轉到下一個場景
+                        int userID = reader.GetInt32("id");
+                        string storedPassword = reader.GetString("password");
+
+                        if (storedPassword == Login_password) // 建議在實際應用中使用哈希比對
+                        {
+                            feedbackText.text = "登錄成功";
+                            LoggedInUsername = Login_username; // 保存使用者名稱
+                            LoggedInUserID = userID; // 保存userID
+                            Debug.Log("  LoggedInUserID:" + LoggedInUserID);
+                            SceneManager.LoadScene("StartScene"); // 跳轉到下一個場景
+                        }
+                        else
+                        {
+                            feedbackText.text = "密碼錯誤";
+                        }
                     }
                     else
                     {
-                        feedbackText.text = "密碼錯誤";
+                        feedbackText.text = "帳號不存在";
                     }
                 }
-                else
-                {
-                    feedbackText.text = "帳號不存在";
-                }
             }
-
+            catch (Exception ex)
+            {
+                Debug.LogError("開啟資料庫失敗: " + ex.Message);
+                feedbackText.text = "開啟資料庫失敗，請確認網路連線在重試";
+            }
         }
     }
     public void OnRegisterButtonClick()
@@ -113,28 +121,37 @@ public class LoginAndRegister : MonoBehaviour
         string connectionString = $"Server={server};Database={database};User ID={user};Password={password};Pooling=false;";
         using (MySqlConnection connection = new MySqlConnection(connectionString))
         {
-            connection.Open();
 
-            // 檢查帳號是否存在
-            MySqlCommand checkCmd = new MySqlCommand("SELECT COUNT(*) FROM users WHERE username = @username", connection);
-            checkCmd.Parameters.AddWithValue("@username", Register_username);
-            int userExists = int.Parse(checkCmd.ExecuteScalar().ToString());
-
-            if (userExists > 0)
+            try
             {
-                feedbackText.text = "帳號已存在，請使用其他帳號";
+                connection.Open();
+
+                // 檢查帳號是否存在
+                MySqlCommand checkCmd = new MySqlCommand("SELECT COUNT(*) FROM users WHERE username = @username", connection);
+                checkCmd.Parameters.AddWithValue("@username", Register_username);
+                int userExists = int.Parse(checkCmd.ExecuteScalar().ToString());
+
+                if (userExists > 0)
+                {
+                    feedbackText.text = "帳號已存在，請使用其他帳號";
+                }
+                else
+                {
+                    // 註冊新帳號
+                    MySqlCommand cmd = new MySqlCommand("INSERT INTO users (username, password) VALUES (@username, @password)", connection);
+                    cmd.Parameters.AddWithValue("@username", Register_username);
+                    cmd.Parameters.AddWithValue("@password", Register_password); // 建議在實際應用中對密碼進行哈希處理
+
+                    cmd.ExecuteNonQuery();
+                    feedbackText.text = "註冊成功";
+                    Login.SetActive(true);
+                    Register.SetActive(false);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                // 註冊新帳號
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO users (username, password) VALUES (@username, @password)", connection);
-                cmd.Parameters.AddWithValue("@username", Register_username);
-                cmd.Parameters.AddWithValue("@password", Register_password); // 建議在實際應用中對密碼進行哈希處理
-
-                cmd.ExecuteNonQuery();
-                feedbackText.text = "註冊成功";
-                Login.SetActive(true);
-                Register.SetActive(false);
+                Debug.LogError("開啟資料庫失敗: " + ex.Message);
+                feedbackText.text = "開啟資料庫失敗，請確認網路連線在重試";
             }
         }
     }
