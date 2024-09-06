@@ -239,6 +239,7 @@ MonoBehaviour:
   ch2LearnAsset: {fileID: 4900000, guid: 3fdbf1d879654b84f8d0849190f1a72f, type: 3}
   trainmode: {fileID: 6447478523199383883, guid: 1921f06796de6bf4facb37a28a97adf6, type: 3}
   train_result: {fileID: 4937072438247560012, guid: 9eed3692dfbed574e8a9945853fc35a9, type: 3}
+  conntectfail: {fileID: 4745461134632633688, guid: b12f6cbf9a5810a42866f520b9beca75, type: 3}
 --- !u!1 &1344301408
 GameObject:
   m_ObjectHideFlags: 0

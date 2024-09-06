@@ -237,10 +237,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   openingText_1: {fileID: 8872910637867270309, guid: 3dc17ffc004116f4a8fb742b98f8b9f4, type: 3}
   openingText_2: {fileID: 4198676215383635534, guid: 7622ac0bc6af8cf499283b180a440fe2, type: 3}
-  InputPlayerField: {fileID: 8103814629810182887, guid: 998c51fb519554546a94012a1ae3c63b, type: 3}
-  playerbutton: {fileID: 6956934878734668005, guid: 4f8a5da2bad4956479765eca12419ea7, type: 3}
   learningmode: {fileID: 6748901085196009285, guid: 3c749c12644bebd40b20c490a21c8e00, type: 3}
   ch1LearnAsset: {fileID: 4900000, guid: 638547b7f8a98f542a56719e7062425a, type: 3}
+  conntectfail: {fileID: 4745461134632633688, guid: b12f6cbf9a5810a42866f520b9beca75, type: 3}
 --- !u!1 &1344301408
 GameObject:
   m_ObjectHideFlags: 0

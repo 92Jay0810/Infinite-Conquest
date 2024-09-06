@@ -39,6 +39,7 @@ public class ch1 : MonoBehaviour
     string user = "ss";
     string password = "worinidaya";
     private MySqlConnection connection;
+    [SerializeField] GameObject conntectfail;
     void Start()
     {
         fs = FlowerManager.Instance.CreateFlowerSystem("default", true);
@@ -50,36 +51,6 @@ public class ch1 : MonoBehaviour
         fs.RegisterCommand("CreateOpeningText_2", CreateOpeningText_2);
         fs.SetVariable("playername", playername);
         fs.RegisterCommand("learningMode", learningMode);
-        if (initDB())
-        {
-
-        }
-            else
-            {
-                Debug.Log("開啟資料庫失敗，請確認網路連線在重試");
-                //先找對話的canva
-                GameObject canvas = GameObject.Find("DefaultDialogPrefab(Clone)");
-                // 在 Canvas 的子物件位置創建prefab
-                // 創建一個新的 GameObject 來持有 Text 組件
-                GameObject textObject = new GameObject("DisplayText");
-                textObject.transform.SetParent(canvas.transform, false);
-                // 添加 Text 組件
-                Text textComponent = textObject.AddComponent<Text>();
-                textComponent.text = "開啟資料庫失敗，請確認網路連線在重試";
-                // 設置文本的一些基本屬性
-                textComponent.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
-                textComponent.fontSize = 24;
-                textComponent.color = Color.black;
-                // 設置 RectTransform
-                RectTransform rectTransform = textComponent.GetComponent<RectTransform>();
-                rectTransform.anchoredPosition = new Vector2(0, 0);
-                rectTransform.sizeDelta = new Vector2(200, 50); // 設置文本區域的寬度和高度
-                                                                // 設置文本在父物件中的對齊方式
-                rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
-                rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
-                rectTransform.pivot = new Vector2(0.5f, 0.5f);
-            }
-        
     }
 
 
@@ -181,8 +152,25 @@ public class ch1 : MonoBehaviour
                     break;
                 case 9:
                     fs.SetTextList(new List<string> { "序章結束進入第一章[w]" });
-                    UpdateCurrentChapter(playerid, 2);
-                    SceneManager.LoadScene("ch2Scene");
+                    if (initDB())
+                    {
+                        UpdateCurrentChapter(playerid, 2);
+                        SceneManager.LoadScene("ch2Scene");
+                    }
+                    else
+                    {
+                        //先找對話的canva
+                        GameObject canvas = GameObject.Find("DefaultDialogPrefab(Clone)");
+                        // 在 Canvas 的子物件位置創建prefab
+                        GameObject conntectfailInstance = Instantiate(conntectfail, canvas.transform);
+                        // 設置 RectTransform
+                        RectTransform rectTransform = conntectfailInstance.GetComponent<RectTransform>();
+                        rectTransform.anchoredPosition = new Vector2(0, 0);
+                        Button conntectfailbutton = conntectfailInstance.transform.Find("return").GetComponent<Button>();
+                        conntectfailbutton.onClick.AddListener(()=> {
+                            gameEnd = false;
+                        });
+                    }
                     gameEnd = true;
                     break;
             }
@@ -353,7 +341,7 @@ public class ch1 : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Debug.LogError("Failed to connect to MySQL database: " + ex.Message);
+            Debug.LogError("開啟資料庫失敗: " + ex.Message);
             return false;  // 連接失敗，返回 false
         }
         finally

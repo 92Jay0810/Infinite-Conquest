@@ -48,6 +48,7 @@ public class  ch3 : MonoBehaviour
     string user = "ss";
     string password = "worinidaya";
     private MySqlConnection connection;
+    [SerializeField] GameObject conntectfail;
     void Start()
     {
         fs = FlowerManager.Instance.CreateFlowerSystem("default", true);
@@ -118,8 +119,36 @@ public class  ch3 : MonoBehaviour
                     progress = 7;
                     break;
                 case 7:
-                    fs.ReadTextFromResource("SingleMode/ch3/trainmode");
-                    progress = 8;
+                    if (connection == null)
+                    {
+                        if (initDB())
+                        {
+                            fs.ReadTextFromResource("SingleMode/ch3/trainmode");
+                            progress = 8;
+                        }
+                        else
+                        {
+                            gameEnd = true;
+                            //先找對話的canva
+                            GameObject canvas = GameObject.Find("DefaultDialogPrefab(Clone)");
+                            // 在 Canvas 的子物件位置創建prefab
+                            GameObject conntectfailInstance = Instantiate(conntectfail, canvas.transform);
+                            // 設置 RectTransform
+                            RectTransform rectTransform = conntectfailInstance.GetComponent<RectTransform>();
+                            rectTransform.anchoredPosition = new Vector2(0, 0);
+                            Button conntectfailbutton = conntectfailInstance.transform.Find("return").GetComponent<Button>();
+                            conntectfailbutton.onClick.AddListener(() => {
+                                gameEnd = false;
+                                progress = 3;
+                                Destroy(conntectfailInstance.gameObject);
+                            });
+                        }
+                    }
+                    else
+                    {
+                        fs.ReadTextFromResource("SingleMode/ch3/trainmode");
+                        progress = 8;
+                    }
                     break;
                 case 8:
                     if (Input.GetKeyDown(KeyCode.R))
@@ -132,13 +161,11 @@ public class  ch3 : MonoBehaviour
                         answer_count = 0;
                         correct_answer_count = 0;
                     }
-                    progress = 9;
                     break;
                 case 9:
                     fs.ReadTextFromResource("SingleMode/ch3/ch3_4");
                     progress = 10;
                     break;
-
                 case 10:
                     fs.SetupButtonGroup();
                     fs.SetupButton("回去觀看學習模式.", () =>
@@ -188,7 +215,6 @@ public class  ch3 : MonoBehaviour
                          answer_count = 0;
                          correct_answer_count = 0;
                      }
-                    progress = 16;
                     break;
                 case 16:
                     fs.ReadTextFromResource("SingleMode/ch3/ch3_6");
@@ -196,8 +222,25 @@ public class  ch3 : MonoBehaviour
                     break;
                 case 17:
                     fs.SetTextList(new List<string> { "結束，進入下一章[w]" });
-                    UpdateCurrentChapter(playerid, 4);
-                    SceneManager.LoadScene("startScene");
+                    if (UpdateCurrentChapter(playerid, 3))
+                    {
+                        SceneManager.LoadScene("startScene");
+                    }
+                    else
+                    {
+                        //先找對話的canva
+                        GameObject canvas = GameObject.Find("DefaultDialogPrefab(Clone)");
+                        // 在 Canvas 的子物件位置創建prefab
+                        GameObject conntectfailInstance = Instantiate(conntectfail, canvas.transform);
+                        // 設置 RectTransform
+                        RectTransform rectTransform = conntectfailInstance.GetComponent<RectTransform>();
+                        rectTransform.anchoredPosition = new Vector2(0, 0);
+                        Button conntectfailbutton = conntectfailInstance.transform.Find("return").GetComponent<Button>();
+                        conntectfailbutton.onClick.AddListener(() => {
+                            gameEnd = false;
+                            Destroy(conntectfailInstance.gameObject);
+                        });
+                    }
                     gameEnd = true;
                     break;
             }
@@ -340,9 +383,6 @@ public class  ch3 : MonoBehaviour
 
     private void trainMode(List<string> properties)
     {
-        //先初始化DB並確認是否有連接
-        if (initDB())
-        {
             //先找對話的canva
             GameObject canvas = GameObject.Find("DefaultDialogPrefab(Clone)");
             // 在 Canvas 的子物件位置創建prefab
@@ -508,35 +548,7 @@ public class  ch3 : MonoBehaviour
                     Debug.LogWarning("No text was generated from this prompt.");
                 }
             });
-
         }
-        else
-        {
-            Debug.Log("開啟資料庫失敗，請按下R退出");
-            //先找對話的canva
-            GameObject canvas = GameObject.Find("DefaultDialogPrefab(Clone)");
-            // 在 Canvas 的子物件位置創建prefab
-            // 創建一個新的 GameObject 來持有 Text 組件
-            GameObject textObject = new GameObject("DisplayText");
-            textObject.transform.SetParent(canvas.transform, false);
-            // 添加 Text 組件
-            Text textComponent = textObject.AddComponent<Text>();
-            textComponent.text = "開啟資料庫失敗，請按下R退出";
-            // 設置文本的一些基本屬性
-            textComponent.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
-            textComponent.fontSize = 24;
-            textComponent.color = Color.black;
-            // 設置 RectTransform
-            RectTransform rectTransform = textComponent.GetComponent<RectTransform>();
-            rectTransform.anchoredPosition = new Vector2(0, 0);
-            rectTransform.sizeDelta = new Vector2(200, 50); // 設置文本區域的寬度和高度
-            // 設置文本在父物件中的對齊方式
-            rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
-            rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
-            rectTransform.pivot = new Vector2(0.5f, 0.5f);
-        }
-
-    }
     private void initQuestion(Button check_button, Button next_button, GameObject question, GameObject option, GameObject choice, GameObject TrueFalse, InputField askField, Button Solution_Question_Button, Text answerText, Text questionText)
     {
         // 打开数据库连接
@@ -548,7 +560,8 @@ public class  ch3 : MonoBehaviour
             }
             catch (Exception ex)
             {
-                Debug.LogError("Failed to open the database connection: " + ex.Message);
+                Debug.LogError("連接資料庫失敗" + ex.Message);
+                answerText.text = "資料庫連線失敗，請確認網路連線，或著按下R重製整個模式";
                 return;
             }
         }
@@ -844,11 +857,11 @@ public class  ch3 : MonoBehaviour
                 }
                 if (trainORcheck == "true")
                 {
-                    progress = 8;
+                    progress =9;
                 }
                 else
                 {
-                    progress = 14;
+                    progress = 16;
                 }
             });
             Retry_Button.gameObject.SetActive(false);
@@ -869,7 +882,7 @@ public class  ch3 : MonoBehaviour
                 }
                 else
                 {
-                    progress = 9;
+                    progress = 10;
                 }
             });
         }
@@ -928,11 +941,11 @@ public class  ch3 : MonoBehaviour
         }
     }
 
-    private void UpdateCurrentChapter(int userID, int chapterID)
+    private bool UpdateCurrentChapter(int userID, int chapterID)
     {
         if (userID == 0)
         {
-            return;
+            return true;
         }
         string updateQuery = @"
         UPDATE users 
@@ -949,10 +962,12 @@ public class  ch3 : MonoBehaviour
                 connection.Open();
                 command.ExecuteNonQuery();
                 Debug.Log("Updated currentChapter to " + chapterID);
+                return true;
             }
             catch (Exception ex)
             {
                 Debug.LogError("Failed to update currentChapter: " + ex.Message);
+                return false;
             }
             finally
             {

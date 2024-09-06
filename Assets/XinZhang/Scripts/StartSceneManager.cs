@@ -122,9 +122,10 @@ public class StartSceneManager : MonoBehaviourPunCallbacks
                 for (int i = 0; i < currentChapter; i++)
             {
                 chapterButtons[i].interactable = true;
+                int temp_chapter = i + 1;
                 chapterButtons[i].onClick.AddListener(() =>
                 {
-                    OnChapterSelected(i+1, chapterSelectionPanel);
+                    OnChapterSelected(temp_chapter, chapterSelectionPanel);
                 });
             }
         }
