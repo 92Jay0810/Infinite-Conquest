@@ -82,49 +82,53 @@ public class  ch3 : MonoBehaviour
                     break;
                 case 2:
                     fs.ReadTextFromResource("SingleMode/ch3/ch3_2");
-                    progress = 3;
+                    progress = 4;
                     break;
                 case 3:
+                    fs.ReadTextFromResource("SingleMode/ch3/ch3_2_5");
+                    progress = 4;
+                    break;
+                case 4:
                     fs.SetupButtonGroup();
                     fs.SetupButton("回去觀看學習模式.", () =>
                     {
                         gameEnd = false;
                         fs.RemoveButtonGroup();
-                        progress = 4;
+                        progress = 5;
                     });
                     fs.SetupButton("進入戰鬥", () =>
                     {
                         gameEnd = false;
                         fs.RemoveButtonGroup();
-                        progress = 6;
+                        progress = 7;
                     });
                     gameEnd = true;
                     break;
-                case 4:
-                    fs.ReadTextFromResource("SingleMode/ch3/learnmode");
-                    progress = 5;
-                    break;
                 case 5:
+                    fs.ReadTextFromResource("SingleMode/ch3/learnmode");
+                    progress =6;
+                    break;
+                case 6:
                     if (Input.GetKeyDown(KeyCode.E))
                     {
-                        progress = 3;
+                        progress = 4;
                         if (learningmode_prefab != null)
                         {
                             Destroy(learningmode_prefab.gameObject);
                         }
                     }
                     break;
-                case 6:
-                    fs.ReadTextFromResource("SingleMode/ch3/ch3_3");
-                    progress = 7;
-                    break;
                 case 7:
+                    fs.ReadTextFromResource("SingleMode/ch3/ch3_3");
+                    progress = 8;
+                    break;
+                case 8:
                     if (connection == null)
                     {
                         if (initDB())
                         {
                             fs.ReadTextFromResource("SingleMode/ch3/trainmode");
-                            progress = 8;
+                            progress = 9;
                         }
                         else
                         {
@@ -147,10 +151,10 @@ public class  ch3 : MonoBehaviour
                     else
                     {
                         fs.ReadTextFromResource("SingleMode/ch3/trainmode");
-                        progress = 8;
+                        progress = 9;
                     }
                     break;
-                case 8:
+                case 9:
                     if (Input.GetKeyDown(KeyCode.R))
                     {
                         progress = 3;
@@ -162,52 +166,56 @@ public class  ch3 : MonoBehaviour
                         correct_answer_count = 0;
                     }
                     break;
-                case 9:
-                    fs.ReadTextFromResource("SingleMode/ch3/ch3_4");
-                    progress = 10;
-                    break;
                 case 10:
+                    fs.ReadTextFromResource("SingleMode/ch3/ch3_4");
+                    progress = 11;
+                    break;
+                case 11:
+                    fs.ReadTextFromResource("SingleMode/ch3/ch3_4_5");
+                    progress = 12;
+                    break;
+                case 12:
                     fs.SetupButtonGroup();
                     fs.SetupButton("回去觀看學習模式.", () =>
                     {
                         gameEnd = false;
                         fs.RemoveButtonGroup();
-                        progress = 11;
+                        progress = 13;
                     });
                     fs.SetupButton("進入戰鬥", () =>
                     {
                         gameEnd = false;
                         fs.RemoveButtonGroup();
-                        progress = 13;
+                        progress = 15;
                     });
                     gameEnd = true;
                     break;
-                case 11:
+                case 13:
                     fs.ReadTextFromResource("SingleMode/ch3/learnmode");
-                    progress = 12;
+                    progress = 14;
                     break;
-                case 12:
+                case 14:
                     if (Input.GetKeyDown(KeyCode.E))
                     {
-                        progress = 10;
+                        progress = 12;
                         if (learningmode_prefab != null)
                         {
                             Destroy(learningmode_prefab.gameObject);
                         }
                     }
                     break;
-                case 13:
-                    fs.ReadTextFromResource("SingleMode/ch3/ch3_5");
-                    progress = 14;
-                    break;
-                case 14:
-                    fs.ReadTextFromResource("SingleMode/ch3/checkmode");
-                    progress = 15;
-                    break;
                 case 15:
+                    fs.ReadTextFromResource("SingleMode/ch3/ch3_5");
+                    progress = 16;
+                    break;
+                case 16:
+                    fs.ReadTextFromResource("SingleMode/ch3/checkmode");
+                    progress = 17;
+                    break;
+                case 17:
                      if (Input.GetKeyDown(KeyCode.R))
                      {
-                         progress = 10;
+                         progress = 11;
                          if (trainmode_prefab != null)
                          {
                              Destroy(trainmode_prefab.gameObject);
@@ -216,11 +224,11 @@ public class  ch3 : MonoBehaviour
                          correct_answer_count = 0;
                      }
                     break;
-                case 16:
+                case 18:
                     fs.ReadTextFromResource("SingleMode/ch3/ch3_6");
-                    progress = 17;
+                    progress = 19;
                     break;
-                case 17:
+                case 19:
                     fs.SetTextList(new List<string> { "結束，進入下一章[w]" });
                     if (UpdateCurrentChapter(playerid, 3))
                     {
@@ -871,11 +879,11 @@ public class  ch3 : MonoBehaviour
                 }
                 if (trainORcheck == "true")
                 {
-                    progress =9;
+                    progress =10;
                 }
                 else
                 {
-                    progress = 16;
+                    progress = 18;
                 }
             });
             Retry_Button.gameObject.SetActive(false);
@@ -896,7 +904,7 @@ public class  ch3 : MonoBehaviour
                 }
                 else
                 {
-                    progress = 10;
+                    progress = 11;
                 }
             });
         }
