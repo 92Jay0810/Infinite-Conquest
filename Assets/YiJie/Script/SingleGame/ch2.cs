@@ -35,7 +35,7 @@ public class  ch2 : MonoBehaviour
     [SerializeField] Image trainmode;
     Image trainmode_prefab;
     string Checkanswer_string="";
-    const int max_answer_count = 5;
+    const int max_answer_count = 15;
     int answer_count = 0;
     int correct_answer_count = 0;
     [SerializeField] Image train_result;
@@ -471,6 +471,17 @@ public class  ch2 : MonoBehaviour
             });
             Next_Button.onClick.AddListener(() =>
             {
+                // 答題數為5的倍數檢查正確率是否六成， 未達六成則跳戰鬥失敗結果
+                if (answer_count > 0 && answer_count % 5 == 0)
+                {
+                    double correct_rate = (double)correct_answer_count / answer_count;
+                    // 如果正確率低於60%，跳出結果
+                    if (correct_rate < 0.6)
+                    {
+                        DisplayResult(properties[0]);
+                        return;
+                    }
+                }
                 if (answer_count < max_answer_count)
                 {
                     promptText.text = "";
@@ -478,6 +489,7 @@ public class  ch2 : MonoBehaviour
                 }
                 else
                 {
+                    //達到最大題數就一定顯示結果
                     DisplayResult(properties[0]);
                 }
             });
@@ -837,9 +849,11 @@ public class  ch2 : MonoBehaviour
         train_result_prefab= Instantiate(train_result, canvas.transform);
         train_result_prefab.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
         //在learningMode圖片下，尋找按鈕及文字
+        Text answer_count_text = train_result_prefab.transform.Find("max_count_text").GetComponent<Text>();
         Text corrent_count_text = train_result_prefab.transform.Find("corrent_count_text").GetComponent<Text>();
         Button Pass_Button = train_result_prefab.transform.Find("Pass").GetComponent<Button>();
         Button Retry_Button = train_result_prefab.transform.Find("Retry").GetComponent<Button>();
+        answer_count_text.text = answer_count.ToString();
         corrent_count_text.text = correct_answer_count.ToString();
         if (correct_answer_count >= answer_count * 0.6)
         {
