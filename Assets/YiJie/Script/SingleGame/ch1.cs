@@ -15,6 +15,7 @@ public class ch1 : MonoBehaviour
     private bool gameEnd = false;
     [SerializeField] GameObject openingText_1;
     [SerializeField] GameObject openingText_2;
+    [SerializeField] GameObject openingText_3;
     private string playername = LoginAndRegister.LoggedInUsername;
     private int playerid = LoginAndRegister.LoggedInUserID;
 
@@ -49,6 +50,7 @@ public class ch1 : MonoBehaviour
         //fs.SetupUIStage("default", "DefaultUIStagePrefab", 10);
         fs.RegisterCommand("CreateOpeningText_1", CreateOpeningText_1);
         fs.RegisterCommand("CreateOpeningText_2", CreateOpeningText_2);
+        fs.RegisterCommand("CreateOpeningText_3", CreateOpeningText_3);
         fs.SetVariable("playername", playername);
         fs.RegisterCommand("learningMode", learningMode);
     }
@@ -196,9 +198,18 @@ public class ch1 : MonoBehaviour
         // 在 Canvas 的子物件位置創建文字 prefab
         GameObject spawnedText = Instantiate(openingText_2, canvas.transform);
         // 設置初始位置
-        spawnedText.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -450);
+        spawnedText.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -500);
     }
- 
+    private void CreateOpeningText_3(List<string> properties)
+    {
+        //先找對話的canva
+        GameObject canvas = GameObject.Find("DefaultDialogPrefab(Clone)");
+        // 在 Canvas 的子物件位置創建文字 prefab
+        GameObject spawnedText = Instantiate(openingText_3, canvas.transform);
+        // 設置初始位置
+        spawnedText.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -500);
+    }
+
     public class Knowledge
     {
         public KnowledgeType Type;
