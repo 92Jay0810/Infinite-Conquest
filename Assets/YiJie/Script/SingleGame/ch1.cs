@@ -68,18 +68,18 @@ public class ch1 : MonoBehaviour
                     break;
                 case 1:
                     fs.SetupButtonGroup();
-                    fs.SetupButton("同意.", () =>
+                    fs.SetupButton("願意.", () =>
                     {
                         gameEnd = false;
                         fs.RemoveButtonGroup();
-                        fs.SetTextList(new List<string> { "那你先去訓練場找教官吧。[w]" });
+                        fs.SetTextList(new List<string> { "冴衙:「那你先去訓練場找教官吧。」[w]" });
                         progress = 2;
                     });
-                    fs.SetupButton("不同意", () =>
+                    fs.SetupButton("不願意", () =>
                     {
                         gameEnd = false;
                         fs.RemoveButtonGroup();
-                        fs.SetTextList(new List<string> { "真的不願意嗎?[w]" });
+                        fs.SetTextList(new List<string> { "冴衙:「真的不願意嗎?」[w]" });
                     });
                     gameEnd = true;
                     break;
@@ -103,19 +103,19 @@ public class ch1 : MonoBehaviour
                     break;
                 case 5:
                     fs.SetupButtonGroup();
-                    fs.SetupButton("要知道.", () =>
+                    fs.SetupButton("想.", () =>
                     {
                         gameEnd = false;
                         fs.RemoveButtonGroup();
                         progress = 6;
                     });
-                    fs.SetupButton("不要知道", () =>
+                    fs.SetupButton("不想", () =>
                     {
                         not_allow1++;
                         gameEnd = false;
                         fs.RemoveButtonGroup();
                         fs.SetTextList(new List<string> { "[#playername]:「那還是算了吧」[w] " +
-                            "冴衙:「真的不願意嗎?」[w]" });
+                            "冴衙:「真的不想嗎?」[w]" });
                     });
                     gameEnd = true;
                     break;

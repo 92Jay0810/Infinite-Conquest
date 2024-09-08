@@ -1,3 +1,5 @@
+[image,bg1,SingleMode/ch2/Transition1,0,0,0]
+[remove,bg1,spFadeOut_2000]
 [image,bg1,SingleMode/ch1/tigerroom2,0,0,0]
 [image,char1,SingleMode/ch1/president-tigerduck4,-550,0,1]
 [image,char2,SingleMode/ch1/ZnCn3,-450,200,1]
