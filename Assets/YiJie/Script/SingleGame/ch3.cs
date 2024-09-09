@@ -616,8 +616,8 @@ public class  ch3 : MonoBehaviour
                 TrueFalse.SetActive(false);
                 askField.gameObject.SetActive(false);
 
-                //隨機 取得選擇題題目並且章節為2 的題目
-                MySqlCommand command0 = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 0 AND ChapterID = 2 ORDER BY RAND() LIMIT 1", connection);
+                //隨機 取得選擇題題目並且章節為3 的題目
+                MySqlCommand command0 = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 0 AND ChapterID = 3 ORDER BY RAND() LIMIT 1", connection);
                 MySqlDataReader reader0 = command0.ExecuteReader();
                 string QuestionID = "";
                 string tempAnswerOptionID_choice = "";
@@ -679,13 +679,13 @@ public class  ch3 : MonoBehaviour
                         correct_answer_count++;
                         Debug.Log("  correct_answer_count" + correct_answer_count);
                         answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID_choice + " 正確! ";
-                        insertOrUpdateUserAnswerAnalysis(playerid, 2, true);
+                        insertOrUpdateUserAnswerAnalysis(playerid, 3, true);
 
                     }
                     else
                     {
                         answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID_choice + " 錯誤 ";
-                        insertOrUpdateUserAnswerAnalysis(playerid, 2, false);
+                        insertOrUpdateUserAnswerAnalysis(playerid, 3, false);
                     }
                     Solution_Question_Button.interactable = true;
                 });
@@ -704,7 +704,7 @@ public class  ch3 : MonoBehaviour
                 askField.gameObject.SetActive(false);
 
                 //隨機 取得是非題並且章節為2 的題目
-                MySqlCommand command = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 1 AND ChapterID = 2 ORDER BY RAND() LIMIT 1", connection);
+                MySqlCommand command = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 1 AND ChapterID = 3 ORDER BY RAND() LIMIT 1", connection);
                 MySqlDataReader reader = command.ExecuteReader();
                 string tempAnswerOptionID = "";
                 if (reader.Read()) // 使用 if 因為只會返回一條記錄
@@ -732,12 +732,12 @@ public class  ch3 : MonoBehaviour
                         correct_answer_count++;
                         Debug.Log("  correct_answer_count" + correct_answer_count);
                         answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID + " 正確! ";
-                        insertOrUpdateUserAnswerAnalysis(playerid, 2, true);
+                        insertOrUpdateUserAnswerAnalysis(playerid, 3, true);
                     }
                     else
                     {
                         answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID + " 錯誤 ";
-                        insertOrUpdateUserAnswerAnalysis(playerid, 2, false);
+                        insertOrUpdateUserAnswerAnalysis(playerid, 3, false);
                     }
                     Solution_Question_Button.interactable = true;
                 });
@@ -749,7 +749,7 @@ public class  ch3 : MonoBehaviour
                 TrueFalse.SetActive(false);
                 askField.gameObject.SetActive(true);
                 //隨機 取得是非題並且章節為2 的題目
-                MySqlCommand command1 = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 2 AND ChapterID = 2 ORDER BY RAND() LIMIT 1", connection);
+                MySqlCommand command1 = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 2 AND ChapterID = 3 ORDER BY RAND() LIMIT 1", connection);
                 MySqlDataReader reader1 = command1.ExecuteReader();
                 if (reader1.Read()) // 使用 if 因為只會返回一條記錄
                 {
@@ -798,13 +798,13 @@ public class  ch3 : MonoBehaviour
                             judge_string = "通過!";
                             correct_answer_count++;
                             Debug.Log("  correct_answer_count" + correct_answer_count);
-                            insertOrUpdateUserAnswerAnalysis(playerid, 2, true);
+                            insertOrUpdateUserAnswerAnalysis(playerid, 3, true);
                         }
                         else
                         {
                             answer_count++;
                             judge_string = "不通過!";
-                            insertOrUpdateUserAnswerAnalysis(playerid, 2, false);
+                            insertOrUpdateUserAnswerAnalysis(playerid, 3, false);
                         }
                         answerText.text = " 專家回答：" + Response_message.Content + " " + judge_string + " \n 你的答案是    " + Checkanswer_string;
 

@@ -8,6 +8,8 @@
 [remove,char1,spFadeOut_0]
 [remove,char2,spFadeOut_0]
 [remove,player,spFadeOut_0]
+[remove,bgm,spFadeOut_500]
+[audio,bgm,SingleMode/music/storytelling,True,spFadeIn_500]
 [show]
 [CreateOpeningText_1]
 [show, 7500]
@@ -16,6 +18,8 @@
 [CreateOpeningText_3]
 [hide, 15000]
 [show]
+[remove,bgm
+[audio,bgm,SingleMode/music/Bgm(c),True,spFadeOut_500]]
 [image,bg1,SingleMode/ch1/tigerroom2,0,0,0]
 [image,char1,SingleMode/ch1/president-tigerduck4,-450,0,1]
 [image,char2,SingleMode/ch1/ZnCn3,-450,200,1]
