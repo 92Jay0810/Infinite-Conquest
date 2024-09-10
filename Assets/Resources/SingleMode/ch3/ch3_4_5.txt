@@ -1,4 +1,6 @@
 [remove,player,spFadeOut_0]
+[remove,bgm]
+[audio,bgm,SingleMode/music/boss2,True]
 [image,player,SingleMode/ch3/human3,0,-350,1]
 [#playername]看著震嶽，深吸了一口氣，然後冷靜地說：「我來這裡不是為了打倒你們，而是為了保護我們的學院。既然你親自迎戰，我也不會退縮。」[w]
 他握緊拳頭，目光堅定地直視震嶽：「你或許不需要武器，但我也不需要什麼花招。真正的力量，不只是來自於力量本身，還有信念。為了我們的學院，我會全力以赴！」[w]

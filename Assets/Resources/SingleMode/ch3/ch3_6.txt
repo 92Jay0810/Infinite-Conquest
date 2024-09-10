@@ -1,3 +1,5 @@
+[remove,bgm]
+[audio,bgm,SingleMode/music/end of game(C),True]
 [#playername]:「你輸了」[w]
 震嶽:「怎麼可能，你竟然擁有連我都能擊敗的實力」[w]
 [#playername]：「這就是我們琥椏學院的力量，不只是力量，還有我們的決心和信念。你的失敗不是因為你不夠強，而是因為你站在錯的一邊。」[w]
