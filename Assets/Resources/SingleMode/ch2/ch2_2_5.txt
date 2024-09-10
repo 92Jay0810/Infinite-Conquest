@@ -1,0 +1,2 @@
+﻿[remove,bgm]
+[audio,bgm,SingleMode/music/emergency,True]
