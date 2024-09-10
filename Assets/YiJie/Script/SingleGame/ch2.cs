@@ -154,7 +154,7 @@ public class  ch2 : MonoBehaviour
                 case 7:
                     if (Input.GetKeyDown(KeyCode.R))
                     {
-                        progress = 3;
+                        progress = 16;
                         if (trainmode_prefab != null)
                         {
                             Destroy(trainmode_prefab.gameObject);
@@ -237,6 +237,10 @@ public class  ch2 : MonoBehaviour
                         });
                     }
                     gameEnd = true;
+                    break;
+                case 16:
+                    fs.ReadTextFromResource("SingleMode/ch2/ch2_2_5");
+                    progress = 3;
                     break;
             }
         }
@@ -887,7 +891,7 @@ public class  ch2 : MonoBehaviour
                 }
                 if (trainORcheck == "true")
                 {
-                    progress = 3;
+                    progress = 16;
                 }
                 else
                 {
