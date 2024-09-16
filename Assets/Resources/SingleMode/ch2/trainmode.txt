@@ -1,0 +1,3 @@
+[trainMode,true]
+[remove,bgm,spFadeOut_500]
+[audio,bgm,SingleMode/music/battle,True]

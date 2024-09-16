@@ -6,6 +6,27 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/XinZhang/SampleScene.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
+    path: Assets/YiJie/Scenes/LoginScene.unity
+    guid: 721527b3d65a2bb4e80cb190dbf0dab5
+  - enabled: 1
+    path: Assets/XinZhang/Scenes/StartScene.unity
+    guid: 7ce2541e9cb27114a99ee5510a486609
+  - enabled: 1
+    path: Assets/XinZhang/Scenes/MultiLobbyScene.unity
+    guid: c1cb6209d3a55ce47984074b46eb79f2
+  - enabled: 1
+    path: Assets/XinZhang/Scenes/MultiRoomScene.unity
+    guid: 60d14659fb5a522439ac5dc231057e80
+  - enabled: 1
+    path: Assets/YiJie/Scenes/GameScene.unity
+    guid: dbbf06f78b8eda747a8244033b6fa1d6
+  - enabled: 1
+    path: Assets/YiJie/Scenes/ch1Scene.unity
+    guid: eceadfab5c435a34ebc4035f267b9287
+  - enabled: 1
+    path: Assets/YiJie/Scenes/ch2Scene.unity
+    guid: 6596aabeb5c5e1c459d18373d59ae383
+  - enabled: 1
+    path: Assets/YiJie/Scenes/ch3Scene.unity
+    guid: d6afd0850fdf8e146a8836ba9336273c
   m_configObjects: {}

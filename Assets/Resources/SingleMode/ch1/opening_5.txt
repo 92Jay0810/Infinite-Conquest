@@ -1,0 +1,4 @@
+﻿[remove,bg1,spFadeOut_0]
+[remove,char1,spFadeOut_0]
+[remove,char2,spFadeOut_0]
+[remove,player,spFadeOut_0]
