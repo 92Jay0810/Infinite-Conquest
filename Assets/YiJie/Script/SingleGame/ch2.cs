@@ -387,8 +387,9 @@ public class  ch2 : MonoBehaviour
             // 在 Canvas 的子物件位置創建prefab
             trainmode_prefab = Instantiate(trainmode, canvas.transform);
             trainmode_prefab.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
-            //在learningMode圖片下，尋找按鈕及文字
-            GameObject question = trainmode_prefab.transform.Find("question").gameObject;
+        //在learningMode圖片下，尋找按鈕及文字
+        Text questionCount = trainmode_prefab.transform.Find("questionCount").GetComponent<Text>();
+        GameObject question = trainmode_prefab.transform.Find("question").gameObject;
             GameObject questionScroll = trainmode_prefab.transform.Find("question/questionScroll").gameObject;
             Text questionText = trainmode_prefab.transform.Find("question/questionScroll/Viewport/Content/questionText").GetComponent<Text>();
             Button Solution_Question_Button = trainmode_prefab.transform.Find("Solution_Question").GetComponent<Button>();
@@ -452,7 +453,7 @@ public class  ch2 : MonoBehaviour
                 answerText.text = "你的回答: " + inputText;
                 Checkanswer_string = inputText;
             });
-            initQuestion(Check_Button, Next_Button, question, option, choice, TrueFalse, ask, Solution_Question_Button, answerText, questionText);
+            initQuestion(Check_Button, Next_Button, question, option, choice, TrueFalse, ask, Solution_Question_Button, questionCount, answerText, questionText);
             //pass by txt file， true  repersent train_mode false represent check_mode，check_mode no hint 
             if (properties[0] == "true")
             {
@@ -468,7 +469,7 @@ public class  ch2 : MonoBehaviour
             {
                 promptcallButton.interactable = false;
             }
-                Solution_Question_Button.onClick.AddListener(() =>
+            Solution_Question_Button.onClick.AddListener(() =>
             {
                 questionScroll.SetActive(!questionScroll.activeSelf);
                 SolutionScroll.SetActive(!SolutionScroll.activeSelf);
@@ -479,17 +480,26 @@ public class  ch2 : MonoBehaviour
                 if (answer_count > 0 && answer_count % 5 == 0)
                 {
                     double correct_rate = (double)correct_answer_count / answer_count;
-                    // 如果正確率低於60%，跳出結果
-                    if (correct_rate < 0.6)
+                    if(properties[0] == "true" && correct_rate < 0.6)
+                    {
+                        // 訓練模式下如果正確率低於60%，跳出結果
+                        DisplayResult(properties[0]);
+                        return;
+                    }
+                    else
+                    {
+                     // 檢測模式下如果正確率低於80%，跳出結果
+                     if (correct_rate < 0.8)
                     {
                         DisplayResult(properties[0]);
                         return;
+                    }
                     }
                 }
                 if (answer_count < max_answer_count)
                 {
                     promptText.text = "";
-                    initQuestion(Check_Button, Next_Button, question, option, choice, TrueFalse, ask, Solution_Question_Button, answerText, questionText);
+                    initQuestion(Check_Button, Next_Button, question, option, choice, TrueFalse, ask, Solution_Question_Button, questionCount,answerText, questionText);
                 }
                 else
                 {
@@ -499,7 +509,7 @@ public class  ch2 : MonoBehaviour
             });
 
             // call OpenAI
-        promptButton.onClick.AddListener(async () =>
+            promptButton.onClick.AddListener(async () =>
         {
             promptText.text = "";
             messages.Clear();
@@ -560,7 +570,7 @@ public class  ch2 : MonoBehaviour
             }
         });
     }
-    private void initQuestion(Button check_button,Button next_button, GameObject question, GameObject option,GameObject choice, GameObject TrueFalse, InputField askField, Button Solution_Question_Button ,Text answerText, Text questionText)
+    private void initQuestion(Button check_button,Button next_button, GameObject question, GameObject option,GameObject choice, GameObject TrueFalse, InputField askField, Button Solution_Question_Button,Text questionCount  , Text answerText, Text questionText)
     {
         // 打开数据库连接
         if (connection.State != System.Data.ConnectionState.Open)
@@ -576,6 +586,7 @@ public class  ch2 : MonoBehaviour
                 return;
             }
         }
+        questionCount.text = "第"+(answer_count+1).ToString()+"題";
         check_button.gameObject.SetActive(true);
         next_button.gameObject.SetActive(false);
         Solution_Question_Button.interactable = false;
@@ -587,7 +598,20 @@ public class  ch2 : MonoBehaviour
         answerText.text = "請回答題目後，按下確認顯示答案";
         Checkanswer_string = "";
         // Randomly select question type
-        int questionType = UnityEngine.Random.Range(0, 3); // 0: Multiple Choice, 1: True/False, 2: Short Answer
+        int randomValue = UnityEngine.Random.Range(0, 100); 
+        int questionType ; // 0: Multiple Choice, 1: True/False, 2: Short Answer
+        if (randomValue < 50)
+        {
+            questionType = 0; // 50% 機率選擇題
+        }
+        else if (randomValue < 80)
+        {
+            questionType = 1; // 30% 機率是非題
+        }
+        else
+        {
+            questionType = 2; // 20% 機率問答題
+        }
         option.SetActive(true);
         Debug.Log(questionType);
         switch (questionType)
@@ -669,13 +693,13 @@ public class  ch2 : MonoBehaviour
                         {
                             correct_answer_count++;
                             Debug.Log("  correct_answer_count" + correct_answer_count);
-                            answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID_choice+" 正確! ";
+                            answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID_choice+"                回答正確! ";
                             insertOrUpdateUserAnswerAnalysis(playerid, 2, true);
 
                         }
                         else
                         {
-                            answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID_choice+" 錯誤 ";
+                            answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID_choice+"                 回答錯誤 ";
                             insertOrUpdateUserAnswerAnalysis(playerid, 2, false);
                         }
                         Solution_Question_Button.interactable = true;
@@ -722,12 +746,12 @@ public class  ch2 : MonoBehaviour
                         {
                             correct_answer_count++;
                             Debug.Log("  correct_answer_count" + correct_answer_count);
-                            answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID + " 正確! ";
+                            answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID + "          回答正確! ";
                             insertOrUpdateUserAnswerAnalysis(playerid, 2, true);
                         }
                         else
                         {
-                            answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID + " 錯誤 ";
+                            answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID + "            回答錯誤 ";
                             insertOrUpdateUserAnswerAnalysis(playerid, 2, false);
                         }
                         Solution_Question_Button.interactable = true;
@@ -859,7 +883,30 @@ public class  ch2 : MonoBehaviour
         Button Retry_Button = train_result_prefab.transform.Find("Retry").GetComponent<Button>();
         answer_count_text.text = answer_count.ToString();
         corrent_count_text.text = correct_answer_count.ToString();
-        if (correct_answer_count >= answer_count * 0.6)
+        bool pass;
+        if(trainORcheck == "true")
+        {
+            if (correct_answer_count >= answer_count * 0.6)
+            {
+                pass = true;
+            }
+            else
+            {
+                pass = false;
+            }
+        }
+        else
+        {
+            if(correct_answer_count >= answer_count * 0.8)
+            {
+                pass = true;
+            }
+            else
+            {
+                pass = false;
+            }
+        }
+        if (pass)
         {
             Pass_Button.gameObject.SetActive(true);
             Pass_Button.onClick.AddListener(() =>
