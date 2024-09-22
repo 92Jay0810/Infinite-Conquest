@@ -9,3 +9,8 @@
 [#playername]：「你已經沒得選擇了。這不只是為了我們的學院，也是為了抵抗帝國學院的壓迫，解放被他們控制的學院。」[w]
 震嶽看著你，沉默片刻，最終歎了一口氣：「好吧，我會告訴你。」[w]
 [#playername]：「謝謝你。相信我，我們不會讓你們失望。這場戰鬥不是為了摧毀，而是為了重建一個自由的世界。」[w]
+[remove,boss,spFadeOut_0]
+[remove,player,spFadeOut_0]
+[remove,bg1,spFadeOut_0]
+[image,bg_transition,SingleMode/ch3/tobecontinue,0,0,5]
+[remove,bg_transition,spFadeOut_2000]

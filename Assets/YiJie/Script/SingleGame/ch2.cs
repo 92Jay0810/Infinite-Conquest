@@ -34,7 +34,7 @@ public class  ch2 : MonoBehaviour
     //train mode
     [SerializeField] Image trainmode;
     Image trainmode_prefab;
-    string Checkanswer_string="";
+    string Checkanswer_string= "";
     const int max_answer_count = 20;
     int answer_count = 0;
     int correct_answer_count = 0;
