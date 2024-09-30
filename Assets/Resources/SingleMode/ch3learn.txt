@@ -30,10 +30,6 @@ Ex，水波、繩波、聲波、彈簧波
 
 Ex，光波、無線電波、微波
 [knowledge]
-[image]SingleMode/ch3/ch3_1
-[knowledge]
-[image]SingleMode/ch3/ch3_2
-[knowledge]
 [text]
 <b>二，	波的名詞解釋</b>
 波峰	偏離平衡位置的最高點稱為波峰
@@ -49,9 +45,9 @@ Ex，光波、無線電波、微波
 <b>橫波</b> 有波峰、波谷、波長、振幅這幾個名詞
 <b>疏密波</b> 有密部、疏部、波長
 [knowledge]
-[image]SingleMode/ch3/ch3_3
+[image]SingleMode/ch3/ch3_1
 [knowledge]
-[image]SingleMode/ch3/ch3_4
+[image]SingleMode/ch3/ch3_2
 [knowledge]
 [text]
 <b>三，	波的特性</b>
@@ -61,7 +57,7 @@ Ex，光波、無線電波、微波
 (3)經過的時間為1個週期。
 2. 波通過介質時，介質分子會隨波上下或前後振動：波傳遞過後，介質分子即回到原本位置，並不會隨波前進。
 [knowledge]
-[image]SingleMode/ch3/ch3_5
+[image]SingleMode/ch3/ch3_3
 [knowledge]
 [text]
 <b>四，	波速</b>
@@ -83,7 +79,7 @@ v=λ*f=λ/T
 [text]
 <b>二,	聲速</b> 下頁為圖片展示，主要展示不同介質的聲數關係，也和溫度濕度風向有關係
 [knowledge]
-[image]SingleMode/ch3/ch3_6
+[image]SingleMode/ch3/ch3_4
 [knowledge]
 [text]
 <b>三,	回聲</b>
@@ -101,7 +97,7 @@ v=λ*f=λ/T
 [text]
 <b>下頁為波的反射示意圖。 其中有入射角。反射角。</b>
 [knowledge]
-[image]SingleMode/ch3/ch3_7
+[image]SingleMode/ch3/ch3_5
 [knowledge]
 [text]
 <b>3.回聲的現象或應用</b>
@@ -130,7 +126,7 @@ v=λ*f=λ/T
 音調	聲音的高低		發聲體的頻率	弦樂器的弦越細、越短、越緊,則頻率越高;管樂器的管越短或金屬簧片越短、越薄,則頻率越高。
 音色	聲音的特色		發聲體的波形	波形不同,音色就不同,故可藉由音色來分辨出不同樂器的聲音。
 [knowledge]
-[image]SingleMode/ch3/ch3_8
+[image]SingleMode/ch3/ch3_6
 [knowledge]
 [text]
 <b>二,	噪音</b>
