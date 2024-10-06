@@ -790,7 +790,7 @@ public class  ch3 : MonoBehaviour
                 check_button.onClick.AddListener(async () =>
                 {
                     check_button.gameObject.SetActive(false);
-                    next_button.gameObject.SetActive(true);
+                    //next_button.gameObject.SetActive(true);
                     option.gameObject.SetActive(false);
                     //後面call LLM可能失敗，先不加，到後面再處理
                     //answer_count++;
@@ -831,12 +831,13 @@ public class  ch3 : MonoBehaviour
                             insertOrUpdateUserAnswerAnalysis(playerid, 3, false);
                         }
                         answerText.text = " 專家回答：" + Response_message.Content + " " + judge_string + " \n 你的答案是    " + Checkanswer_string;
-
+                        next_button.gameObject.SetActive(true);
                     }
                     else
                     {
                         Debug.LogWarning("No text was generated from this prompt.");
                         answerText.text = "專家失蹤了! 請確認一下網路狀況  \n 你的答案是" + Checkanswer_string;
+                        next_button.gameObject.SetActive(true);
                     }
                     Solution_Question_Button.interactable = true;
                 });
