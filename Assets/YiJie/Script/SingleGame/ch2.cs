@@ -486,14 +486,11 @@ public class  ch2 : MonoBehaviour
                         DisplayResult(properties[0]);
                         return;
                     }
-                    else
-                    {
                      // 檢測模式下如果正確率低於80%，跳出結果
-                     if (correct_rate < 0.8)
+                     if (properties[0] == "false" && correct_rate < 0.8)
                     {
                         DisplayResult(properties[0]);
                         return;
-                    }
                     }
                 }
                 if (answer_count < max_answer_count)
