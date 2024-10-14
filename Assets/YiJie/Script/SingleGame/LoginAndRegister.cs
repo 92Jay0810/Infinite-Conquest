@@ -14,6 +14,7 @@ public class LoginAndRegister : MonoBehaviour
     [SerializeField] GameObject Register;
     InputField Register_userNameInput;
     InputField Register_passwordInput;
+    InputField Register_emailInput;
 
     [SerializeField] Text feedbackText;
     [SerializeField] Button SwitchLoginAndRegisterButton;
@@ -35,6 +36,7 @@ public class LoginAndRegister : MonoBehaviour
 
         Register_userNameInput = Register.transform.Find("UserName").GetComponent<InputField>();
         Register_passwordInput = Register.transform.Find("Password").GetComponent<InputField>();
+        Register_emailInput = Register.transform.Find("email").GetComponent<InputField>();
         Text SwitchLoginAndRegister_Text = SwitchLoginAndRegisterButton.transform.Find("Text").GetComponent<Text>();
         SwitchLoginAndRegisterButton.onClick.AddListener(() =>
         {
@@ -112,10 +114,17 @@ public class LoginAndRegister : MonoBehaviour
     {
         string Register_username = Register_userNameInput.text;
         string Register_password = Register_passwordInput.text;
+        string Register_email = Register_emailInput.text;
 
         if (string.IsNullOrEmpty(Register_username) || string.IsNullOrEmpty(Register_password))
         {
             feedbackText.text = "請輸入帳號和密碼";
+            return;
+        }
+        // 檢查 email 是否包含 @ 符號
+        if (string.IsNullOrEmpty(Register_email) || !Register_email.Contains("@"))
+        {
+            feedbackText.text = "請輸入有效的 Email";
             return;
         }
         string connectionString = $"Server={server};Database={database};User ID={user};Password={password};Pooling=false;";
@@ -138,9 +147,10 @@ public class LoginAndRegister : MonoBehaviour
                 else
                 {
                     // 註冊新帳號
-                    MySqlCommand cmd = new MySqlCommand("INSERT INTO users (username, password) VALUES (@username, @password)", connection);
+                    MySqlCommand cmd = new MySqlCommand("INSERT INTO users (username, password, email) VALUES (@username, @password, @register_email)", connection);
                     cmd.Parameters.AddWithValue("@username", Register_username);
-                    cmd.Parameters.AddWithValue("@password", Register_password); // 建議在實際應用中對密碼進行哈希處理
+                    cmd.Parameters.AddWithValue("@password", Register_password);
+                    cmd.Parameters.AddWithValue("@register_email", Register_email);
 
                     cmd.ExecuteNonQuery();
                     feedbackText.text = "註冊成功";
