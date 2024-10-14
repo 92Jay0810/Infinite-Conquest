@@ -1,3 +1,6 @@
+[image,bg1,SingleMode/ch1/tigerroom2,0,0,0]
+[image,char1,SingleMode/ch3/president-tigerduck4,-550,0,1]
+[image,char2,SingleMode/ch3/ZnCn4,0,0,1]
 在打敗秋榎學院校長後，[#playername]迅速回到琥椏學院向冴衙校長報告最新的情況。[w]
 <校長室>[w]
 冴衙：「[#playername]，你做得很好。秋榎學院的情報對我們非常重要。下一步，我們要進攻的是永光學院。」[w]

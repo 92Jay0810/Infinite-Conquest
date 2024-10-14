@@ -216,11 +216,11 @@ public class  ch4 : MonoBehaviour
                          correct_answer_count = 0;
                      }
                     break;
-                case 18: //目前 檢驗模式前
+                case 18:
                     fs.ReadTextFromResource("SingleMode/ch4/ch4_4");
                     progress = 20;
                     break;
-                case 19: //resource 未改
+                case 19: 
                     fs.ReadTextFromResource("SingleMode/ch4/ch4_4_5");
                     progress = 20;
                     break;
@@ -514,7 +514,7 @@ public class  ch4 : MonoBehaviour
             });
             initQuestion(Check_Button, Next_Button, question, option, choice, TrueFalse, ask, Solution_Question_Button,questionCount , answerText, questionText);
             //pass by txt file， true  repersent train_mode false represent check_mode，check_mode no hint 
-            if (properties[0] == "true")
+            if (properties[0] == "true" || properties[0] == "true2")
             {
                 promptcallButton.onClick.AddListener(() =>
                 {
@@ -687,8 +687,8 @@ public class  ch4 : MonoBehaviour
                 TrueFalse.SetActive(false);
                 askField.gameObject.SetActive(false);
 
-                //隨機 取得選擇題題目並且章節為3 的題目
-                MySqlCommand command0 = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 0 AND ChapterID = 3 ORDER BY RAND() LIMIT 1", connection);
+                //隨機 取得選擇題題目並且章節為4 的題目
+                MySqlCommand command0 = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 0 AND ChapterID = 4 ORDER BY RAND() LIMIT 1", connection);
                 MySqlDataReader reader0 = command0.ExecuteReader();
                 string QuestionID = "";
                 string tempAnswerOptionID_choice = "";
@@ -774,8 +774,8 @@ public class  ch4 : MonoBehaviour
                 choice.SetActive(false);
                 askField.gameObject.SetActive(false);
 
-                //隨機 取得是非題並且章節為2 的題目
-                MySqlCommand command = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 1 AND ChapterID = 3 ORDER BY RAND() LIMIT 1", connection);
+                //隨機 取得是非題並且章節為4 的題目
+                MySqlCommand command = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 1 AND ChapterID = 4 ORDER BY RAND() LIMIT 1", connection);
                 MySqlDataReader reader = command.ExecuteReader();
                 string tempAnswerOptionID = "";
                 if (reader.Read()) // 使用 if 因為只會返回一條記錄
@@ -819,8 +819,8 @@ public class  ch4 : MonoBehaviour
                 choice.SetActive(false);
                 TrueFalse.SetActive(false);
                 askField.gameObject.SetActive(true);
-                //隨機 取得是非題並且章節為2 的題目
-                MySqlCommand command1 = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 2 AND ChapterID = 3 ORDER BY RAND() LIMIT 1", connection);
+                //隨機 取得是非題並且章節為4 的題目
+                MySqlCommand command1 = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 2 AND ChapterID = 4 ORDER BY RAND() LIMIT 1", connection);
                 MySqlDataReader reader1 = command1.ExecuteReader();
                 if (reader1.Read()) // 使用 if 因為只會返回一條記錄
                 {
