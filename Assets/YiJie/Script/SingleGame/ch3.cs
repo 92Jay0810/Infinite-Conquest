@@ -230,9 +230,9 @@ public class  ch3 : MonoBehaviour
                     break;
                 case 19:
                     fs.SetTextList(new List<string> { "結束，進入下一章[w]" });
-                    if (UpdateCurrentChapter(playerid, 3))
+                    if (UpdateCurrentChapter(playerid, 4))
                     {
-                        SceneManager.LoadScene("startScene");
+                        SceneManager.LoadScene("ch4Scene");
                     }
                     else
                     {
@@ -350,7 +350,7 @@ public class  ch3 : MonoBehaviour
             // Complete the instruction
             var completionResponse = await openai.CreateChatCompletion(new CreateChatCompletionRequest()
             {
-                Model = "gpt-4o",
+                Model = "gpt-4",
                 Messages = messages
             });
             if (completionResponse.Choices != null && completionResponse.Choices.Count > 0)
@@ -560,7 +560,7 @@ public class  ch3 : MonoBehaviour
                 // Complete the instruction
                 var completionResponse = await openai.CreateChatCompletion(new CreateChatCompletionRequest()
                 {
-                    Model = "gpt-4o",
+                    Model = "gpt-4",
                     Messages = messages
                 });
                 if (completionResponse.Choices != null && completionResponse.Choices.Count > 0)
@@ -804,7 +804,7 @@ public class  ch3 : MonoBehaviour
                     // Complete the instruction
                     var completionResponse = await openai.CreateChatCompletion(new CreateChatCompletionRequest()
                     {
-                        Model = "gpt-4o",
+                        Model = "gpt-4",
                         Messages = messages
                     });
                     if (completionResponse.Choices != null && completionResponse.Choices.Count > 0)

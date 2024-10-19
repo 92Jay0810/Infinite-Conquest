@@ -1,1 +1,3 @@
+[remove,bgm]
+[audio,bgm,SingleMode/music/battle3,True]
 [trainMode,true]

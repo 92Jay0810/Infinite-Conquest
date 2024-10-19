@@ -341,7 +341,7 @@ public class  ch2 : MonoBehaviour
             // Complete the instruction
             var completionResponse = await openai.CreateChatCompletion(new CreateChatCompletionRequest()
             {
-                Model = "gpt-4o",
+                Model = "gpt-4",
                 Messages = messages
             });
             if (completionResponse.Choices != null && completionResponse.Choices.Count > 0)
@@ -551,7 +551,7 @@ public class  ch2 : MonoBehaviour
             // Complete the instruction
             var completionResponse = await openai.CreateChatCompletion(new CreateChatCompletionRequest()
             {
-                Model = "gpt-4o",
+                Model = "gpt-4",
                 Messages = messages
             });
             if (completionResponse.Choices != null && completionResponse.Choices.Count > 0)
@@ -795,7 +795,7 @@ public class  ch2 : MonoBehaviour
                         // Complete the instruction
                         var completionResponse = await openai.CreateChatCompletion(new CreateChatCompletionRequest()
                         {
-                            Model = "gpt-4o",
+                            Model = "gpt-4",
                             Messages = messages
                         });
                         if (completionResponse.Choices != null && completionResponse.Choices.Count > 0)
