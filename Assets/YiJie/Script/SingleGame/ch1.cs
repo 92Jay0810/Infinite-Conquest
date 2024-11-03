@@ -301,7 +301,7 @@ public class ch1 : MonoBehaviour
             // Complete the instruction
             var completionResponse = await openai.CreateChatCompletion(new CreateChatCompletionRequest()
             {
-                Model = "gpt-4",
+                Model = "gpt-4o",
                 Messages = messages
             });
             if (completionResponse.Choices != null && completionResponse.Choices.Count > 0)
