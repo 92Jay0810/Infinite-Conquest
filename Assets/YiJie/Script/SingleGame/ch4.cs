@@ -750,13 +750,13 @@ public class  ch4 : MonoBehaviour
                         correct_answer_count++;
                         Debug.Log("  correct_answer_count" + correct_answer_count);
                         answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID_choice + "          回答正確! ";
-                        insertOrUpdateUserAnswerAnalysis(playerid, 3, true);
+                        insertOrUpdateUserAnswerAnalysis(playerid, 4, true);
 
                     }
                     else
                     {
                         answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID_choice + "            回答錯誤 ";
-                        insertOrUpdateUserAnswerAnalysis(playerid, 3, false);
+                        insertOrUpdateUserAnswerAnalysis(playerid, 4, false);
                     }
                     Solution_Question_Button.interactable = true;
                 });
@@ -803,12 +803,12 @@ public class  ch4 : MonoBehaviour
                         correct_answer_count++;
                         Debug.Log("  correct_answer_count" + correct_answer_count);
                         answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID + "                      回答正確! ";
-                        insertOrUpdateUserAnswerAnalysis(playerid, 3, true);
+                        insertOrUpdateUserAnswerAnalysis(playerid, 4, true);
                     }
                     else
                     {
                         answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID + "                     回答錯誤 ";
-                        insertOrUpdateUserAnswerAnalysis(playerid, 3, false);
+                        insertOrUpdateUserAnswerAnalysis(playerid, 4, false);
                     }
                     Solution_Question_Button.interactable = true;
                 });
@@ -869,13 +869,13 @@ public class  ch4 : MonoBehaviour
                             judge_string = "通過!";
                             correct_answer_count++;
                             Debug.Log("  correct_answer_count" + correct_answer_count);
-                            insertOrUpdateUserAnswerAnalysis(playerid, 3, true);
+                            insertOrUpdateUserAnswerAnalysis(playerid, 4, true);
                         }
                         else
                         {
                             answer_count++;
                             judge_string = "不通過!";
-                            insertOrUpdateUserAnswerAnalysis(playerid, 3, false);
+                            insertOrUpdateUserAnswerAnalysis(playerid, 4, false);
                         }
                         answerText.text = " 專家回答：" + Response_message.Content + " " + judge_string + " \n 你的答案是    " + Checkanswer_string;
                         next_button.gameObject.SetActive(true);
