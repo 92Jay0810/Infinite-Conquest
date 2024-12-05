@@ -1,0 +1,3 @@
+[remove,bgm]
+[audio,bgm,SingleMode/music/Boss3,True]
+[trainMode,false]

@@ -8,7 +8,7 @@ using OpenAI;
 using MySql.Data.MySqlClient;
 using UnityEngine.SceneManagement;
 
-public class  ch3 : MonoBehaviour
+public class  ch4 : MonoBehaviour
 {
     FlowerSystem fs;
     private int progress = 0;
@@ -20,7 +20,7 @@ public class  ch3 : MonoBehaviour
     [SerializeField] Image learningmode;
  
     Image learningmode_prefab;
-    public TextAsset ch3LearnAsset;
+    public TextAsset ch4LearnAsset;
     private List<Knowledge> knowledgePoints;
     private int currentPageIndex = 0;
 
@@ -67,7 +67,7 @@ public class  ch3 : MonoBehaviour
             switch (progress)
             {
                 case 0:
-                    fs.ReadTextFromResource("SingleMode/ch3/ch3_1");
+                    fs.ReadTextFromResource("SingleMode/ch4/ch4_1");
                     progress = 1;
                     break;
                 case 1:
@@ -81,11 +81,11 @@ public class  ch3 : MonoBehaviour
                     }
                     break;
                 case 2:
-                    fs.ReadTextFromResource("SingleMode/ch3/ch3_2");
+                    fs.ReadTextFromResource("SingleMode/ch4/ch4_2");
                     progress = 4;
                     break;
                 case 3:
-                    fs.ReadTextFromResource("SingleMode/ch3/ch3_2_5");
+                    fs.ReadTextFromResource("SingleMode/ch4/ch4_2_5");
                     progress = 4;
                     break;
                 case 4:
@@ -100,12 +100,12 @@ public class  ch3 : MonoBehaviour
                     {
                         gameEnd = false;
                         fs.RemoveButtonGroup();
-                        progress = 7;
+                        progress = 8;
                     });
                     gameEnd = true;
                     break;
                 case 5:
-                    fs.ReadTextFromResource("SingleMode/ch3/learnmode");
+                    fs.ReadTextFromResource("SingleMode/ch4/learnmode");
                     progress =6;
                     break;
                 case 6:
@@ -118,16 +118,12 @@ public class  ch3 : MonoBehaviour
                         }
                     }
                     break;
-                case 7:
-                    fs.ReadTextFromResource("SingleMode/ch3/ch3_3");
-                    progress = 8;
-                    break;
                 case 8:
                     if (connection == null)
                     {
                         if (initDB())
                         {
-                            fs.ReadTextFromResource("SingleMode/ch3/trainmode");
+                            fs.ReadTextFromResource("SingleMode/ch4/trainmode");
                             progress = 9;
                         }
                         else
@@ -150,7 +146,7 @@ public class  ch3 : MonoBehaviour
                     }
                     else
                     {
-                        fs.ReadTextFromResource("SingleMode/ch3/trainmode");
+                        fs.ReadTextFromResource("SingleMode/ch4/trainmode");
                         progress = 9;
                     }
                     break;
@@ -167,11 +163,11 @@ public class  ch3 : MonoBehaviour
                     }
                     break;
                 case 10:
-                    fs.ReadTextFromResource("SingleMode/ch3/ch3_4");
-                    progress = 11;
+                    fs.ReadTextFromResource("SingleMode/ch4/ch4_3");
+                    progress = 12;
                     break;
                 case 11:
-                    fs.ReadTextFromResource("SingleMode/ch3/ch3_4_5");
+                    fs.ReadTextFromResource("SingleMode/ch4/ch4_3_5");
                     progress = 12;
                     break;
                 case 12:
@@ -186,12 +182,12 @@ public class  ch3 : MonoBehaviour
                     {
                         gameEnd = false;
                         fs.RemoveButtonGroup();
-                        progress = 15;
+                        progress = 16;
                     });
                     gameEnd = true;
                     break;
                 case 13:
-                    fs.ReadTextFromResource("SingleMode/ch3/learnmode");
+                    fs.ReadTextFromResource("SingleMode/ch4/learnmode");
                     progress = 14;
                     break;
                 case 14:
@@ -204,12 +200,8 @@ public class  ch3 : MonoBehaviour
                         }
                     }
                     break;
-                case 15:
-                    fs.ReadTextFromResource("SingleMode/ch3/ch3_5");
-                    progress = 16;
-                    break;
                 case 16:
-                    fs.ReadTextFromResource("SingleMode/ch3/checkmode");
+                    fs.ReadTextFromResource("SingleMode/ch4/trainmode2");
                     progress = 17;
                     break;
                 case 17:
@@ -225,14 +217,72 @@ public class  ch3 : MonoBehaviour
                      }
                     break;
                 case 18:
-                    fs.ReadTextFromResource("SingleMode/ch3/ch3_6");
-                    progress = 19;
+                    fs.ReadTextFromResource("SingleMode/ch4/ch4_4");
+                    progress = 20;
                     break;
-                case 19:
+                case 19: 
+                    fs.ReadTextFromResource("SingleMode/ch4/ch4_4_5");
+                    progress = 20;
+                    break;
+                case 20:
+                    fs.SetupButtonGroup();
+                    fs.SetupButton("回去觀看學習模式.", () =>
+                    {
+                        gameEnd = false;
+                        fs.RemoveButtonGroup();
+                        progress = 21;
+                    });
+                    fs.SetupButton("進入戰鬥", () =>
+                    {
+                        gameEnd = false;
+                        fs.RemoveButtonGroup();
+                        progress = 23;
+                    });
+                    gameEnd = true;
+                    break;
+                case 21:
+                    fs.ReadTextFromResource("SingleMode/ch4/learnmode");
+                    progress = 22;
+                    break;
+                case 22:
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        progress = 20;
+                        if (learningmode_prefab != null)
+                        {
+                            Destroy(learningmode_prefab.gameObject);
+                        }
+                    }
+                    break;
+                case 23:
+                    fs.ReadTextFromResource("SingleMode/ch4/ch4_5");
+                    progress = 24;
+                    break;
+                case 24:
+                    fs.ReadTextFromResource("SingleMode/ch4/checkmode");
+                    progress = 25;
+                    break;
+                case 25:
+                    if (Input.GetKeyDown(KeyCode.R))
+                    {
+                        progress = 19;
+                        if (trainmode_prefab != null)
+                        {
+                            Destroy(trainmode_prefab.gameObject);
+                        }
+                        answer_count = 0;
+                        correct_answer_count = 0;
+                    }
+                    break;
+                case 26:
+                    fs.ReadTextFromResource("SingleMode/ch4/ch4_6");
+                    progress = 27;
+                    break;
+                case 27:
                     fs.SetTextList(new List<string> { "結束，進入下一章[w]" });
                     if (UpdateCurrentChapter(playerid, 4))
                     {
-                        SceneManager.LoadScene("ch4Scene");
+                        SceneManager.LoadScene("startScene");
                     }
                     else
                     {
@@ -288,7 +338,7 @@ public class  ch3 : MonoBehaviour
         Text promptText = learningmode_prefab.transform.Find("PromptPanel/Scroll View/Viewport/Content/promptText").GetComponent<Text>();
 
         //讀取檔案
-        string content = ch3LearnAsset.text;
+        string content = ch4LearnAsset.text;
         knowledgePoints = new List<Knowledge>();
         // 分頁
         string[] parts = content.Split(new[] { "[knowledge]" }, System.StringSplitOptions.RemoveEmptyEntries);
@@ -464,7 +514,7 @@ public class  ch3 : MonoBehaviour
             });
             initQuestion(Check_Button, Next_Button, question, option, choice, TrueFalse, ask, Solution_Question_Button,questionCount , answerText, questionText);
             //pass by txt file， true  repersent train_mode false represent check_mode，check_mode no hint 
-            if (properties[0] == "true")
+            if (properties[0] == "true" || properties[0] == "true2")
             {
                 promptcallButton.onClick.AddListener(() =>
                 {
@@ -637,8 +687,8 @@ public class  ch3 : MonoBehaviour
                 TrueFalse.SetActive(false);
                 askField.gameObject.SetActive(false);
 
-                //隨機 取得選擇題題目並且章節為3 的題目
-                MySqlCommand command0 = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 0 AND ChapterID = 3 ORDER BY RAND() LIMIT 1", connection);
+                //隨機 取得選擇題題目並且章節為4 的題目
+                MySqlCommand command0 = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 0 AND ChapterID = 4 ORDER BY RAND() LIMIT 1", connection);
                 MySqlDataReader reader0 = command0.ExecuteReader();
                 string QuestionID = "";
                 string tempAnswerOptionID_choice = "";
@@ -700,13 +750,13 @@ public class  ch3 : MonoBehaviour
                         correct_answer_count++;
                         Debug.Log("  correct_answer_count" + correct_answer_count);
                         answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID_choice + "          回答正確! ";
-                        insertOrUpdateUserAnswerAnalysis(playerid, 3, true);
+                        insertOrUpdateUserAnswerAnalysis(playerid, 4, true);
 
                     }
                     else
                     {
                         answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID_choice + "            回答錯誤 ";
-                        insertOrUpdateUserAnswerAnalysis(playerid, 3, false);
+                        insertOrUpdateUserAnswerAnalysis(playerid, 4, false);
                     }
                     Solution_Question_Button.interactable = true;
                 });
@@ -724,8 +774,8 @@ public class  ch3 : MonoBehaviour
                 choice.SetActive(false);
                 askField.gameObject.SetActive(false);
 
-                //隨機 取得是非題並且章節為2 的題目
-                MySqlCommand command = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 1 AND ChapterID = 3 ORDER BY RAND() LIMIT 1", connection);
+                //隨機 取得是非題並且章節為4 的題目
+                MySqlCommand command = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 1 AND ChapterID = 4 ORDER BY RAND() LIMIT 1", connection);
                 MySqlDataReader reader = command.ExecuteReader();
                 string tempAnswerOptionID = "";
                 if (reader.Read()) // 使用 if 因為只會返回一條記錄
@@ -753,12 +803,12 @@ public class  ch3 : MonoBehaviour
                         correct_answer_count++;
                         Debug.Log("  correct_answer_count" + correct_answer_count);
                         answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID + "                      回答正確! ";
-                        insertOrUpdateUserAnswerAnalysis(playerid, 3, true);
+                        insertOrUpdateUserAnswerAnalysis(playerid, 4, true);
                     }
                     else
                     {
                         answerText.text = " 你的答案是    " + Checkanswer_string + " 解答為 " + tempAnswerOptionID + "                     回答錯誤 ";
-                        insertOrUpdateUserAnswerAnalysis(playerid, 3, false);
+                        insertOrUpdateUserAnswerAnalysis(playerid, 4, false);
                     }
                     Solution_Question_Button.interactable = true;
                 });
@@ -769,8 +819,8 @@ public class  ch3 : MonoBehaviour
                 choice.SetActive(false);
                 TrueFalse.SetActive(false);
                 askField.gameObject.SetActive(true);
-                //隨機 取得是非題並且章節為2 的題目
-                MySqlCommand command1 = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 2 AND ChapterID = 3 ORDER BY RAND() LIMIT 1", connection);
+                //隨機 取得是非題並且章節為4 的題目
+                MySqlCommand command1 = new MySqlCommand("SELECT * FROM questionnare.questions WHERE QuestionType = 2 AND ChapterID = 4 ORDER BY RAND() LIMIT 1", connection);
                 MySqlDataReader reader1 = command1.ExecuteReader();
                 if (reader1.Read()) // 使用 if 因為只會返回一條記錄
                 {
@@ -819,13 +869,13 @@ public class  ch3 : MonoBehaviour
                             judge_string = "通過!";
                             correct_answer_count++;
                             Debug.Log("  correct_answer_count" + correct_answer_count);
-                            insertOrUpdateUserAnswerAnalysis(playerid, 3, true);
+                            insertOrUpdateUserAnswerAnalysis(playerid, 4, true);
                         }
                         else
                         {
                             answer_count++;
                             judge_string = "不通過!";
-                            insertOrUpdateUserAnswerAnalysis(playerid, 3, false);
+                            insertOrUpdateUserAnswerAnalysis(playerid, 4, false);
                         }
                         answerText.text = " 專家回答：" + Response_message.Content + " " + judge_string + " \n 你的答案是    " + Checkanswer_string;
                         next_button.gameObject.SetActive(true);
@@ -926,9 +976,13 @@ public class  ch3 : MonoBehaviour
                 {
                     progress =10;
                 }
-                else
+                else if (trainORcheck == "true2")
                 {
                     progress = 18;
+                }
+                else
+                {
+                    progress = 26;
                 }
             });
             Retry_Button.gameObject.SetActive(false);
@@ -946,10 +1000,13 @@ public class  ch3 : MonoBehaviour
                 if (trainORcheck == "true")
                 {
                     progress = 3;
+                }else if(trainORcheck == "true2")
+                {
+                    progress = 11;
                 }
                 else
                 {
-                    progress = 11;
+                    progress = 19;
                 }
             });
         }

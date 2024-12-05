@@ -114,7 +114,8 @@ public class StartSceneManager : MonoBehaviourPunCallbacks
             Button button1 = chapterSelectionPanel.transform.Find("1").GetComponent<Button>();
             Button button2 = chapterSelectionPanel.transform.Find("2").GetComponent<Button>();
             Button button3 = chapterSelectionPanel.transform.Find("3").GetComponent<Button>();
-            Button[] chapterButtons = { button1, button2, button3 };
+            Button button4 = chapterSelectionPanel.transform.Find("4").GetComponent<Button>();
+            Button[] chapterButtons = { button1, button2, button3, button4 };
             foreach (Button chapter_option in chapterButtons)
             {
                 chapter_option.interactable = false;

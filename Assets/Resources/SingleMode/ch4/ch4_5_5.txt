@@ -1,0 +1,4 @@
+[remove,bgm]
+[audio,bgm,SingleMode/music/BGM3,True]
+[#playername]：「我已經準備好了，來吧。」[w]
+映輝：「很好，我就讓你見識一下真正的化學力量。準備迎接你的末日吧！」[w]
